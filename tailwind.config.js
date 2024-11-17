@@ -29,6 +29,22 @@ module.exports = {
       backgroundImage: {
         lastMovie: "url('https://wallpapers.com/images/hd/4k-mountain-l3f04sogeaabr5h0.jpg')"
       },
+
+      animation: {
+        fadeIn: "fadeIn 0.5s ease-in-out forwards",
+        fadeOut: 'fadeOut 0.5s ease-out'
+      },
+
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 }
+        },
+        fadeOut: {
+          '0%': { opacity: 1 },
+          '100%': { opacity: 0 },
+        },
+      }
     },
   },
   plugins: [],
