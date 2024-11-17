@@ -4,5 +4,5 @@ import MoviesWatched from "./dashboard/components/MoviesWatched"
 
 import "./Header.css"
 export default function Home() {
-    redirect('./(auth)/login')
+    redirect('./login')
 }
