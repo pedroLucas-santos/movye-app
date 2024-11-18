@@ -151,7 +151,7 @@ export const fetchMovieLastWatched = async () => {
                 rating: 0,
                 release_date: "",
                 title: "",
-                watched_at: Timestamp.now()
+                watched_at: Timestamp.now(),
             }
 
             // Cria o novo documento
@@ -248,6 +248,20 @@ export const fetchUserLastMovieReview = async (lastMovieId) => {
         const snapshot = await getDocs(reviewsQuery)
 
         const reviews = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+
+        if (reviews.length === 0) {
+            // Nenhuma review encontrada para este filme
+            return {
+                review: "",
+                rating: null,
+                reviewed_at: "",
+                user: {
+                    displayName: "",
+                    photoURL: null,
+                },
+            }
+        }
+
         const latestReview = reviews.sort((a, b) => b.reviewed_at.toMillis() - a.reviewed_at.toMillis())[0]
 
         let formattedDate = ""
@@ -264,7 +278,7 @@ export const fetchUserLastMovieReview = async (lastMovieId) => {
             })
         }
 
-        const userId = latestReview.user_id // Ajuste conforme o campo correto.
+        const userId = latestReview.user_id
         const userDocRef = doc(db, "users", userId)
         const userDoc = await getDoc(userDocRef)
 
