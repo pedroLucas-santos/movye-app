@@ -105,7 +105,7 @@ const MainBanner = () => {
                         </div>
                     </div>
                     <div className="w-[300px] h-[450px]">
-                        <img src={lastWatchedMovie.posterUrl} alt="" className="w-full h-full select-none" />
+                        <img src={lastWatchedMovie.posterUrl} alt="" className="w-full h-full select-none shadow-xl" />
                     </div>
                 </div>
             </div>

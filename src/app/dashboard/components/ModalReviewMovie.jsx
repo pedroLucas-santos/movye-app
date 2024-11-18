@@ -38,6 +38,18 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
     }
 
     useEffect(() => {
+        const fetchMovieList = async () => {
+            try {
+                const response = await fetchMoviesWatched()
+                setWatchedMovies(response)
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        fetchMovieList()
+    }, [])
+
+    useEffect(() => {
         if (selectedMovieId) {
             const movie = watchedMovies.find((movie) => movie.id === selectedMovieId)
 
@@ -75,37 +87,33 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
     }
 
     const addReview = async () => {
-        if (rating && selectedMovieId) {
+        if (rating && selectedMovieId && review !== "") {
             try {
                 const response = await fetchMovieReview(selectedMovieId, rating, selectedMovie, review, user.uid)
                 toast.success("Review enviado com sucesso:", response)
-                setTimeout(() => {
-                    triggerUpdate()
-                }, 1500)
+
+                triggerUpdate()
+
+                return true
             } catch (e) {
                 console.error(e)
+                return false
             }
         } else {
-            toast.error("É necessário preencher o rating e o filme para enviar o review.")
+            toast.error("É necessário preencher o rating, filme e review para finalizar sua review!")
+            return false
         }
     }
 
     const handleReview = async () => {
-        await addReview()
-        closeModal()
-    }
+        const reviewAdded = await addReview()
 
-    useEffect(() => {
-        const fetchMovieList = async () => {
-            try {
-                const response = await fetchMoviesWatched()
-                setWatchedMovies(response)
-            } catch (e) {
-                console.error(e)
-            }
+        if (reviewAdded) {
+            setTimeout(() => {
+                closeModal()
+            }, 1200)
         }
-        fetchMovieList()
-    }, [])
+    }
 
     return (
         <div
