@@ -41,13 +41,11 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
     useEffect(() => {
         const fetchMovieList = async () => {
             try {
-                const watchedMoviesResponse = await fetchMoviesWatched(); // Busca filmes assistidos
-                const userReviews = await fetchUserReviews(user.uid); // Busca reviews do usuário no Firestore
+                const watchedMoviesResponse = await fetchMoviesWatched();
+                const userReviews = await fetchUserReviews(user.uid);
     
-                // Extrai IDs dos filmes que já possuem reviews
                 const reviewedMovieIds = userReviews.map((review) => review.id_movie);
-                console.log(reviewedMovieIds);
-                // Filtra os filmes assistidos para incluir apenas os não avaliados
+
                 const moviesToReview = watchedMoviesResponse.filter(
                     (movie) => !reviewedMovieIds.includes(movie.id)
                 );

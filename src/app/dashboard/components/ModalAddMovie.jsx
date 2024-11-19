@@ -104,7 +104,7 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
                                     return (
                                         <div
                                             key={movie.id}
-                                            className="border-2 border-gray-300 p-4 mt-4 flex gap-4 justify-center items-center flex-col opacity-0 animate-fadeIn transition"
+                                            className="p-4 mt-4 flex gap-4 justify-center items-center flex-col opacity-0 animate-fadeIn transition"
                                         >
                                             <ul
                                                 className={`w-[90%] border-2 border-cyan-500/0 rounded-lg overflow-hidden shadow-md transition duration-300 hover:transform hover:scale-105 ${
