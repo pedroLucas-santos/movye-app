@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import NavBar from "./NavBar"
 import { fetchMovieLastWatched, fetchUserLastMovieReview } from "../../lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
@@ -12,6 +12,7 @@ const MainBanner = () => {
     const reviewChangeInterval = 5000
     const [animate, setAnimate] = useState(false) // Estado de animação
     const { updateSignal } = useMovieUpdate()
+    const allReviewsRef = useRef(allReviews)
 
     const renderStar = (index, movieRating) => {
         const isFilled = index <= movieRating
@@ -68,19 +69,23 @@ const MainBanner = () => {
     }, [lastWatchedMovie])
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            if (allReviews.length > 1) {
+        allReviewsRef.current = allReviews
+    }, [allReviews])
+
+    useEffect(() => {
+        if (allReviewsRef.current.length > 1) {
+            const interval = setInterval(() => {
                 setReviewIndex((prevIndex) => {
-                    const nextIndex = (prevIndex + 1) % allReviews.length // Vai de 0 ao comprimento da lista
-                    setCurrentReview(allReviews[nextIndex])
+                    const nextIndex = (prevIndex + 1) % allReviewsRef.current.length
+                    setCurrentReview(allReviewsRef.current[nextIndex])
                     return nextIndex
                 })
                 setAnimate(true)
-            }
-        }, reviewChangeInterval)
-
-        return () => clearInterval(interval)
-    }, [allReviews])
+            }, reviewChangeInterval)
+    
+            return () => clearInterval(interval)
+        }
+    }, [allReviews, reviewChangeInterval])
 
     useEffect(() => {
         if (animate) {
