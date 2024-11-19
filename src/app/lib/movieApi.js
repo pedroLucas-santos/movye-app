@@ -12,7 +12,6 @@ export const options = {
 
 export const fetchMoviePoster = async (movieId) => {
     try {
-        //get the id of the last watched movie
         const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/images`, options)
         const data = await response.json()
 
@@ -21,11 +20,11 @@ export const fetchMoviePoster = async (movieId) => {
 
             if (filteredPosters.length > 0) {
                 const posterPath = filteredPosters[0].file_path
-                return `https://image.tmdb.org/t/p/w500${posterPath}` // Return the full URL for the poster
+                return `https://image.tmdb.org/t/p/w500${posterPath}`
             }
-        } else {
+        } /* else {
             throw new Error("No posters found")
-        }
+        } */
     } catch (error) {
         throw new Error("Error fetching movie images: " + error.message)
     }
@@ -46,9 +45,9 @@ export const fetchMovieBackdrop = async (movieId) => {
                 const backdropPath = randomBackdrop.file_path
                 return `https://image.tmdb.org/t/p/original${backdropPath}`
             }
-        } else {
+        } /* else {
             throw new Error("No posters found")
-        }
+        } */
     } catch (error) {
         throw new Error("Error fetching movie images: " + error.message)
     }
@@ -59,17 +58,14 @@ export const fetchMovieCard = async (apiKey) => {
         const response = await fetch(`https://api.themoviedb.org/3/movie/120/images`, options)
         const data = await response.json()
 
-        /* const id = data.backdrops.findIndex(b => b.file_path === "/atAgkg1ILczZQNDSHCTARPMTQOs.jpg")
-        console.log(id) == 91 FOTO BALAAA */
-
         if (data.backdrops && data.backdrops.length > 0) {
             for (let i = 0; i < data.backdrops.length; i++) {
                 const backdropPath = data.backdrops[Math.floor(Math.random() * data.backdrops.length)].file_path
                 return `https://image.tmdb.org/t/p/original${backdropPath}` // Return the full URL for the poster
-            } // Return the full URL for the poster
-        } else {
+            }
+        } /* else {
             throw new Error("No posters found")
-        }
+        } */
     } catch (error) {
         throw new Error("Error fetching movie images: " + error.message)
     }
@@ -143,7 +139,6 @@ export const fetchMovieLastWatched = async () => {
         if (!movieDoc.exists()) {
             console.log("Documento 'lastWatchedMovie' não encontrado. Criando novo documento...")
 
-            // Defina os dados do novo documento
             const newMovieData = {
                 genre: "",
                 id: 0,
@@ -154,7 +149,6 @@ export const fetchMovieLastWatched = async () => {
                 watched_at: Timestamp.now(),
             }
 
-            // Cria o novo documento
             await setDoc(movieDocRef, newMovieData)
 
             console.log("Documento criado com sucesso.")
@@ -164,9 +158,9 @@ export const fetchMovieLastWatched = async () => {
 
         const movieData = movieDoc.data()
 
-        if (!movieData || !movieData.id || !movieData.title) {
+/*         if (!movieData || !movieData.id || !movieData.title) {
             throw new Error("O filme 'lastWatchedMovie' não tem dados completos no banco de dados.")
-        }
+        } */
 
         const movieId = movieData.id
         const title = movieData.title
@@ -238,19 +232,41 @@ export const fetchMovieReview = async (movieId, newRating, movieSelected, newRev
     }
 }
 
-//PAREI AQUIII
 export const fetchUserLastMovieReview = async (lastMovieId) => {
     try {
         console.log(lastMovieId)
 
         const reviewsQuery = query(collectionGroup(db, "reviews"), where("id_movie", "==", lastMovieId))
-
         const snapshot = await getDocs(reviewsQuery)
 
-        const reviews = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+        const reviews = snapshot.docs.map((doc) => {
+            const data = doc.data()
+            let formattedDate = ""
+
+            // Formata a data da review
+            if (data.reviewed_at) {
+                const timestamp = data.reviewed_at
+                const date = timestamp.toDate()
+                formattedDate = date.toLocaleDateString("pt-BR", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                })
+            }
+
+            return {
+                id: doc.id,
+                review: data.review || "",
+                rating: data.rating || 0,
+                reviewed_at: formattedDate,
+                user_id: data.user_id,
+            }
+        })
 
         if (reviews.length === 0) {
-            // Nenhuma review encontrada para este filme
             return {
                 review: "",
                 rating: null,
@@ -262,47 +278,49 @@ export const fetchUserLastMovieReview = async (lastMovieId) => {
             }
         }
 
-        const latestReview = reviews.sort((a, b) => b.reviewed_at.toMillis() - a.reviewed_at.toMillis())[0]
+        const userPromises = reviews.map(async (review) => {
+            const userDocRef = doc(db, "users", review.user_id)
+            const userDoc = await getDoc(userDocRef)
 
-        let formattedDate = ""
-        if (latestReview?.reviewed_at) {
-            const timestamp = latestReview.reviewed_at
-            const date = timestamp.toDate()
-            formattedDate = date.toLocaleDateString("pt-BR", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-            })
-        }
+            if (!userDoc.exists()) {
+                throw new Error(`Usuário com ID ${review.user_id} não encontrado.`)
+            }
 
-        const userId = latestReview.user_id
-        const userDocRef = doc(db, "users", userId)
-        const userDoc = await getDoc(userDocRef)
+            const userData = userDoc.data()
 
-        if (!userDoc.exists()) {
-            throw new Error(`Usuário com ID ${userId} não encontrado.`)
-        }
+            return {
+                ...review,
+                user: {
+                    displayName: userData.displayName || "",
+                    photoURL: userData.photoURL || null,
+                },
+            }
+        })
 
-        const userData = userDoc.data()
-        console.log(userData)
+        const reviewsWithUser = await Promise.all(userPromises)
 
-        const userReviews = {
-            review: latestReview.review || "",
-            rating: latestReview.rating || 0,
-            reviewed_at: formattedDate,
-            user: {
-                displayName: userData.displayName || "",
-                photoURL: userData.photoURL || null,
-            },
-        }
-
-        console.log(userReviews)
-
-        return userReviews
+        return reviewsWithUser
     } catch (e) {
         throw new Error("Error fetching user last movie review: " + e.message)
     }
 }
+
+export const fetchUserReviews = async (userId) => {
+    try {
+        console.log(userId)
+        // Cria uma referência para a coleção "reviews" no Firestore
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId))
+        const snapshot = await getDocs(reviewsQuery)
+
+        // Mapeia os documentos para um array
+        const reviews = snapshot.docs.map((doc) => ({
+            id: doc.id, // ID do documento
+            ...doc.data(), // Dados do documento
+        }));
+
+        return reviews; // Retorna um array de reviews
+    } catch (error) {
+        console.error("Erro ao buscar reviews no Firestore:", error);
+        throw error;
+    }
+};

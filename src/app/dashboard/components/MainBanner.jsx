@@ -2,13 +2,15 @@
 import React, { useEffect, useState } from "react"
 import NavBar from "./NavBar"
 import { fetchMovieLastWatched, fetchUserLastMovieReview } from "../../lib/movieApi"
-import { useAuth } from "@/app/context/auth-context"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 
 const MainBanner = () => {
     const [lastWatchedMovie, setLastWatchedMovie] = useState({})
-    const [lastWatchedMovieReview, setLastWatchedMovieReview] = useState({})
-    const { user } = useAuth()
+    const [allReviews, setAllReviews] = useState([])
+    const [currentReview, setCurrentReview] = useState(null)
+    const [reviewIndex, setReviewIndex] = useState(0)
+    const reviewChangeInterval = 5000
+    const [animate, setAnimate] = useState(false) // Estado de animação
     const { updateSignal } = useMovieUpdate()
 
     const renderStar = (index, movieRating) => {
@@ -49,8 +51,13 @@ const MainBanner = () => {
         const fetchLastMovieReview = async () => {
             try {
                 console.log(lastWatchedMovie)
-                const obj = await fetchUserLastMovieReview(lastWatchedMovie.id)
-                setLastWatchedMovieReview(obj) //
+                const reviews = await fetchUserLastMovieReview(lastWatchedMovie.id)
+                setAllReviews(reviews) //
+                if (reviews && reviews.length > 0) {
+                    setCurrentReview(reviews[0]) // Exibe a primeira review ao iniciar
+                }else {
+                    setCurrentReview(null)
+                }
             } catch (e) {
                 console.error(e)
             }
@@ -59,6 +66,31 @@ const MainBanner = () => {
             fetchLastMovieReview()
         }
     }, [lastWatchedMovie])
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (allReviews.length > 1) {
+                setReviewIndex((prevIndex) => {
+                    const nextIndex = (prevIndex + 1) % allReviews.length // Vai de 0 ao comprimento da lista
+                    setCurrentReview(allReviews[nextIndex])
+                    return nextIndex
+                })
+                setAnimate(true)
+            }
+        }, reviewChangeInterval)
+
+        return () => clearInterval(interval)
+    }, [allReviews])
+
+    useEffect(() => {
+        if (animate) {
+            const timeout = setTimeout(() => {
+                setAnimate(false)
+            }, 1000)
+
+            return () => clearTimeout(timeout)
+        }
+    }, [animate])
 
     return (
         <div
@@ -73,43 +105,44 @@ const MainBanner = () => {
                         <span className="text-4xl font-bold antialiased">Último filme assistido:</span>
                         <span className="text-2xl antialiased w-3/4 text-center ml-4">{lastWatchedMovie.title}</span>
 
-                        <div className="flex flex-col p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark mt-2">
-                            <div className="flex">
-                                <div className="flex gap-4">
-                                    {lastWatchedMovieReview?.user?.photoURL && (
-                                        <img
-                                            id="avatar"
-                                            src={lastWatchedMovieReview.user.photoURL}
-                                            className="rounded-full h-10 w-10 cursor-pointer"
-                                            alt="Avatar"
-                                        />
-                                    )}
-                                    <div className="flex flex-col">
-                                        <div className="flex gap-3 items-center -mt-1">
-                                            {lastWatchedMovieReview?.user?.displayName && (
-                                                <p className="font-semibold cursor-pointer">{lastWatchedMovieReview.user.displayName}</p>
+                        {currentReview && (
+                            <div className='flex flex-col p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark mt-2'>
+                                <div className="flex">
+                                    <div className={`flex gap-4 ${animate ? 'animate-fadeIn' : ""}`}>
+                                        {currentReview.user?.photoURL && (
+                                            <img
+                                                id="avatar"
+                                                src={currentReview.user.photoURL}
+                                                className="rounded-full h-10 w-10 cursor-pointer"
+                                                alt="Avatar"
+                                            />
+                                        )}
+                                        <div className="flex flex-col">
+                                            <div className="flex gap-3 items-center -mt-1">
+                                                {currentReview.user?.displayName && (
+                                                    <p className="font-semibold cursor-pointer">{currentReview.user.displayName}</p>
+                                                )}
+                                            </div>
+                                            {currentReview.rating && (
+                                                <div className="text-[#005ef6] text-xl tracking-[2px] flex">
+                                                    {Array.from({ length: 5 }, (_, index) => renderStar(index + 1, currentReview.rating))}
+                                                </div>
                                             )}
                                         </div>
-                                        {lastWatchedMovieReview.rating && (
-                                            <div className="text-[#005ef6] text-xl tracking-[2px] flex">
-                                                {Array.from({ length: 5 }, (_, index) => renderStar(index + 1, lastWatchedMovieReview.rating))}
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
+                                <div className={`italic mt-4 text-[18px] text-white font-normal ${animate ? 'animate-fadeIn' : ""}`}>{currentReview.review}</div>
+                                <div className={`flex gap-6 text-white text-[12px] mt-4 ${animate ? 'animate-fadeIn' : ""}`}>
+                                    <span>{currentReview.reviewed_at}</span>
+                                </div>
                             </div>
-                            <div className="italic mt-4 text-[18px] text-white font-normal">{lastWatchedMovieReview.review}</div>
-                            <div className="flex gap-6 text-white text-[12px] mt-4">
-                                <span>{lastWatchedMovieReview.reviewed_at}</span>
-                            </div>
-                        </div>
+                        )}
                     </div>
                     <div className="w-[300px] h-[450px]">
                         <img src={lastWatchedMovie.posterUrl} alt="" className="w-full h-full select-none shadow-xl" />
                     </div>
                 </div>
             </div>
-            {console.log(lastWatchedMovieReview)}
         </div>
     )
 }
