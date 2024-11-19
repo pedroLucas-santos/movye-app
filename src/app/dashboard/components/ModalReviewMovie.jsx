@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react"
-import { fetchMoviesWatched, fetchMovieReview } from "../../lib/movieApi"
+import { fetchMoviesWatched, fetchMovieReview, fetchUserReviews } from "../../lib/movieApi"
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { useAuth } from "@/app/context/auth-context"
 import { useMovieUpdate } from "../../context/movieUpdateProvider"
+import ToastCustom from "./ToastCustom"
 
 const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
     const [isModalClosing, setIsModalClosing] = useState(null)
@@ -14,7 +15,7 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
     const [selectedMovieId, setSelectedMovieId] = useState(0)
     const [review, setReview] = useState("")
     const { user } = useAuth()
-    const { triggerUpdate } = useMovieUpdate()
+    const { triggerUpdate, updateSignal } = useMovieUpdate()
 
     const closeModal = () => {
         setIsModalClosing(true)
@@ -40,14 +41,25 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
     useEffect(() => {
         const fetchMovieList = async () => {
             try {
-                const response = await fetchMoviesWatched()
-                setWatchedMovies(response)
-            } catch (e) {
-                console.error(e)
+                const watchedMoviesResponse = await fetchMoviesWatched(); // Busca filmes assistidos
+                const userReviews = await fetchUserReviews(user.uid); // Busca reviews do usuário no Firestore
+    
+                // Extrai IDs dos filmes que já possuem reviews
+                const reviewedMovieIds = userReviews.map((review) => review.id_movie);
+                console.log(reviewedMovieIds);
+                // Filtra os filmes assistidos para incluir apenas os não avaliados
+                const moviesToReview = watchedMoviesResponse.filter(
+                    (movie) => !reviewedMovieIds.includes(movie.id)
+                );
+    
+                setWatchedMovies(moviesToReview);
+            } catch (error) {
+                console.error("Erro ao carregar lista de filmes:", error);
             }
-        }
-        fetchMovieList()
-    }, [])
+        };
+    
+        fetchMovieList();
+    }, [updateSignal]);
 
     useEffect(() => {
         if (selectedMovieId) {
@@ -140,6 +152,7 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
                         <option value="" disabled>
                             Selecione um filme
                         </option>
+                        {console.log(watchedMovies)}
                         {watchedMovies.map((movie) => {
                             return (
                                 <option key={movie.id} value={movie.id}>
@@ -182,18 +195,7 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
                     <button className="bg-primary-dark text-white p-4 rounded-md transition hover:bg-primary-dark/50" onClick={handleReview}>
                         Finalizar review
                     </button>
-                    <ToastContainer
-                        position="top-left"
-                        hideProgressBar={true}
-                        newestOnTop={true}
-                        toastStyle={{
-                            backgroundColor: "#1f1f1f",
-                            color: "#ffffff",
-                            borderRadius: "8px",
-                            padding: "12px",
-                            fontSize: "14px",
-                        }}
-                    />
+                    <ToastCustom/>
                 </div>
             </div>
         </div>

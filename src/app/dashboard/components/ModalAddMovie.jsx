@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react"
 import { fetchSearchedMovieName, fetchAddMovie } from "../../lib/movieApi"
 import { useMovieUpdate } from "../../context/movieUpdateProvider"
+import { toast, ToastContainer } from "react-toastify"
+import ToastCustom from "./ToastCustom"
 
 const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
     const [searchInput, setSearchInput] = useState("")
@@ -15,11 +17,10 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
 
     const closeModal = () => {
         setIsModalClosing(true)
-        // Após a animação de fade-out (2s), fecha o modal
         setTimeout(() => {
             setIsModalClosing(false)
             toggleModalAddMovie()
-        }, 500) // Duração do fade-out
+        }, 500)
     }
 
     useEffect(() => {
@@ -37,17 +38,32 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
     }, [searchInput])
 
     const addMovie = async () => {
-        try {
-            await fetchAddMovie(selectedMovie)
-            triggerUpdate()
-        } catch (e) {
-            console.log(e)
+        if (selectedMovie) {
+            try {
+                await fetchAddMovie(selectedMovie)
+                toast.success("Filme adicionado com sucesso!")
+
+                triggerUpdate()
+
+                return true
+            } catch (e) {
+                console.log(e)
+                return false
+            }
+        } else {
+            toast.error("Selecione um filme para adicionar!")
+            return false
         }
     }
 
     const handleAddClick = async () => {
-        await addMovie()
-        closeModal()
+        const movieAdded = await addMovie()
+
+        if (movieAdded) {
+            setTimeout(() => {
+                closeModal()
+            }, 1200)
+        }
     }
 
     return (
@@ -111,6 +127,7 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
                                     )
                                 })}
                     </div>
+                    <ToastCustom/>
                 </div>
             )}
         </>
