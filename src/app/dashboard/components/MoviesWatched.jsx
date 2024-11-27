@@ -63,7 +63,7 @@ const MoviesWatched = () => {
     const currentMovies = watchedMovies.slice(indexOfFirstMovie, indexOfLastMovie)
 
     return (
-        <div className=" p-4 gap-8 flex flex-col items-center flex-wrap justify-center">
+        <div className=" p-4 pb-12 gap-8 flex flex-col items-center flex-wrap justify-center">
             <span className="text-5xl mt-8">Filmes assistidos</span>
             <div className="gap-8 flex items-center flex-wrap justify-center">
                 {currentMovies.map((movie) => {

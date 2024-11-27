@@ -1,16 +1,19 @@
 "use client"
 import React, { useState, useContext } from "react"
-import ModalAddMovie from "./ModalAddMovie"
-import ModalReviewMovie from "./ModalReviewMovie"
+import ModalAddMovie from "./dashboard/components/ModalAddMovie"
+import ModalReviewMovie from "./dashboard/components/ModalReviewMovie"
 import { signOut } from "firebase/auth"
 import { auth } from "@/app/lib/firebase-config"
 import { useAuth } from "@/app/context/auth-context";
+import { Router } from "next/router"
+import { useRouter } from "next/navigation"
 
 const NavBar = () => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
     const [isModalAddMovie, setModalAddMovie] = useState(false)
     const [isModalReviewMovie, setModalReviewMovie] = useState(false)
     const { user } = useAuth()
+    const router = useRouter()
 
     const toggleProfileDropdown = () => {
         setProfileDropdown(!isProfileDropdown)
@@ -33,6 +36,10 @@ const NavBar = () => {
         }
     }
 
+    const reviewsPage = () => {
+        router.push('/reviews')
+    }
+
     return (
         <>
             {isModalAddMovie && <ModalAddMovie toggleModalAddMovie={toggleModalAddMovie} isModalAddMovie={isModalAddMovie} />}
@@ -53,7 +60,7 @@ const NavBar = () => {
                     <ul className="hidden md:flex items-center justify-center">
                         <li>
                             <a href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
-                                Inicio
+                                Dashboard
                             </a>
                         </li>
                         <li>
@@ -106,7 +113,7 @@ const NavBar = () => {
                                 <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
                                     <span className="text-xl">{user.displayName}</span>
                                     <span className="hover:cursor-pointer">Perfil</span>
-                                    <span className="hover:cursor-pointer">Reviews</span>
+                                    <span className="hover:cursor-pointer" onClick={reviewsPage}>Reviews</span>
                                     <span className="hover:cursor-pointer" onClick={logout}>Logout</span>
                                 </div>
                             </div>

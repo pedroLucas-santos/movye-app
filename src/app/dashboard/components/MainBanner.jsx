@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState, useRef } from "react"
-import NavBar from "./NavBar"
+import NavBar from "../../NavBar"
 import { fetchMovieLastWatched, fetchUserLastMovieReview } from "../../lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 

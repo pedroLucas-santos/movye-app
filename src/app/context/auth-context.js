@@ -1,7 +1,7 @@
 "use client"
 
 import React, { createContext, useState, useEffect, useContext } from "react"
-import { auth } from "@/app/lib/firebase-config" // Caminho para a configuração do Firebase
+import { auth } from "@/app/lib/firebase-config"
 import { onAuthStateChanged } from "firebase/auth"
 
 // Criação do Contexto
@@ -13,7 +13,7 @@ export const useAuth = () => useContext(AuthContext)
 // Provedor do Contexto
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
-    const [loading, setLoading] = useState(true) // Estado de carregamento
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         // Função para lidar com as mudanças de estado de autenticação

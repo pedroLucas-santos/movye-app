@@ -1,5 +1,5 @@
 import { db } from "../lib/firebase-config"
-import { getDocs, collection, updateDoc, doc, Timestamp, getDoc, setDoc, query, orderBy, where, collectionGroup } from "firebase/firestore"
+import { getDocs, collection, updateDoc, doc, Timestamp, getDoc, setDoc, query, orderBy, where, collectionGroup, limit } from "firebase/firestore"
 
 export const options = {
     method: "GET",
@@ -158,7 +158,7 @@ export const fetchMovieLastWatched = async () => {
 
         const movieData = movieDoc.data()
 
-/*         if (!movieData || !movieData.id || !movieData.title) {
+        /*         if (!movieData || !movieData.id || !movieData.title) {
             throw new Error("O filme 'lastWatchedMovie' não tem dados completos no banco de dados.")
         } */
 
@@ -316,11 +316,72 @@ export const fetchUserReviews = async (userId) => {
         const reviews = snapshot.docs.map((doc) => ({
             id: doc.id, // ID do documento
             ...doc.data(), // Dados do documento
-        }));
+        }))
 
-        return reviews; // Retorna um array de reviews
+        return reviews // Retorna um array de reviews
     } catch (error) {
-        console.error("Erro ao buscar reviews no Firestore:", error);
-        throw error;
+        console.error("Erro ao buscar reviews no Firestore:", error)
+        throw error
     }
-};
+}
+
+export const fetchLastReviewUser = async (userId) => {
+    try {
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), orderBy("reviewed_at", "desc"), limit(1))
+
+        const snapshot = await getDocs(reviewsQuery)
+        console.log(snapshot.docs[0].data())
+
+        if (snapshot.empty) {
+            return {
+                review: "",
+                rating: null,
+                reviewed_at: "",
+                user: {
+                    displayName: "",
+                    photoURL: null,
+                },
+            }
+        }
+
+        const docData = snapshot.docs[0].data()
+        const reviewId = snapshot.docs[0].id
+
+        let formattedDate = ""
+
+        if (docData.reviewed_at) {
+            const timestamp = docData.reviewed_at
+            const date = timestamp.toDate()
+            formattedDate = date.toLocaleDateString("pt-BR", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+            })
+        }
+
+        const userDocRef = doc(db, "users", userId)
+        const userDoc = await getDoc(userDocRef)
+
+        if (!userDoc.exists()) {
+            throw new Error(`Usuário com ID ${userId} não encontrado.`)
+        }
+
+        const userData = userDoc.data()
+
+        return {
+            id: reviewId,
+            review: docData.review || "",
+            rating: docData.rating || 0,
+            reviewed_at: formattedDate,
+            user: {
+                displayName: userData.displayName || "",
+                photoURL: userData.photoURL || null,
+            },
+        }
+    } catch (e) {
+        throw new Error("Error fetching user's last movie review: " + e.message)
+    }
+}
