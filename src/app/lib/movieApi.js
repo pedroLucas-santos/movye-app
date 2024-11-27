@@ -226,6 +226,7 @@ export const fetchMovieReview = async (movieId, newRating, movieSelected, newRev
             review: newReview,
             reviewed_at: Timestamp.now(),
             user_id: uid,
+            genre: movieSelected.genre,
         })
     } catch (e) {
         throw new Error("Error fetching movie review: " + e.message)
@@ -327,10 +328,9 @@ export const fetchUserReviews = async (userId) => {
 
 export const fetchLastReviewUser = async (userId) => {
     try {
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), orderBy("reviewed_at", "desc"), limit(1))
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), orderBy("reviewed_at", "desc"))
 
         const snapshot = await getDocs(reviewsQuery)
-        console.log(snapshot.docs[0].data())
 
         if (snapshot.empty) {
             return {
@@ -341,16 +341,52 @@ export const fetchLastReviewUser = async (userId) => {
                     displayName: "",
                     photoURL: null,
                 },
+                mostViewedGenre: "", // Gênero mais visto
+                totalReviews: 0,
+                averageRating: 0, // Contagem total de reviews
             }
         }
 
-        const docData = snapshot.docs[0].data()
-        const reviewId = snapshot.docs[0].id
+        const genreCounts = {}
+        let lastReview = null
+        let totalReviews = 0 // Inicializar contador de reviews
+        let totalRating = 0
+
+        snapshot.docs.forEach((doc, index) => {
+            const data = doc.data()
+            totalReviews++ // Incrementar o contador de reviews
+
+            if (data.rating) {
+                totalRating += data.rating
+            }
+            // Contar os gêneros
+            if (data.genre) {
+                genreCounts[data.genre] = (genreCounts[data.genre] || 0) + 1
+            }
+
+            // Salvar a última review
+            if (index === 0) {
+                lastReview = {
+                    id: doc.id,
+                    ...data,
+                }
+            }
+        })
+
+        // Determinar o gênero mais visto
+        const mostViewedGenre = Object.entries(genreCounts).reduce(
+            (max, [genre, count]) => {
+                return count > max.count ? { genre, count } : max
+            },
+            { genre: "", count: 0 }
+        ).genre
+
+        const averageRating = totalReviews > 0 ? Math.ceil(totalRating / totalReviews) : 0;
 
         let formattedDate = ""
 
-        if (docData.reviewed_at) {
-            const timestamp = docData.reviewed_at
+        if (lastReview?.reviewed_at) {
+            const timestamp = lastReview.reviewed_at
             const date = timestamp.toDate()
             formattedDate = date.toLocaleDateString("pt-BR", {
                 year: "numeric",
@@ -372,14 +408,17 @@ export const fetchLastReviewUser = async (userId) => {
         const userData = userDoc.data()
 
         return {
-            id: reviewId,
-            review: docData.review || "",
-            rating: docData.rating || 0,
+            id: lastReview?.id || "",
+            review: lastReview?.review || "",
+            rating: lastReview?.rating || 0,
             reviewed_at: formattedDate,
             user: {
                 displayName: userData.displayName || "",
                 photoURL: userData.photoURL || null,
             },
+            mostViewedGenre: mostViewedGenre, // Gênero mais visto
+            totalReviews: totalReviews,
+            averageRating: averageRating, // Contagem total de reviews
         }
     } catch (e) {
         throw new Error("Error fetching user's last movie review: " + e.message)

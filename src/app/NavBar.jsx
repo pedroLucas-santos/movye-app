@@ -1,12 +1,11 @@
 "use client"
-import React, { useState, useContext } from "react"
+import React, { useState } from "react"
 import ModalAddMovie from "./dashboard/components/ModalAddMovie"
 import ModalReviewMovie from "./dashboard/components/ModalReviewMovie"
 import { signOut } from "firebase/auth"
 import { auth } from "@/app/lib/firebase-config"
-import { useAuth } from "@/app/context/auth-context";
-import { Router } from "next/router"
-import { useRouter } from "next/navigation"
+import { useAuth } from "@/app/context/auth-context"
+import { useRouter, usePathname } from "next/navigation"
 
 const NavBar = () => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -14,6 +13,7 @@ const NavBar = () => {
     const [isModalReviewMovie, setModalReviewMovie] = useState(false)
     const { user } = useAuth()
     const router = useRouter()
+    const pathname = usePathname()
 
     const toggleProfileDropdown = () => {
         setProfileDropdown(!isProfileDropdown)
@@ -28,16 +28,16 @@ const NavBar = () => {
     }
 
     const logout = async () => {
-        try{
+        try {
             await signOut(auth)
-            window.location.href = "/login"
-        }catch(err) {
+            router.push("/login")
+        } catch (err) {
             console.error(err)
         }
     }
 
     const reviewsPage = () => {
-        router.push('/reviews')
+        router.push("/reviews")
     }
 
     return (
@@ -59,7 +59,7 @@ const NavBar = () => {
                 <div>
                     <ul className="hidden md:flex items-center justify-center">
                         <li>
-                            <a href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            <a href="/dashboard" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Dashboard
                             </a>
                         </li>
@@ -82,28 +82,26 @@ const NavBar = () => {
                 </div>
 
                 <div className="flex justify-center items-center gap-4">
-                    <div className="flex gap-4">
-                        <button
-                            onClick={toggleModalReviewMovie}
-                            className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"
-                        >
-                            Adicionar Review
-                        </button>
+                    {pathname === "/dashboard" && (
+                        <div className="flex gap-4">
+                            <button
+                                onClick={toggleModalReviewMovie}
+                                className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"
+                            >
+                                Adicionar Review
+                            </button>
 
-                        <button
-                            onClick={toggleModalAddMovie}
-                            className="bg-transparent text-white border-2 transition duration-150 hover:border-white/10 hover:bg-secondary-dark p-2 rounded-md"
-                        >
-                            Adicionar Filme
-                        </button>
-                    </div>
+                            <button
+                                onClick={toggleModalAddMovie}
+                                className="bg-transparent text-white border-2 transition duration-150 hover:border-white/10 hover:bg-secondary-dark p-2 rounded-md"
+                            >
+                                Adicionar Filme
+                            </button>
+                        </div>
+                    )}
+
                     <div>
-                        <img
-                            id="avatar"
-                            src={user.photoURL}
-                            className="rounded-full h-10 w-10 cursor-pointer"
-                            onClick={toggleProfileDropdown}
-                        />
+                        <img id="avatar" src={user.photoURL} className="rounded-full h-10 w-10 cursor-pointer" onClick={toggleProfileDropdown} />
                         {isProfileDropdown && (
                             <div
                                 id="userDropdown"
@@ -113,8 +111,12 @@ const NavBar = () => {
                                 <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
                                     <span className="text-xl">{user.displayName}</span>
                                     <span className="hover:cursor-pointer">Perfil</span>
-                                    <span className="hover:cursor-pointer" onClick={reviewsPage}>Reviews</span>
-                                    <span className="hover:cursor-pointer" onClick={logout}>Logout</span>
+                                    <span className="hover:cursor-pointer" onClick={reviewsPage}>
+                                        Reviews
+                                    </span>
+                                    <span className="hover:cursor-pointer" onClick={logout}>
+                                        Logout
+                                    </span>
                                 </div>
                             </div>
                         )}

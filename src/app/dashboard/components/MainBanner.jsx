@@ -1,8 +1,8 @@
 "use client"
-import React, { useEffect, useState, useRef } from "react"
-import NavBar from "../../NavBar"
+import { useEffect, useState, useRef } from "react"
 import { fetchMovieLastWatched, fetchUserLastMovieReview } from "../../lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
+import NavBar from "../../NavBar"
 
 const MainBanner = () => {
     const [lastWatchedMovie, setLastWatchedMovie] = useState({})

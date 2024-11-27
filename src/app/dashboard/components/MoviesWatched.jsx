@@ -1,7 +1,8 @@
 "use client"
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { fetchMoviesWatched } from "../../lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
+
 const MoviesWatched = () => {
     const [watchedMovies, setWatchedMovies] = useState([])
     const { updateSignal } = useMovieUpdate()
@@ -80,7 +81,7 @@ const MoviesWatched = () => {
                             <div className="bg-secondary-dark flex-grow w-full flex justify-between items-center gap-6 pl-12 pr-12">
                                 <span className="text-sm md:text-lg truncate">{movie.title}</span>
                                 <div className="text-center flex flex-col gap-2 items-end">
-                                    <span className="text-sm bg-indigo-700 p-1">{movie.genre}</span>
+                                    <span className="text-sm text-gray-500 bg-gray-950/20 rounded-lg p-1">{movie.genre}</span>
                                     <div className="flex">{Array.from({ length: 5 }, (_, index) => renderStar(index + 1, movie.rating))}</div>
                                 </div>
                             </div>
