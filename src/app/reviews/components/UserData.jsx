@@ -2,31 +2,11 @@ import { useState, useEffect } from "react"
 import { fetchLastReviewUser } from "../../lib/movieApi" // Importando a função
 import { useAuth } from "../../context/auth-context"
 import Image from "next/image"
+import RenderStars from "@/app/shared/RenderStars"
 
 const UserData = () => {
     const { user, loading } = useAuth()
     const [userInfo, setUserInfo] = useState({})
-
-    const renderStar = (index, movieRating) => {
-        const isFilled = index <= movieRating
-        return (
-            <svg
-                key={index}
-                xmlns="http://www.w3.org/2000/svg"
-                fill={isFilled ? "currentColor" : "none"}
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className={`w-5 h-5 transition-colors ${isFilled ? "text-white" : "text-white/20"}`}
-            >
-                <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 17.75l-5.8 3.04 1.1-6.44-4.7-4.58 6.5-.58L12 2l2.9 6.28 6.5.58-4.7 4.58 1.1 6.44L12 17.75z"
-                />
-            </svg>
-        )
-    }
 
     useEffect(() => {
         if (!user?.uid) return // Verifica se o user está disponível
@@ -61,7 +41,11 @@ const UserData = () => {
                         <div>
                             <span className="flex flex-col justify-center items-center">
                                 Média de avaliação
-                                <span className="flex">{Array.from({ length: 5 }, (_, index) => renderStar(index + 1, userInfo.averageRating))}</span>
+                                <span className="flex">
+                                    {Array.from({ length: 5 }, (_, index) => (
+                                        <RenderStars key={index} index={index + 1} movieRating={userInfo.averageRating} />
+                                    ))}
+                                </span>
                             </span>
                         </div>
                         <div>
@@ -80,7 +64,9 @@ const UserData = () => {
                                         </div>
                                         {userInfo.rating && (
                                             <div className="text-[#005ef6] text-xl tracking-[2px] flex justify-center mt-4">
-                                                {Array.from({ length: 5 }, (_, index) => renderStar(index + 1, userInfo.rating))}
+                                                {Array.from({ length: 5 }, (_, index) => (
+                                                    <RenderStars key={index} index={index + 1} movieRating={userInfo.rating} />
+                                                ))}
                                             </div>
                                         )}
                                     </div>

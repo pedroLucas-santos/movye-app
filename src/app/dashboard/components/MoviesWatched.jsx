@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import { fetchMoviesWatched } from "../../lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
+import RenderStars from "@/app/shared/RenderStars"
 
 const MoviesWatched = () => {
     const [watchedMovies, setWatchedMovies] = useState([])
@@ -82,7 +83,11 @@ const MoviesWatched = () => {
                                 <span className="text-sm md:text-lg truncate">{movie.title}</span>
                                 <div className="text-center flex flex-col gap-2 items-end">
                                     <span className="text-sm text-gray-500 bg-gray-950/20 rounded-lg p-1">{movie.genre}</span>
-                                    <div className="flex">{Array.from({ length: 5 }, (_, index) => renderStar(index + 1, movie.rating))}</div>
+                                    <div className="flex">
+                                        {Array.from({ length: 5 }, (_, index) => (
+                                            <RenderStars key={index} index={index + 1} movieRating={movie.rating} />
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -53,24 +53,6 @@ export const fetchMovieBackdrop = async (movieId) => {
     }
 }
 
-export const fetchMovieCard = async (apiKey) => {
-    try {
-        const response = await fetch(`https://api.themoviedb.org/3/movie/120/images`, options)
-        const data = await response.json()
-
-        if (data.backdrops && data.backdrops.length > 0) {
-            for (let i = 0; i < data.backdrops.length; i++) {
-                const backdropPath = data.backdrops[Math.floor(Math.random() * data.backdrops.length)].file_path
-                return `https://image.tmdb.org/t/p/original${backdropPath}` // Return the full URL for the poster
-            }
-        } /* else {
-            throw new Error("No posters found")
-        } */
-    } catch (error) {
-        throw new Error("Error fetching movie images: " + error.message)
-    }
-}
-
 export const fetchSearchedMovieName = async (movie) => {
     try {
         const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${movie}`, options)
@@ -381,7 +363,7 @@ export const fetchLastReviewUser = async (userId) => {
             { genre: "", count: 0 }
         ).genre
 
-        const averageRating = totalReviews > 0 ? Math.ceil(totalRating / totalReviews) : 0;
+        const averageRating = totalReviews > 0 ? Math.ceil(totalRating / totalReviews) : 0
 
         let formattedDate = ""
 
@@ -422,5 +404,53 @@ export const fetchLastReviewUser = async (userId) => {
         }
     } catch (e) {
         throw new Error("Error fetching user's last movie review: " + e.message)
+    }
+}
+
+export const fetchReviewsCard = async (userId) => {
+    try {
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), orderBy("reviewed_at", "desc"))
+
+        const snapshot = await getDocs(reviewsQuery)
+
+        if (snapshot.empty) {
+            return []
+        }
+
+        const reviews = await Promise.all(
+            snapshot.docs.map(async (doc) => {
+                const data = doc.data()
+                let formattedDate = ""
+
+                // Formata a data da review
+                if (data.reviewed_at) {
+                    const timestamp = data.reviewed_at
+                    const date = timestamp.toDate()
+                    formattedDate = date.toLocaleDateString("pt-BR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                    })
+                }
+
+                const poster_url = await fetchMoviePoster(data.id_movie)
+
+                return {
+                    id: doc.id,
+                    review: data.review || "",
+                    rating: data.rating || 0,
+                    reviewed_at: formattedDate,
+                    genre: data.genre || "",
+                    posterUrl: poster_url || null,
+                }
+            })
+        )
+
+        return reviews
+    } catch (e) {
+        throw new Error("Error fetching reviews card: " + e.message)
     }
 }

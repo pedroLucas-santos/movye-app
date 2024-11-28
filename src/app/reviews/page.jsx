@@ -1,9 +1,9 @@
 "use client"
 import "../Header.css"
 import { useAuth } from "../context/auth-context"
-import LoadingSpinner from "../LoadingSpinner"
-import NavBar from "../NavBar"
-import MustBeLogged from "../MustBeLogged"
+import LoadingSpinner from "../shared/LoadingSpinner"
+import NavBar from "../shared/NavBar"
+import MustBeLogged from "../shared/MustBeLogged"
 import UserData from "./components/UserData"
 import ReviewsCard from "./components/ReviewsCard"
 const Reviews = () => {
@@ -17,12 +17,10 @@ const Reviews = () => {
         return <MustBeLogged />
     }
 
-    //arrumar o scroll, nao permitir scrollar a pagina, somente os cards
-
     return (
-        <main id="view" className="w-full h-full scroll-smooth overflow-y-auto">
+        <main id="view" className="w-full h-full scroll-smooth flex flex-col">
             <NavBar />
-            <div className="border-2 border-dashed border-red-600 p-4 flex gap-4 h-full">
+            <div className="border-2 border-dashed border-red-600 p-4 flex gap-4 h-full flex-grow overflow-y-hidden">
                 <UserData />
                 <ReviewsCard/>
             </div>
