@@ -6,6 +6,8 @@ import NavBar from "../shared/NavBar"
 import MustBeLogged from "../shared/MustBeLogged"
 import UserData from "./components/UserData"
 import ReviewsCard from "./components/ReviewsCard"
+import { SelectionProvider } from "../context/selectionEditReview"
+
 const Reviews = () => {
     const { user, loading } = useAuth()
 
@@ -18,13 +20,13 @@ const Reviews = () => {
     }
 
     return (
-        <main id="view" className="w-full h-full scroll-smooth flex flex-col">
-            <NavBar />
-            <div className="border-2 border-dashed border-red-600 p-4 flex gap-4 h-full flex-grow overflow-y-hidden">
-                <UserData />
-                <ReviewsCard/>
-            </div>
-        </main>
+            <main id="view" className="w-full h-full scroll-smooth flex flex-col">
+                <NavBar />
+                <div className="border-2 border-dashed border-red-600 p-4 flex gap-4 h-full flex-grow overflow-y-hidden">
+                    <UserData />
+                    <ReviewsCard />
+                </div>
+            </main>
     )
 }
 

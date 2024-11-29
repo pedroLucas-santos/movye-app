@@ -1,19 +1,23 @@
 "use client"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import ModalAddMovie from "../dashboard/components/ModalAddMovie"
 import ModalReviewMovie from "../dashboard/components/ModalReviewMovie"
 import { signOut } from "firebase/auth"
 import { auth } from "@/app/lib/firebase-config"
 import { useAuth } from "@/app/context/auth-context"
 import { useRouter, usePathname } from "next/navigation"
+import { useSelectionReview } from "../context/selectionEditReview"
+import ModalReviewEdit from "../reviews/components/ModalReviewEdit"
 
 const NavBar = () => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
     const [isModalAddMovie, setModalAddMovie] = useState(false)
     const [isModalReviewMovie, setModalReviewMovie] = useState(false)
+    const [isModalReviewEdit, setModalReviewEdit] = useState(false)
     const { user } = useAuth()
     const router = useRouter()
     const pathname = usePathname()
+    const { isSelectingReview, setIsSelectingReview, selectedReview } = useSelectionReview()
 
     const toggleProfileDropdown = () => {
         setProfileDropdown(!isProfileDropdown)
@@ -26,6 +30,16 @@ const NavBar = () => {
     const toggleModalReviewMovie = () => {
         setModalReviewMovie(!isModalReviewMovie)
     }
+
+    const toggleModalReviewEdit = () => {
+        setModalReviewEdit(!isModalReviewEdit)
+    }
+
+    useEffect(() => {
+        if (selectedReview) {
+            toggleModalReviewEdit()
+        }
+    }, [selectedReview])
 
     const logout = async () => {
         try {
@@ -45,6 +59,8 @@ const NavBar = () => {
             {isModalAddMovie && <ModalAddMovie toggleModalAddMovie={toggleModalAddMovie} isModalAddMovie={isModalAddMovie} />}
 
             {isModalReviewMovie && <ModalReviewMovie toggleModalReviewMovie={toggleModalReviewMovie} isModalReviewMovie={isModalReviewMovie} />}
+
+            {isModalReviewEdit && <ModalReviewEdit toggleModalReviewEdit={toggleModalReviewEdit} isModalReviewEdit={isModalReviewEdit} />}
 
             <nav className="flex justify-around items-center h-32 w-full">
                 <button id="menu-toggle" className="text-white md:hidden focus:outline-none">
@@ -100,7 +116,15 @@ const NavBar = () => {
                         </div>
                     )}
 
-                    <div>
+                    <div className="flex gap-4 justify-center items-center">
+                        {pathname === "/reviews" && (
+                            <button
+                                onClick={() => setIsSelectingReview(!isSelectingReview)}
+                                className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"
+                            >
+                                Editar Review
+                            </button>
+                        )}
                         <img id="avatar" src={user.photoURL} className="rounded-full h-10 w-10 cursor-pointer" onClick={toggleProfileDropdown} />
                         {isProfileDropdown && (
                             <div

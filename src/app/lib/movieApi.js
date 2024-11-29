@@ -209,6 +209,8 @@ export const fetchMovieReview = async (movieId, newRating, movieSelected, newRev
             reviewed_at: Timestamp.now(),
             user_id: uid,
             genre: movieSelected.genre,
+            title: movieSelected.title,
+            backdrop_path: movieSelected.backdrop_path,
         })
     } catch (e) {
         throw new Error("Error fetching movie review: " + e.message)
@@ -440,6 +442,7 @@ export const fetchReviewsCard = async (userId) => {
 
                 return {
                     id: doc.id,
+                    id_movie: data.id_movie || '',
                     review: data.review || "",
                     rating: data.rating || 0,
                     reviewed_at: formattedDate,
@@ -452,5 +455,23 @@ export const fetchReviewsCard = async (userId) => {
         return reviews
     } catch (e) {
         throw new Error("Error fetching reviews card: " + e.message)
+    }
+}
+
+export const fetchEditReview = async (userId, reviewId) => {
+    console.log('teste')
+    try {
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where("id_movie", "==", reviewId))
+        const snapshot = await getDocs(reviewsQuery)
+
+        if(!snapshot.empty) {
+            const review = snapshot.docs[0].data()
+            return review
+        } else {
+            console.log('No review found')
+            return null
+        }
+    } catch (e) {
+        throw new Error("Error fetching edit review: " + e.message)
     }
 }
