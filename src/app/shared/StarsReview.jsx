@@ -26,4 +26,4 @@ const StarsReview = ({ index, rating, hoveredRating, handleRating, handleMouseEn
     );
 };
 
-export default Star;
+export default StarsReview;

@@ -1,5 +1,19 @@
 import { db } from "../lib/firebase-config"
-import { getDocs, collection, updateDoc, doc, Timestamp, getDoc, setDoc, query, orderBy, where, collectionGroup, limit } from "firebase/firestore"
+import {
+    getDocs,
+    collection,
+    updateDoc,
+    doc,
+    Timestamp,
+    getDoc,
+    setDoc,
+    query,
+    orderBy,
+    where,
+    collectionGroup,
+    limit,
+    deleteDoc,
+} from "firebase/firestore"
 
 export const options = {
     method: "GET",
@@ -442,7 +456,7 @@ export const fetchReviewsCard = async (userId) => {
 
                 return {
                     id: doc.id,
-                    id_movie: data.id_movie || '',
+                    id_movie: data.id_movie || "",
                     review: data.review || "",
                     rating: data.rating || 0,
                     reviewed_at: formattedDate,
@@ -459,19 +473,68 @@ export const fetchReviewsCard = async (userId) => {
 }
 
 export const fetchEditReview = async (userId, reviewId) => {
-    console.log('teste')
+    console.log("teste")
     try {
         const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where("id_movie", "==", reviewId))
         const snapshot = await getDocs(reviewsQuery)
 
-        if(!snapshot.empty) {
+        if (!snapshot.empty) {
             const review = snapshot.docs[0].data()
             return review
         } else {
-            console.log('No review found')
+            console.log("No review found")
             return null
         }
     } catch (e) {
         throw new Error("Error fetching edit review: " + e.message)
+    }
+}
+
+export const fetchUpdateReview = async (userId, reviewId, updatedReview, updatedRating) => {
+    try {
+        // Query to find the specific review
+        const reviewQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where("id_movie", "==", reviewId))
+
+        // Get the documents that match the query
+        const querySnapshot = await getDocs(reviewQuery)
+
+        if (querySnapshot.empty) {
+            throw new Error("No matching review found")
+        }
+
+        // Loop through the matching documents (there should typically be only one)
+        for (const doc of querySnapshot.docs) {
+            const reviewRef = doc.ref // Reference to the document
+            await updateDoc(reviewRef, {
+                review: updatedReview,
+                reviewed_at: Timestamp.now(), // Update the reviewed_at timestamp
+                ...(updatedRating !== undefined && { rating: updatedRating }), // Conditionally update rating
+            })
+        }
+
+        return true
+    } catch (e) {
+        throw new Error("Error updating review: " + e.message)
+    }
+}
+
+export const fetchDeleteReview = async (userId, reviewId) => {
+    try {
+        // Query para encontrar a review no Firestore
+        const reviewQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where("id_movie", "==", reviewId))
+
+        const querySnapshot = await getDocs(reviewQuery)
+
+        if (!querySnapshot.empty) {
+            // Assume que há apenas um documento que corresponde à query
+            const docToDelete = querySnapshot.docs[0]
+            await deleteDoc(docToDelete.ref)
+            return true
+        } else {
+            throw new Error("Review não encontrada.")
+        }
+    } catch (error) {
+        console.error("Erro ao deletar review:", error)
+        throw error
     }
 }

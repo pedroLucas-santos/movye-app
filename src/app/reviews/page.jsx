@@ -22,7 +22,7 @@ const Reviews = () => {
     return (
             <main id="view" className="w-full h-full scroll-smooth flex flex-col">
                 <NavBar />
-                <div className="border-2 border-dashed border-red-600 p-4 flex gap-4 h-full flex-grow overflow-y-hidden">
+                <div className="p-4 flex gap-4 h-full flex-grow overflow-y-hidden">
                     <UserData />
                     <ReviewsCard />
                 </div>

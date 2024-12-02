@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify"
 import { useAuth } from "@/app/context/auth-context"
 import { useMovieUpdate } from "../../context/movieUpdateProvider"
 import ToastCustom from "./ToastCustom"
+import StarsReview from "@/app/shared/StarsReview"
 
 const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
     const [isModalClosing, setIsModalClosing] = useState(null)
@@ -41,23 +42,21 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
     useEffect(() => {
         const fetchMovieList = async () => {
             try {
-                const watchedMoviesResponse = await fetchMoviesWatched();
-                const userReviews = await fetchUserReviews(user.uid);
-    
-                const reviewedMovieIds = userReviews.map((review) => review.id_movie);
+                const watchedMoviesResponse = await fetchMoviesWatched()
+                const userReviews = await fetchUserReviews(user.uid)
 
-                const moviesToReview = watchedMoviesResponse.filter(
-                    (movie) => !reviewedMovieIds.includes(movie.id)
-                );
-    
-                setWatchedMovies(moviesToReview);
+                const reviewedMovieIds = userReviews.map((review) => review.id_movie)
+
+                const moviesToReview = watchedMoviesResponse.filter((movie) => !reviewedMovieIds.includes(movie.id))
+
+                setWatchedMovies(moviesToReview)
             } catch (error) {
-                console.error("Erro ao carregar lista de filmes:", error);
+                console.error("Erro ao carregar lista de filmes:", error)
             }
-        };
-    
-        fetchMovieList();
-    }, [updateSignal]);
+        }
+
+        fetchMovieList()
+    }, [updateSignal])
 
     useEffect(() => {
         if (selectedMovieId) {
@@ -186,14 +185,26 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
                     ></textarea>
                     <div className="rating-container">
                         <p>Avalie o filme:</p>
-                        <div className="flex">{Array.from({ length: 5 }, (_, index) => renderStar(index + 1))}</div>
+                        <div className="flex">
+                            {Array.from({ length: 5 }, (_, index) => (
+                                <StarsReview
+                                    key={index}
+                                    index={index + 1}
+                                    rating={rating}
+                                    hoveredRating={hoveredRating}
+                                    handleRating={handleRating}
+                                    handleMouseEnter={handleMouseEnter}
+                                    handleMouseLeave={handleMouseLeave}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
                 <div className="mt-8 flex justify-end items-center">
                     <button className="bg-primary-dark text-white p-4 rounded-md transition hover:bg-primary-dark/50" onClick={handleReview}>
                         Finalizar review
                     </button>
-                    <ToastCustom/>
+                    <ToastCustom />
                 </div>
             </div>
         </div>

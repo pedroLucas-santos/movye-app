@@ -1,15 +1,20 @@
 import { useAuth } from "@/app/context/auth-context"
-import { fetchReviewsCard } from "@/app/lib/movieApi"
+import { fetchDeleteReview, fetchReviewsCard } from "@/app/lib/movieApi"
 import RenderStars from "@/app/shared/RenderStars"
 import { useEffect, useState } from "react"
 import { useSelectionReview } from "../../context/selectionEditReview"
 import Image from "next/image"
+import { useMovieUpdate } from "../../context/movieUpdateProvider"
+import { toast } from "react-toastify"
+import ToastCustom from "@/app/dashboard/components/ToastCustom"
+import { FiFilter } from "react-icons/fi";
 
 const ReviewsCard = () => {
     const [reviewsData, setReviewsData] = useState([])
     const { user, loading } = useAuth()
     const { isSelectingReview, setSelectedReview, setIsSelectingReview } = useSelectionReview()
     const [currentSelection, setCurrentSelection] = useState(null)
+    const { triggerUpdate, updateSignal } = useMovieUpdate()
 
     const handleCheckboxChange = (reviewId) => {
         // Atualiza o estado com o ID do card selecionado ou desmarca
@@ -17,9 +22,29 @@ const ReviewsCard = () => {
     }
 
     const handleReviewSelection = () => {
+        console.log(currentSelection)
         if (currentSelection) {
             setSelectedReview(currentSelection)
             setIsSelectingReview(!isSelectingReview)
+        }
+    }
+
+    const handleReviewDelete = async () => {
+        if (currentSelection) {
+            // Chama a função para deletar a review
+            try {
+                await fetchDeleteReview(user.uid, currentSelection)
+
+                setCurrentSelection(null)
+                setIsSelectingReview(!isSelectingReview)
+
+                triggerUpdate()
+
+                toast.success("Review deletada!")
+            } catch (error) {
+                toast.error("Ocorreu um erro ao deletar a review.")
+                console.error(error)
+            }
         }
     }
 
@@ -36,7 +61,7 @@ const ReviewsCard = () => {
         }
 
         fetchReviewsData()
-    }, [user?.uid])
+    }, [user?.uid, updateSignal])
 
     useEffect(() => {
         if (!isSelectingReview) {
@@ -47,8 +72,8 @@ const ReviewsCard = () => {
     //criar modal para editar review quando clicar no OK
 
     return (
-        <div className="w-full h-full overflow-y-auto flex items-center justify-center bg-stone-950 rounded-lg">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-24 max-h-screen">
+        <div className="w-full h-full overflow-y-auto flex flex-col items-center justify-start bg-stone-950 rounded-lg shadow-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 mb-10">
                 {reviewsData.map((review) => (
                     <div
                         key={review.id_movie}
@@ -79,9 +104,14 @@ const ReviewsCard = () => {
                                 />
                             )}
                             {currentSelection === review.id_movie && isSelectingReview && (
-                                <button onClick={handleReviewSelection} className="m-2 p-2 bg-green-700 text-white rounded-lg shadow-md">
-                                    OK
-                                </button>
+                                <div>
+                                    <button onClick={handleReviewSelection} className="m-2 p-2 bg-green-700 text-white rounded-lg shadow-md">
+                                        Editar
+                                    </button>
+                                    <button onClick={handleReviewDelete} className="m-2 p-2 bg-red-700 text-white rounded-lg shadow-md">
+                                        Excluir
+                                    </button>
+                                </div>
                             )}
                         </div>
 
@@ -100,6 +130,7 @@ const ReviewsCard = () => {
                         </div>
                     </div>
                 ))}
+                <ToastCustom />
             </div>
         </div>
     )

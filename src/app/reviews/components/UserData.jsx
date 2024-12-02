@@ -3,10 +3,12 @@ import { fetchLastReviewUser } from "../../lib/movieApi" // Importando a funçã
 import { useAuth } from "../../context/auth-context"
 import Image from "next/image"
 import RenderStars from "@/app/shared/RenderStars"
+import { useMovieUpdate } from "../../context/movieUpdateProvider"
 
 const UserData = () => {
     const { user, loading } = useAuth()
     const [userInfo, setUserInfo] = useState({})
+    const { triggerUpdate, updateSignal } = useMovieUpdate()
 
     useEffect(() => {
         if (!user?.uid) return // Verifica se o user está disponível
@@ -21,9 +23,9 @@ const UserData = () => {
         }
 
         fetchLastMovieReview() // Chama a função
-    }, [user?.uid]) // A dependência é o `user?.uid`, para que a função seja chamada toda vez que o user mudar
+    }, [user?.uid, updateSignal]) // A dependência é o `user?.uid`, para que a função seja chamada toda vez que o user mudar
     return (
-        <div id="userInfo" className="flex border-2 border-cyan-100 flex-col w-96 justify-center items-center gap-4 p-4">
+        <div id="userInfo" className="flex flex-col w-96 justify-center items-center gap-4 p-4">
             <Image
                 className="rounded-full"
                 src={`${user.photoURL.replace("s96-c", "s400-c")}`}
