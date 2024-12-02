@@ -24,6 +24,7 @@ module.exports = {
         // Cores de Suporte
         'text-gray': '#A6A6A6', // Textos secundários
         'action-blue': '#1E88E5', // Links e elementos de ação
+        primary: "#3498db",
       },
       
       backgroundImage: {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { fetchSearchedMovieName, fetchAddMovie } from "../../lib/movieApi"
 import { useMovieUpdate } from "../../context/movieUpdateProvider"
 import { toast, ToastContainer } from "react-toastify"
@@ -10,6 +10,27 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
     const [selectedMovie, setSelectedMovie] = useState(0)
     const [isModalClosing, setIsModalClosing] = useState(null)
     const { triggerUpdate } = useMovieUpdate()
+    const genreMap = {
+        28: "Action",
+        12: "Adventure",
+        16: "Animation",
+        35: "Comedy",
+        80: "Crime",
+        99: "Documentary",
+        18: "Drama",
+        10751: "Family",
+        14: "Fantasy",
+        36: "History",
+        27: "Horror",
+        10402: "Music",
+        9648: "Mystery",
+        10749: "Romance",
+        878: "Science Fiction",
+        10770: "TV Movie",
+        53: "Thriller",
+        10752: "War",
+        37: "Western",
+    }
 
     const selectMovie = (movieId) => {
         setSelectedMovie(movieId)
@@ -101,6 +122,7 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
                             movieName
                                 .filter((movie) => movie.backdrop_path !== null)
                                 .map((movie) => {
+                                    const firstGenre = movie.genre_ids && movie.genre_ids.length > 0 ? genreMap[movie.genre_ids[0]] : "Sem Gênero"
                                     return (
                                         <div
                                             key={movie.id}
@@ -112,14 +134,15 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
                                                 }`}
                                                 onClick={() => selectMovie(movie.id)}
                                             >
-                                                <li key={movie.id} className="h-[200px] flex flex-col items-center opacity-0 animate-fadeIn">
+                                                <li key={movie.id} className="h-[250px] flex flex-col items-center opacity-0 animate-fadeIn">
                                                     <img
                                                         src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
                                                         alt={movie.title || "Movie Image"}
                                                         className="bg-slate h-[70%] w-full object-cover"
                                                     />
-                                                    <div className="bg-primary-dark w-full flex-grow flex justify-center items-center p-2">
-                                                        <span className="text-sm md:text-lg truncate">{movie.title}</span>
+                                                    <div className="bg-primary-dark w-full flex-grow flex justify-center items-center p-2 flex-col">
+                                                        <span className="text-sm md:text-lg truncate max-w-full">{movie.title}</span>
+                                                        <span className="text-xs md:text-sm text-gray-500 bg-gray-950/20 rounded-lg p-1 mt-1">{firstGenre}</span>
                                                     </div>
                                                 </li>
                                             </ul>
@@ -127,7 +150,7 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
                                     )
                                 })}
                     </div>
-                    <ToastCustom/>
+                    <ToastCustom />
                 </div>
             )}
         </>

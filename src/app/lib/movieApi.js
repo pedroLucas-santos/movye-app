@@ -1,5 +1,19 @@
 import { db } from "../lib/firebase-config"
-import { getDocs, collection, updateDoc, doc, Timestamp, getDoc, setDoc, query, orderBy, where, collectionGroup } from "firebase/firestore"
+import {
+    getDocs,
+    collection,
+    updateDoc,
+    doc,
+    Timestamp,
+    getDoc,
+    setDoc,
+    query,
+    orderBy,
+    where,
+    collectionGroup,
+    limit,
+    deleteDoc,
+} from "firebase/firestore"
 
 export const options = {
     method: "GET",
@@ -44,24 +58,6 @@ export const fetchMovieBackdrop = async (movieId) => {
                 const randomBackdrop = filteredBackdrops[Math.floor(Math.random() * filteredBackdrops.length)]
                 const backdropPath = randomBackdrop.file_path
                 return `https://image.tmdb.org/t/p/original${backdropPath}`
-            }
-        } /* else {
-            throw new Error("No posters found")
-        } */
-    } catch (error) {
-        throw new Error("Error fetching movie images: " + error.message)
-    }
-}
-
-export const fetchMovieCard = async (apiKey) => {
-    try {
-        const response = await fetch(`https://api.themoviedb.org/3/movie/120/images`, options)
-        const data = await response.json()
-
-        if (data.backdrops && data.backdrops.length > 0) {
-            for (let i = 0; i < data.backdrops.length; i++) {
-                const backdropPath = data.backdrops[Math.floor(Math.random() * data.backdrops.length)].file_path
-                return `https://image.tmdb.org/t/p/original${backdropPath}` // Return the full URL for the poster
             }
         } /* else {
             throw new Error("No posters found")
@@ -158,7 +154,7 @@ export const fetchMovieLastWatched = async () => {
 
         const movieData = movieDoc.data()
 
-/*         if (!movieData || !movieData.id || !movieData.title) {
+        /*         if (!movieData || !movieData.id || !movieData.title) {
             throw new Error("O filme 'lastWatchedMovie' não tem dados completos no banco de dados.")
         } */
 
@@ -226,6 +222,9 @@ export const fetchMovieReview = async (movieId, newRating, movieSelected, newRev
             review: newReview,
             reviewed_at: Timestamp.now(),
             user_id: uid,
+            genre: movieSelected.genre,
+            title: movieSelected.title,
+            backdrop_path: movieSelected.backdrop_path,
         })
     } catch (e) {
         throw new Error("Error fetching movie review: " + e.message)
@@ -316,11 +315,226 @@ export const fetchUserReviews = async (userId) => {
         const reviews = snapshot.docs.map((doc) => ({
             id: doc.id, // ID do documento
             ...doc.data(), // Dados do documento
-        }));
+        }))
 
-        return reviews; // Retorna um array de reviews
+        return reviews // Retorna um array de reviews
     } catch (error) {
-        console.error("Erro ao buscar reviews no Firestore:", error);
-        throw error;
+        console.error("Erro ao buscar reviews no Firestore:", error)
+        throw error
     }
-};
+}
+
+export const fetchLastReviewUser = async (userId) => {
+    try {
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), orderBy("reviewed_at", "desc"))
+
+        const snapshot = await getDocs(reviewsQuery)
+
+        if (snapshot.empty) {
+            return {
+                review: "",
+                rating: null,
+                reviewed_at: "",
+                user: {
+                    displayName: "",
+                    photoURL: null,
+                },
+                mostViewedGenre: "", // Gênero mais visto
+                totalReviews: 0,
+                averageRating: 0, // Contagem total de reviews
+            }
+        }
+
+        const genreCounts = {}
+        let lastReview = null
+        let totalReviews = 0 // Inicializar contador de reviews
+        let totalRating = 0
+
+        snapshot.docs.forEach((doc, index) => {
+            const data = doc.data()
+            totalReviews++ // Incrementar o contador de reviews
+
+            if (data.rating) {
+                totalRating += data.rating
+            }
+            // Contar os gêneros
+            if (data.genre) {
+                genreCounts[data.genre] = (genreCounts[data.genre] || 0) + 1
+            }
+
+            // Salvar a última review
+            if (index === 0) {
+                lastReview = {
+                    id: doc.id,
+                    ...data,
+                }
+            }
+        })
+
+        // Determinar o gênero mais visto
+        const mostViewedGenre = Object.entries(genreCounts).reduce(
+            (max, [genre, count]) => {
+                return count > max.count ? { genre, count } : max
+            },
+            { genre: "", count: 0 }
+        ).genre
+
+        const averageRating = totalReviews > 0 ? Math.ceil(totalRating / totalReviews) : 0
+
+        let formattedDate = ""
+
+        if (lastReview?.reviewed_at) {
+            const timestamp = lastReview.reviewed_at
+            const date = timestamp.toDate()
+            formattedDate = date.toLocaleDateString("pt-BR", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+            })
+        }
+
+        const userDocRef = doc(db, "users", userId)
+        const userDoc = await getDoc(userDocRef)
+
+        if (!userDoc.exists()) {
+            throw new Error(`Usuário com ID ${userId} não encontrado.`)
+        }
+
+        const userData = userDoc.data()
+
+        return {
+            id: lastReview?.id || "",
+            review: lastReview?.review || "",
+            rating: lastReview?.rating || 0,
+            reviewed_at: formattedDate,
+            user: {
+                displayName: userData.displayName || "",
+                photoURL: userData.photoURL || null,
+            },
+            mostViewedGenre: mostViewedGenre, // Gênero mais visto
+            totalReviews: totalReviews,
+            averageRating: averageRating, // Contagem total de reviews
+        }
+    } catch (e) {
+        throw new Error("Error fetching user's last movie review: " + e.message)
+    }
+}
+
+export const fetchReviewsCard = async (userId) => {
+    try {
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), orderBy("reviewed_at", "desc"))
+
+        const snapshot = await getDocs(reviewsQuery)
+
+        if (snapshot.empty) {
+            return []
+        }
+
+        const reviews = await Promise.all(
+            snapshot.docs.map(async (doc) => {
+                const data = doc.data()
+                let formattedDate = ""
+
+                // Formata a data da review
+                if (data.reviewed_at) {
+                    const timestamp = data.reviewed_at
+                    const date = timestamp.toDate()
+                    formattedDate = date.toLocaleDateString("pt-BR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                    })
+                }
+
+                const poster_url = await fetchMoviePoster(data.id_movie)
+
+                return {
+                    id: doc.id,
+                    id_movie: data.id_movie || "",
+                    review: data.review || "",
+                    rating: data.rating || 0,
+                    reviewed_at: formattedDate,
+                    genre: data.genre || "",
+                    posterUrl: poster_url || null,
+                }
+            })
+        )
+
+        return reviews
+    } catch (e) {
+        throw new Error("Error fetching reviews card: " + e.message)
+    }
+}
+
+export const fetchEditReview = async (userId, reviewId) => {
+    console.log("teste")
+    try {
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where("id_movie", "==", reviewId))
+        const snapshot = await getDocs(reviewsQuery)
+
+        if (!snapshot.empty) {
+            const review = snapshot.docs[0].data()
+            return review
+        } else {
+            console.log("No review found")
+            return null
+        }
+    } catch (e) {
+        throw new Error("Error fetching edit review: " + e.message)
+    }
+}
+
+export const fetchUpdateReview = async (userId, reviewId, updatedReview, updatedRating) => {
+    try {
+        // Query to find the specific review
+        const reviewQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where("id_movie", "==", reviewId))
+
+        // Get the documents that match the query
+        const querySnapshot = await getDocs(reviewQuery)
+
+        if (querySnapshot.empty) {
+            throw new Error("No matching review found")
+        }
+
+        // Loop through the matching documents (there should typically be only one)
+        for (const doc of querySnapshot.docs) {
+            const reviewRef = doc.ref // Reference to the document
+            await updateDoc(reviewRef, {
+                review: updatedReview,
+                reviewed_at: Timestamp.now(), // Update the reviewed_at timestamp
+                ...(updatedRating !== undefined && { rating: updatedRating }), // Conditionally update rating
+            })
+        }
+
+        return true
+    } catch (e) {
+        throw new Error("Error updating review: " + e.message)
+    }
+}
+
+export const fetchDeleteReview = async (userId, reviewId) => {
+    try {
+        // Query para encontrar a review no Firestore
+        const reviewQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where("id_movie", "==", reviewId))
+
+        const querySnapshot = await getDocs(reviewQuery)
+
+        if (!querySnapshot.empty) {
+            // Assume que há apenas um documento que corresponde à query
+            const docToDelete = querySnapshot.docs[0]
+            await deleteDoc(docToDelete.ref)
+            return true
+        } else {
+            throw new Error("Review não encontrada.")
+        }
+    } catch (error) {
+        console.error("Erro ao deletar review:", error)
+        throw error
+    }
+}

@@ -1,8 +1,9 @@
 "use client"
-import React, { useEffect, useState, useRef } from "react"
-import NavBar from "./NavBar"
+import { useEffect, useState, useRef } from "react"
 import { fetchMovieLastWatched, fetchUserLastMovieReview } from "../../lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
+import NavBar from "../../shared/NavBar"
+import RenderStars from "@/app/shared/RenderStars"
 
 const MainBanner = () => {
     const [lastWatchedMovie, setLastWatchedMovie] = useState({})
@@ -56,7 +57,7 @@ const MainBanner = () => {
                 setAllReviews(reviews) //
                 if (reviews && reviews.length > 0) {
                     setCurrentReview(reviews[0]) // Exibe a primeira review ao iniciar
-                }else {
+                } else {
                     setCurrentReview(null)
                 }
             } catch (e) {
@@ -82,7 +83,7 @@ const MainBanner = () => {
                 })
                 setAnimate(true)
             }, reviewChangeInterval)
-    
+
             return () => clearInterval(interval)
         }
     }, [allReviews, reviewChangeInterval])
@@ -111,9 +112,9 @@ const MainBanner = () => {
                         <span className="text-2xl antialiased w-3/4 text-center ml-4">{lastWatchedMovie.title}</span>
 
                         {currentReview && (
-                            <div className='flex flex-col p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark mt-2'>
+                            <div className="flex flex-col p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark mt-2">
                                 <div className="flex">
-                                    <div className={`flex gap-4 ${animate ? 'animate-fadeIn' : ""}`}>
+                                    <div className={`flex gap-4 ${animate ? "animate-fadeIn" : ""}`}>
                                         {currentReview.user?.photoURL && (
                                             <img
                                                 id="avatar"
@@ -130,14 +131,18 @@ const MainBanner = () => {
                                             </div>
                                             {currentReview.rating && (
                                                 <div className="text-[#005ef6] text-xl tracking-[2px] flex">
-                                                    {Array.from({ length: 5 }, (_, index) => renderStar(index + 1, currentReview.rating))}
+                                                    {Array.from({ length: 5 }, (_, index) => (
+                                                        <RenderStars key={index} index={index + 1} movieRating={currentReview.rating} />
+                                                    ))}
                                                 </div>
                                             )}
                                         </div>
                                     </div>
                                 </div>
-                                <div className={`italic mt-4 text-[18px] text-white font-normal ${animate ? 'animate-fadeIn' : ""}`}>{currentReview.review}</div>
-                                <div className={`flex gap-6 text-white text-[12px] mt-4 ${animate ? 'animate-fadeIn' : ""}`}>
+                                <div className={`italic mt-4 text-[18px] text-white font-normal ${animate ? "animate-fadeIn" : ""}`}>
+                                    {currentReview.review}
+                                </div>
+                                <div className={`flex gap-6 text-white text-[12px] mt-4 ${animate ? "animate-fadeIn" : ""}`}>
                                     <span>{currentReview.reviewed_at}</span>
                                 </div>
                             </div>
