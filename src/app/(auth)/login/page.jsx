@@ -5,10 +5,36 @@ import { useRouter } from "next/navigation"
 import { auth, googleProdiver, db } from "@/app/lib/firebase-config"
 import { doc, setDoc, getDoc } from "firebase/firestore"
 import { useEffect, useState } from "react"
+import { isFriendCodeUnique } from "@/app/lib/movieApi"
 
 export default function LoginPage() {
     const router = useRouter()
     const [rememberMe, setRememberMe] = useState(false)
+
+    function generateFriendCode() {
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const codeLength = 8; // Tamanho do código
+        let code = "";
+    
+        for (let i = 0; i < codeLength; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            code += characters[randomIndex];
+        }
+    
+        return code;
+    }
+
+    const generateUniqueFriendCode = async () => {
+        let code;
+        let isUnique = false;
+    
+        while (!isUnique) {
+            code = generateFriendCode();
+            isUnique = await isFriendCodeUnique(code);
+        }
+    
+        return code;
+    };
 
     // Função de login
     const signInWithGoogle = async () => {
@@ -16,6 +42,7 @@ export default function LoginPage() {
             const result = await signInWithPopup(auth, googleProdiver)
             const { user } = result
             const { uid, displayName, email, photoURL } = user
+            const friendCode = await generateUniqueFriendCode()
 
             const userDocRef = doc(db, "users", uid)
 
@@ -27,6 +54,8 @@ export default function LoginPage() {
                     email: email,
                     photoURL: photoURL || "",
                     createdAt: new Date().toISOString(),
+                    friendCode: friendCode,
+                    friends: [],
                 })
             }
 
