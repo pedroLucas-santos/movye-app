@@ -9,6 +9,7 @@ import { useRouter, usePathname } from "next/navigation"
 import { useSelectionReview } from "../context/selectionEditReview"
 import ModalReviewEdit from "../reviews/components/ModalReviewEdit"
 import NotificationDropdown from "./components/NotificationDropdown"
+import { useNotifications } from "../context/notificationProvider"
 
 const NavBar = () => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -16,7 +17,8 @@ const NavBar = () => {
     const [isModalReviewMovie, setModalReviewMovie] = useState(false)
     const [isModalReviewEdit, setModalReviewEdit] = useState(false)
     const [isNotificationsDropdown, setIsNotificationsDropdown] = useState(false)
-    const [notificationsTest, setNotificationsTest] = useState(1)
+
+    const {notifications, loading} = useNotifications()
     const { user } = useAuth()
     const router = useRouter()
     const pathname = usePathname()
@@ -147,13 +149,14 @@ const NavBar = () => {
                                 ></path>
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19a2 2 0 100-4 2 2 0 000 4z"></path>
                             </svg>
-                            {notificationsTest > 0 && (
+                            {notifications.length > 0 && (
                                 <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-4 flex items-center justify-center rounded-full">
-                                    {notificationsTest > 9 ? "+9" : notificationsTest}
+                                    {notifications > 9 ? "+9" : notifications.length}
                                 </span>
                             )}
                         </button>
-                        <NotificationDropdown isNotificationsDropdown={isNotificationsDropdown} />
+                        {console.log(notifications)}
+                        <NotificationDropdown isNotificationsDropdown={isNotificationsDropdown} notifications={notifications} loading={loading}/>
                         {isProfileDropdown && (
                             <div
                                 id="userDropdown"

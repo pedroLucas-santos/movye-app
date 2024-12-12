@@ -15,6 +15,7 @@ import {
     deleteDoc,
     addDoc,
 } from "firebase/firestore"
+import { createNotification } from "./notificationApi"
 
 export const searchFriendCode = async (friendCode) => {
     try {
@@ -36,14 +37,18 @@ export const searchFriendCode = async (friendCode) => {
     }
 }
 
-export const sendFriendRequest = async (senderId, receiverId) => {
-    try {
-        // Verifique se a solicitação já existe
+export const sendFriendRequest = async (sender, receiverId) => {
+    try {  
+        if (sender.uid === receiverId) {
+            console.log("Você não pode enviar uma solicitação de amizade para si mesmo.");
+            throw new Error("Você não pode enviar uma solicitação de amizade para si mesmo.");
+        }
+
         const requestRef = collection(db, "friendRequest")
 
         const existingRequestQuery = query(
             requestRef,
-            where("from", "==", senderId),
+            where("from", "==", sender.uid),
             where("to", "==", receiverId),
             where("status", "==", "pendente") // Verifica apenas solicitações pendentes
         )
@@ -52,14 +57,22 @@ export const sendFriendRequest = async (senderId, receiverId) => {
 
         if (!existingRequestSnapshot.empty) {
             console.log("Friend request already exists.")
-            throw new Error ("Pedido de amizade já enviado!")
+            throw new Error("Pedido de amizade já enviado!")
         }
 
         const requestDoc = await addDoc(requestRef, {
-            from: senderId,
+            from: sender.uid,
             to: receiverId,
-            status: "pendente", // Solicitação pendente
-            createdAt: new Date(),
+            status: "pendente",
+            createdAt: Timestamp.now(),
+        })
+
+        await createNotification({
+            sender: sender,
+            receiverId: receiverId,
+            type: "friend-request",
+            message: "enviou uma solicitação de amizade!",
+            additionalData: { friendRequestId: requestDoc.id },
         })
 
         console.log("Friend request sent:", requestDoc.id)

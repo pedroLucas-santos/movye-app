@@ -2,13 +2,14 @@ import React from "react"
 import { FiCheck, FiX } from "react-icons/fi"
 
 const NotiFriendRequest = ({ notification }) => {
+    //TODO FUNCAO PARA ACEITAR A SOLICITACAO DE AMIZADE (context provavelmente)
     return (
         <div className="flex flex-col items-center px-4 py-2 border-2 border-primary-dark gap-1 rounded-xl">
             <div className="flex items-center gap-2">
-                <img src={notification.photoURL} alt={`${notification.user} photo`} className="w-10 h-10 rounded-full object-cover" />
+                <img src={notification.senderPhoto} alt={`${notification.senderName} photo`} className="w-10 h-10 rounded-full object-cover" />
                 <div className="flex flex-col">
                     <div className="font-semibold text-sm text-white">{notification.title}</div>
-                    <div className="text-xs text-white/70">{`${notification.user} ${notification.message}`}</div>
+                    <div className="text-xs text-white/70">{`${notification.senderName} ${notification.message}`}</div>
                 </div>
             </div>
 

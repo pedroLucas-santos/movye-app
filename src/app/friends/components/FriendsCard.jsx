@@ -12,7 +12,7 @@ const FriendsCard = () => {
 
     const addFriend = async () => {
         try {
-            await sendFriendRequest(user.uid, friendData.id)
+            await sendFriendRequest(user, friendData.id)
             toast.success("Pedido de amizade enviado com sucesso!")
             setInputCode("")
             setFriendData(null)
@@ -72,7 +72,7 @@ const FriendsCard = () => {
                                     </span>
                                 </div>
                                 <div className="absolute right-4">
-                                    <button onClick={addFriend} className="bg-primary-dark text-white p-2 rounded-lg hover:bg-primary-dark/50 transition">
+                                    <button onClick={addFriend} className="bg-primary-dark text-white p-2 rounded-lg hover:bg-stone-900 transition">
                                         Adicionar
                                     </button>
                                 </div>
