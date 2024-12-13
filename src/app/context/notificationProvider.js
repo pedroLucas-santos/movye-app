@@ -19,7 +19,14 @@ export const NotificationProvider = ({ children }) => {
             return // Se o usuário estiver carregando ou não estiver disponível, não faz nada
         }
         // Cria uma consulta para notificações ordenadas por data
-        const notificationsQuery = query(collection(db, "notifications"), where("receiverId", "==", user.uid), orderBy("createdAt", "desc"))
+        const notificationsQuery = query(
+            collection(db, "notifications"),
+            where("receiverId", "==", user.uid),
+            where("status", "==", "unread"),
+            orderBy("receiverId"),
+            orderBy("status"),
+            orderBy("createdAt", "desc")
+        );
 
         // Escuta as alterações em tempo real
         const unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {

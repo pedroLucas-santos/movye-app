@@ -15,7 +15,34 @@ import {
     deleteDoc,
     addDoc,
 } from "firebase/firestore"
-import { createNotification } from "./notificationApi"
+import { createNotification, updateNotificationStatus } from "./notificationApi"
+
+export const getUserFriendCode = async (userId) => {
+    try {
+        const userRef = doc(db, "users", userId)
+        const userDoc = await getDoc(userRef)
+        if (!userDoc.exists()) {
+            throw new Error(`Usuário com ID ${userId} não encontrado.`)
+        }
+        const userData = userDoc.data();
+        return userData.friendCode;
+    }catch (err) {
+        console.error("Error getting user document:", err)
+        throw err
+    }
+}
+
+export const getFriendList = async (userId) => {
+    try {
+        const friendsRef = collection(db, "users", userId, "friends");
+        const friendsSnapshot = await getDocs(friendsRef);
+        const friendList = friendsSnapshot.docs.map((doc) => ({ id: doc.id,...doc.data() }));
+        return friendList;
+    } catch (err) {
+        console.error("Error getting friend list:", err)
+        throw err
+    }
+}
 
 export const searchFriendCode = async (friendCode) => {
     try {
@@ -44,12 +71,27 @@ export const sendFriendRequest = async (sender, receiverId) => {
             throw new Error("Você não pode enviar uma solicitação de amizade para si mesmo.");
         }
 
+        const senderFriendsRef = collection(db, "users", sender.uid, "friends");
+        const receiverFriendsRef = collection(db, "users", receiverId, "friends");
+
+        const senderFriendsSnapshot = await getDocs(senderFriendsRef);
+        const receiverFriendsSnapshot = await getDocs(receiverFriendsRef);
+
+        // Verifica se o receiverId está na lista de amigos do sender e se o senderId está na lista de amigos do receiver
+        if (
+            senderFriendsSnapshot.docs.some(doc => doc.id === receiverId) || 
+            receiverFriendsSnapshot.docs.some(doc => doc.id === sender.uid)
+        ) {
+            console.log("Você já é amigo dessa pessoa.");
+            throw new Error("Você já é amigo dessa pessoa.");
+        }
+
         const requestRef = collection(db, "friendRequest")
 
         const existingRequestQuery = query(
             requestRef,
-            where("from", "==", sender.uid),
-            where("to", "==", receiverId),
+            where("senderId", "==", sender.uid),
+            where("receiverId", "==", receiverId),
             where("status", "==", "pendente") // Verifica apenas solicitações pendentes
         )
 
@@ -61,8 +103,8 @@ export const sendFriendRequest = async (sender, receiverId) => {
         }
 
         const requestDoc = await addDoc(requestRef, {
-            from: sender.uid,
-            to: receiverId,
+            senderId: sender.uid,
+            receiverId: receiverId,
             status: "pendente",
             createdAt: Timestamp.now(),
         })
@@ -89,7 +131,7 @@ export const acceptFriendRequest = async (senderId, receiverId) => {
 
         if (!friendRequestSnapshot.empty) {
             const requestDoc = friendRequestSnapshot.docs[0]
-            await updateDoc(requestDoc.ref, { status: "accepted" })
+            await updateDoc(requestDoc.ref, { status: "aceito" })
 
             // Obtenha os dados do amigo a partir do documento da solicitação de amizade
             const senderData = (await getDoc(doc(db, "users", senderId))).data()

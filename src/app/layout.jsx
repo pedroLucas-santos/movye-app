@@ -20,11 +20,11 @@ export default function RootLayout({ children }) {
         <AuthProvider>
             <MovieUpdateProvider>
                 <SelectionProvider>
-                    <NotificationProvider>
-                        <html lang="en">
-                            <body className={`${comfortaa.className} antialiased`}>{children}</body>
-                        </html>
-                    </NotificationProvider>
+                        <NotificationProvider>
+                            <html lang="en">
+                                <body className={`${comfortaa.className} antialiased`}>{children}</body>
+                            </html>
+                        </NotificationProvider>
                 </SelectionProvider>
             </MovieUpdateProvider>
         </AuthProvider>

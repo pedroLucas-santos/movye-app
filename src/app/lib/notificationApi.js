@@ -50,3 +50,13 @@ export const createNotification = async (notificationData) => {
         throw err
     }
 }
+
+export const updateNotificationStatus = async (notificationId, newStatus) => {
+    try {
+        const notificationRef = doc(db, "notifications", notificationId)
+        await updateDoc(notificationRef, { status: newStatus })
+    } catch (err) {
+        console.error("Error updating notification status:", err)
+        throw err
+    }
+}

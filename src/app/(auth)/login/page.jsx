@@ -55,7 +55,6 @@ export default function LoginPage() {
                     photoURL: photoURL || "",
                     createdAt: new Date().toISOString(),
                     friendCode: friendCode,
-                    friends: [],
                 })
             }
 
