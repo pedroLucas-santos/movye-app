@@ -25,7 +25,7 @@ const FriendList = ({ friendList }) => {
                     {friendList.length > 6 && <p className="mt-4 text-gray-400">+{friendList.length - 6} outros amigos</p>}
                 </div>
             ) : (
-                <p className="mt-8 text-gray-500">No friends to show.</p>
+                <p className="mt-8 text-gray-500">Nenhum amigo.</p>
             )}
         </div>
     )

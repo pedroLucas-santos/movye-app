@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { fetchMoviesWatched } from "../../lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 import RenderStars from "@/app/shared/RenderStars"
+import "@/app/Header.css"
 
 const MoviesWatched = () => {
     const [watchedMovies, setWatchedMovies] = useState([])
@@ -50,7 +51,7 @@ const MoviesWatched = () => {
                     return (
                         <div
                             key={movie.id}
-                            className=" border-dashed border-stone-950 w-[500px] h-[300px] flex flex-col items-center rounded-lg overflow-hidden shadow-md"
+                            className=" border-dashed border-stone-950 w-[500px] h-[300px] flex flex-col items-center rounded-lg overflow-hidden shadow-md scrollAppear"
                         >
                             <img
                                 src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}

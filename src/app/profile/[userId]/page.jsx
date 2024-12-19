@@ -29,13 +29,13 @@ export default async function ProfilePage({ params }) {
                 <Image
                     src={backdropUrl ? backdropUrl : null}
                     alt="Backdrop Image"
-                    fill // Ensures the image covers the div
-                    quality={100} // Ensures the best quality
-                    priority // Preloads the image for faster rendering
-                    className="object-center object-cover"
+                    fill
+                    quality={100}
+                    priority
+                    className="object-top object-cover"
                 />
                 <div id="dark-filter" className="absolute inset-0 bg-black opacity-60"></div>
-                <NavBar />
+                <NavBar userFirestore={user}/>
                 <div className="relative flex flex-col justify-center items-center w-full h-[590px]">
                     <div>
                         <UserInfo user={user} reviewCount={reviewCount} />

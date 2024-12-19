@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
             <MovieUpdateProvider>
                 <SelectionProvider>
                         <NotificationProvider>
-                            <html lang="en">
+                            <html lang="pt">
                                 <body className={`${comfortaa.className} antialiased`}>{children}</body>
                             </html>
                         </NotificationProvider>

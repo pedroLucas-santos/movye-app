@@ -12,7 +12,7 @@ import NotificationDropdown from "./components/NotificationDropdown"
 import { useNotifications } from "../context/notificationProvider"
 import ModalEditProfile from "../profile/[userId]/components/ModalEditProfile"
 
-const NavBar = () => {
+const NavBar = ({userFirestore}) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
     const [isModalAddMovie, setModalAddMovie] = useState(false)
     const [isModalReviewMovie, setModalReviewMovie] = useState(false)
@@ -84,7 +84,7 @@ const NavBar = () => {
 
             {isModalReviewEdit && <ModalReviewEdit toggleModalReviewEdit={toggleModalReviewEdit} isModalReviewEdit={isModalReviewEdit} />}
 
-            {isModalEditProfile && <ModalEditProfile toggleModalEditProfile={toggleModalEditProfile} isModalEditProfile={isModalEditProfile} />}
+            {isModalEditProfile && <ModalEditProfile toggleModalEditProfile={toggleModalEditProfile} isModalEditProfile={isModalEditProfile} userFirestore={userFirestore} />}
 
             <nav className="flex justify-around items-center h-32 w-full relative">
                 <button id="menu-toggle" className="text-white md:hidden focus:outline-none">

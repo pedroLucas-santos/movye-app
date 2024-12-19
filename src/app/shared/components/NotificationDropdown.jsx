@@ -14,7 +14,7 @@ const NotificationDropdown = ({ isNotificationsDropdown, notifications, loading 
             {isNotificationsDropdown && (
                 <div
                     id="notificationsDropdown"
-                    className="absolute top-24 right-8 w-64 h-96 bg-secondary-dark shadow-lg rounded-lg p-2 z-10 flex flex-col items-center justify-start"
+                    className="absolute top-24 right-[98px] w-64 h-96 bg-secondary-dark shadow-lg rounded-lg p-2 z-10 flex flex-col items-center justify-start"
                 >
                     {/* Triângulo apontando para o sino */}
                     <div className="absolute -top-2 right-[50%] w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-secondary-dark"></div>

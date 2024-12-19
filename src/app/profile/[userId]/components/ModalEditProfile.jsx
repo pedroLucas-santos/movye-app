@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 
-const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile }) => {
+const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFirestore }) => {
     const { user } = useAuth()
     const [searchMovie, setSearchMovie] = useState("")
     const [bio, setBio] = useState("")
@@ -61,6 +61,12 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile }) => {
             movieName()
         }
     }, [searchMovie])
+
+    useEffect(() => {
+        if (userFirestore) {
+            setBio(userFirestore.bio)
+        }
+    },[])
 
     const favoriteMovieBackdrop = async (movieId) => {
         try {
@@ -118,6 +124,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile }) => {
                         </div>
                         <div className="flex items-center w-full mt-4 space-x-4">
                             <textarea
+                                value={bio}
                                 onChange={(e) => setBio(e.target.value)}
                                 className="flex-1 px-4 py-2 pt-3 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark text-white resize-none"
                                 placeholder="Bio..."
@@ -219,7 +226,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile }) => {
                                     <img
                                         src={`https://image.tmdb.org/t/p/original${backdrops[currentBackdropIndex].file_path}`}
                                         alt={`Backdrop ${currentBackdropIndex + 1}`}
-                                        className="max-w-4xl max-h-[80%] object-contain"
+                                        className="max-w-7xl max-h-[80%] object-contain"
                                     />
                                     <button
                                         className="absolute right-4 text-white text-3xl"
