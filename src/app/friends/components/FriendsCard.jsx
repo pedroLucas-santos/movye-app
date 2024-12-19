@@ -1,8 +1,8 @@
 import { useAuth } from "@/app/context/auth-context"
 import ToastCustom from "@/app/dashboard/components/ToastCustom"
-import { getFriendList, getUserFriendCode, searchFriendCode, sendFriendRequest } from "@/app/lib/friendApi"
+import { deleteFriend, getFriendList, getUserFriendCode, searchFriendCode, sendFriendRequest } from "@/app/lib/friendApi"
 import Image from "next/image"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 
 const FriendsCard = () => {
@@ -10,11 +10,47 @@ const FriendsCard = () => {
     const [friendData, setFriendData] = useState(null)
     const [userFriendCode, setUserFriendCode] = useState(null)
     const [friendList, setFriendList] = useState(null)
-    const [isActionDropdown, setIsActionDropdown] = useState(null)
+    const [dropdownFriendId, setDropdownFriendId] = useState(null)
     const { user } = useAuth()
 
-    const toggleActionDropdown = () => {
-        setIsActionDropdown(!isActionDropdown)
+    const dropdownRef = useRef(null)
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (user) {
+            fetchUserFriendCode()
+            fetchFriendList()
+        }
+    }, [user])
+
+    useEffect(() => {
+        if (inputCode !== "") {
+            const friendCode = async () => {
+                try {
+                    const response = await searchFriendCode(inputCode)
+                    setFriendData(response)
+                } catch (e) {
+                    console.log(e)
+                }
+            }
+            friendCode()
+        }
+    }, [inputCode])
+
+    const toggleActionDropdown = (id) => {
+        setDropdownFriendId((prevId) => (prevId === id ? null : id))
+    }
+
+    const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setDropdownFriendId(null) // Close dropdown if click is outside
+        }
     }
 
     const addFriend = async () => {
@@ -29,6 +65,17 @@ const FriendsCard = () => {
         }
     }
 
+    const deleteFriendHandler = async (user, friendId) => {
+        try {
+            await deleteFriend(user, friendId)
+            setFriendList((prevList) => prevList.filter((friend) => friend.id !== friendId))
+            toast.success("Amigo excluído com sucesso!")
+        } catch (e) {
+            toast.error("Erro ao excluir amigo.")
+            console.log(e)
+        }
+    }
+
     const copyToClipboard = () => {
         navigator.clipboard
             .writeText(userFriendCode) // Copia o userFriendCode para o clipboard
@@ -39,13 +86,6 @@ const FriendsCard = () => {
                 console.error("Erro ao copiar: ", error) // Tratamento de erro, caso algo dê errado
             })
     }
-
-    useEffect(() => {
-        if (user) {
-            fetchUserFriendCode()
-            fetchFriendList()
-        }
-    }, [user])
 
     const fetchUserFriendCode = async () => {
         try {
@@ -63,19 +103,6 @@ const FriendsCard = () => {
         }
     }
 
-    useEffect(() => {
-        if (inputCode !== "") {
-            const friendCode = async () => {
-                try {
-                    const response = await searchFriendCode(inputCode)
-                    setFriendData(response)
-                } catch (e) {
-                    console.log(e)
-                }
-            }
-            friendCode()
-        }
-    }, [inputCode])
     return (
         <div className="w-full h-full overflow-y-auto flex flex-col items-start justify-start bg-stone-950 rounded-lg shadow-2xl">
             <div className="grid grid-cols-2 w-full h-full gap-8">
@@ -134,15 +161,15 @@ const FriendsCard = () => {
                                     <h3 className="text-lg font-semibold text-white">{friend.displayName}</h3>
                                     <a className="text-sm text-blue-400">Perfil</a>
                                 </div>
-                                <button onClick={toggleActionDropdown}>
+                                <button onClick={() => toggleActionDropdown(friend.id)}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v.01M12 12v.01M12 18v.01" />
                                     </svg>
                                 </button>
-                                {/* TODO FAZER O DROPDOWN APARECER ABAIXO DOS BOTOES */}
-                                {isActionDropdown && (
-                                    <div className="absolute right-36 top-60 mt-2 bg-primary-dark rounded-lg shadow-lg w-32">
+                                {dropdownFriendId === friend.id && (
+                                    <div ref={dropdownRef} className="absolute right-32 mt-2 bg-primary-dark rounded-lg shadow-lg w-32">
                                         <button
+                                            onClick={() => deleteFriendHandler(user, friend.id)}
                                             className="w-full text-left text-red-600 p-2 hover:bg-red-600 hover:text-white rounded-lg"
                                         >
                                             Excluir

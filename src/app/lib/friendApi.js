@@ -24,9 +24,9 @@ export const getUserFriendCode = async (userId) => {
         if (!userDoc.exists()) {
             throw new Error(`Usuário com ID ${userId} não encontrado.`)
         }
-        const userData = userDoc.data();
-        return userData.friendCode;
-    }catch (err) {
+        const userData = userDoc.data()
+        return userData.friendCode
+    } catch (err) {
         console.error("Error getting user document:", err)
         throw err
     }
@@ -34,10 +34,10 @@ export const getUserFriendCode = async (userId) => {
 
 export const getFriendList = async (userId) => {
     try {
-        const friendsRef = collection(db, "users", userId, "friends");
-        const friendsSnapshot = await getDocs(friendsRef);
-        const friendList = friendsSnapshot.docs.map((doc) => ({ id: doc.id,...doc.data() }));
-        return friendList;
+        const friendsRef = collection(db, "users", userId, "friends")
+        const friendsSnapshot = await getDocs(friendsRef)
+        const friendList = friendsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+        return friendList
     } catch (err) {
         console.error("Error getting friend list:", err)
         throw err
@@ -65,25 +65,22 @@ export const searchFriendCode = async (friendCode) => {
 }
 
 export const sendFriendRequest = async (sender, receiverId) => {
-    try {  
+    try {
         if (sender.uid === receiverId) {
-            console.log("Você não pode enviar uma solicitação de amizade para si mesmo.");
-            throw new Error("Você não pode enviar uma solicitação de amizade para si mesmo.");
+            console.log("Você não pode enviar uma solicitação de amizade para si mesmo.")
+            throw new Error("Você não pode enviar uma solicitação de amizade para si mesmo.")
         }
 
-        const senderFriendsRef = collection(db, "users", sender.uid, "friends");
-        const receiverFriendsRef = collection(db, "users", receiverId, "friends");
+        const senderFriendsRef = collection(db, "users", sender.uid, "friends")
+        const receiverFriendsRef = collection(db, "users", receiverId, "friends")
 
-        const senderFriendsSnapshot = await getDocs(senderFriendsRef);
-        const receiverFriendsSnapshot = await getDocs(receiverFriendsRef);
+        const senderFriendsSnapshot = await getDocs(senderFriendsRef)
+        const receiverFriendsSnapshot = await getDocs(receiverFriendsRef)
 
         // Verifica se o receiverId está na lista de amigos do sender e se o senderId está na lista de amigos do receiver
-        if (
-            senderFriendsSnapshot.docs.some(doc => doc.id === receiverId) || 
-            receiverFriendsSnapshot.docs.some(doc => doc.id === sender.uid)
-        ) {
-            console.log("Você já é amigo dessa pessoa.");
-            throw new Error("Você já é amigo dessa pessoa.");
+        if (senderFriendsSnapshot.docs.some((doc) => doc.id === receiverId) || receiverFriendsSnapshot.docs.some((doc) => doc.id === sender.uid)) {
+            console.log("Você já é amigo dessa pessoa.")
+            throw new Error("Você já é amigo dessa pessoa.")
         }
 
         const requestRef = collection(db, "friendRequest")
@@ -158,5 +155,30 @@ export const acceptFriendRequest = async (senderId, receiverId) => {
         }
     } catch (error) {
         console.error("Error accepting friend request:", error)
+    }
+}
+
+export const deleteFriend = async (user, friendId) => {
+    try {
+        const senderFriendsRef = collection(db, "users", user.uid, "friends")
+        const receiverFriendsRef = collection(db, "users", friendId, "friends")
+
+        const senderQuery = query(senderFriendsRef, where("id", "==", friendId))
+        const receiverQuery = query(receiverFriendsRef, where("id", "==", user.uid))
+
+        const senderFriendsSnapshot = await getDocs(senderQuery)
+        const receiverFriendsSnapshot = await getDocs(receiverQuery)
+
+        senderFriendsSnapshot.forEach(async (docSnap) => {
+            await deleteDoc(doc(db, "users", user.uid, "friends", docSnap.id))
+        })
+
+        // Delete the document from the receiver's collection
+        receiverFriendsSnapshot.forEach(async (docSnap) => {
+            await deleteDoc(doc(db, "users", friendId, "friends", docSnap.id))
+        })
+        console.log("Friendship successfully deleted.")
+    } catch (error) {
+        console.error("Error deleting friend:", error)
     }
 }

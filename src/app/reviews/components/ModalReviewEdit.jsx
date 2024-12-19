@@ -38,14 +38,14 @@ const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
             toggleModalReviewEdit()
         }, 500)
     }
-    
+
     const editReview = async () => {
         if (rating && selectedReview && newReview !== "") {
             try {
                 const updatedReview = await fetchUpdateReview(user.uid, selectedReview, newReview, rating)
                 console.log(updatedReview)
                 toast.success("Review editada com sucesso!")
-                
+
                 triggerUpdate()
 
                 return true
@@ -59,7 +59,7 @@ const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
     const handleReview = async () => {
         const reviewEdited = await editReview()
 
-        if(reviewEdited){
+        if (reviewEdited) {
             setTimeout(() => {
                 closeModal()
             }, 1200)
@@ -84,7 +84,6 @@ const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
 
     return (
         <>
-            {console.log("MODAL ?: " + isModalReviewEdit)}
             {isModalReviewEdit && (
                 <div
                     className={`fixed flex justify-center p-12 z-10 w-dvw h-dvh bg-black/40 transition duration-300 ${

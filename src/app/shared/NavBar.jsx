@@ -10,15 +10,17 @@ import { useSelectionReview } from "../context/selectionEditReview"
 import ModalReviewEdit from "../reviews/components/ModalReviewEdit"
 import NotificationDropdown from "./components/NotificationDropdown"
 import { useNotifications } from "../context/notificationProvider"
+import ModalEditProfile from "../profile/[userId]/components/ModalEditProfile"
 
 const NavBar = () => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
     const [isModalAddMovie, setModalAddMovie] = useState(false)
     const [isModalReviewMovie, setModalReviewMovie] = useState(false)
     const [isModalReviewEdit, setModalReviewEdit] = useState(false)
+    const [isModalEditProfile, setModalEditProfile] = useState(false)
     const [isNotificationsDropdown, setIsNotificationsDropdown] = useState(false)
 
-    const {notifications, loading} = useNotifications()
+    const { notifications, loading } = useNotifications()
     const { user } = useAuth()
     const router = useRouter()
     const pathname = usePathname()
@@ -42,6 +44,9 @@ const NavBar = () => {
 
     const toggleModalReviewEdit = () => {
         setModalReviewEdit(!isModalReviewEdit)
+    }
+    const toggleModalEditProfile = () => {
+        setModalEditProfile(!isModalEditProfile)
     }
 
     useEffect(() => {
@@ -67,6 +72,10 @@ const NavBar = () => {
         router.push("/friends")
     }
 
+    const profilePage = () => {
+        router.push(`/profile/${user.uid}`)
+    }
+
     return (
         <>
             {isModalAddMovie && <ModalAddMovie toggleModalAddMovie={toggleModalAddMovie} isModalAddMovie={isModalAddMovie} />}
@@ -75,7 +84,9 @@ const NavBar = () => {
 
             {isModalReviewEdit && <ModalReviewEdit toggleModalReviewEdit={toggleModalReviewEdit} isModalReviewEdit={isModalReviewEdit} />}
 
-            <nav className="flex justify-around items-center h-32 w-full">
+            {isModalEditProfile && <ModalEditProfile toggleModalEditProfile={toggleModalEditProfile} isModalEditProfile={isModalEditProfile} />}
+
+            <nav className="flex justify-around items-center h-32 w-full relative">
                 <button id="menu-toggle" className="text-white md:hidden focus:outline-none">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -138,7 +149,12 @@ const NavBar = () => {
                                 Editar Review
                             </button>
                         )}
-                        <img id="avatar" src={user.photoURL} className="rounded-full h-10 w-10 cursor-pointer" onClick={toggleProfileDropdown} />
+                        {pathname === `/profile/${user?.uid}` ? (
+                            <button onClick={toggleModalEditProfile} className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md">
+                                Editar Perfil
+                            </button>
+                        ) : null}
+                        <img id="avatar" src={user?.photoURL} className="rounded-full h-10 w-10 cursor-pointer" onClick={toggleProfileDropdown} />
                         <button onClick={toggleNotificationsDropdown} id="notifications" className="relative text-white focus:outline-none">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -156,7 +172,7 @@ const NavBar = () => {
                             )}
                         </button>
                         {console.log(notifications)}
-                        <NotificationDropdown isNotificationsDropdown={isNotificationsDropdown} notifications={notifications} loading={loading}/>
+                        <NotificationDropdown isNotificationsDropdown={isNotificationsDropdown} notifications={notifications} loading={loading} />
                         {isProfileDropdown && (
                             <div
                                 id="userDropdown"
@@ -165,7 +181,9 @@ const NavBar = () => {
                             >
                                 <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
                                     <span className="text-xl">{user.displayName}</span>
-                                    <span className="hover:cursor-pointer">Perfil</span>
+                                    <span className="hover:cursor-pointer" onClick={profilePage}>
+                                        Perfil
+                                    </span>
                                     <span className="hover:cursor-pointer" onClick={friendsPage}>
                                         Amigos
                                     </span>
