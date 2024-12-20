@@ -154,7 +154,7 @@ const NavBar = ({userFirestore}) => {
                                 Editar Perfil
                             </button>
                         ) : null}
-                        <img id="avatar" src={user?.photoURL} className="rounded-full h-10 w-10 cursor-pointer" onClick={toggleProfileDropdown} />
+                        <img id="avatar" src={user?.photoURL} className="rounded-full h-10 w-10 cursor-pointer select-none" onClick={toggleProfileDropdown} />
                         <button onClick={toggleNotificationsDropdown} id="notifications" className="relative text-white focus:outline-none">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path

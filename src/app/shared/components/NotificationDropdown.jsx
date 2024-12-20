@@ -22,6 +22,7 @@ const NotificationDropdown = ({ isNotificationsDropdown, notifications, loading 
                     {notifications.length > 0 ? (
                         <div className="flex flex-col gap-4 h-full overflow-y-auto">
                             {notifications.map((notification, index) => {
+                                
                                 switch (notification.type) {
                                     case "friend-request":
                                         return <NotiFriendRequest key={index} notification={notification} />

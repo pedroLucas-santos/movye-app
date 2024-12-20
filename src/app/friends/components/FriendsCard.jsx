@@ -2,6 +2,7 @@ import { useAuth } from "@/app/context/auth-context"
 import ToastCustom from "@/app/dashboard/components/ToastCustom"
 import { deleteFriend, getFriendList, getUserFriendCode, searchFriendCode, sendFriendRequest } from "@/app/lib/friendApi"
 import Image from "next/image"
+import Link from "next/link"
 import React, { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 
@@ -126,12 +127,12 @@ const FriendsCard = () => {
                         <div className="relative w-full bg-secondary-dark flex justify-start items-start p-2 rounded-lg">
                             {console.log(friendData)}
                             <div className="flex justify-center items-center gap-4">
-                                <Image src={friendData.photoURL} alt="User's profile picture" width={100} height={100} quality={100} />
+                                <Image src={friendData.photoURL} className="select-none" alt="User's profile picture" width={100} height={100} quality={100} />
                                 <div className="flex flex-col">
                                     <span className="font-bold text-2xl">{friendData.displayName}</span>
-                                    <span className="text-blue-400">
-                                        <a href="">Perfil</a>
-                                    </span>
+                                    <Link href={`/profile/${friendData.id}`} className="text-sm text-blue-400">
+                                        Perfil
+                                    </Link>
                                 </div>
                                 <div className="absolute right-4">
                                     <button onClick={addFriend} className="bg-primary-dark text-white p-2 rounded-lg hover:bg-stone-900 transition">
@@ -150,7 +151,7 @@ const FriendsCard = () => {
                         friendList.map((friend) => (
                             <div key={friend.id} className="flex items-center justify-center w-72 p-4 bg-primary-dark rounded-lg">
                                 <Image
-                                    className="rounded-full"
+                                    className="rounded-full select-none"
                                     src={friend.photoURL}
                                     alt={`'s profile picture`}
                                     width={50}
@@ -159,7 +160,9 @@ const FriendsCard = () => {
                                 />
                                 <div className="ml-4 flex-grow">
                                     <h3 className="text-lg font-semibold text-white">{friend.displayName}</h3>
-                                    <a className="text-sm text-blue-400">Perfil</a>
+                                    <Link href={`/profile/${friend.id}`} className="text-sm text-blue-400">
+                                        Perfil
+                                    </Link>
                                 </div>
                                 <button onClick={() => toggleActionDropdown(friend.id)}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

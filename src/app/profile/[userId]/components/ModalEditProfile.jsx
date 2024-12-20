@@ -2,6 +2,7 @@
 import { useAuth } from "@/app/context/auth-context"
 import ToastCustom from "@/app/dashboard/components/ToastCustom"
 import { getMovieBackdrop, saveProfileEdit, searchFavoriteMovie } from "@/app/lib/userApi"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { toast } from "react-toastify"
@@ -66,7 +67,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
         if (userFirestore) {
             setBio(userFirestore.bio)
         }
-    },[])
+    }, [])
 
     const favoriteMovieBackdrop = async (movieId) => {
         try {
@@ -144,7 +145,6 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                             />
                             {movies.length > 0 && searchMovie !== "" && (
                                 <ul className="bg-primary-dark rounded-lg mt-2 max-h-64 overflow-y-auto shadow-lg">
-                                    {console.log(movies)}
                                     {movies.map((movie) => (
                                         <li
                                             key={movie.id}
@@ -159,7 +159,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                             <img
                                                 src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
                                                 alt={movie.title}
-                                                className="w-12 h-18 object-cover mr-4"
+                                                className="w-12 h-18 object-cover mr-4 select-none"
                                             />
                                             <span className="text-white truncate">{movie.title}</span>
                                         </li>
@@ -172,7 +172,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                         <img
                                             src={`https://image.tmdb.org/t/p/w185${selectedMovie.poster_path}`}
                                             alt={selectedMovie.title}
-                                            className="w-28 h-40 object-cover mr-4"
+                                            className="w-28 h-40 object-cover mr-4 select-none"
                                         />
                                         <div className="flex justify-center items-center flex-col">
                                             <span className="text-white text-xl font-bold text-center">{selectedMovie.title}</span>
@@ -182,7 +182,6 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                         </div>
                                     </div>
 
-                                    {console.log(backdrops)}
                                     {backdrops.length > 0 && (
                                         <div className="mt-6 p-4 bg-primary-dark rounded-lg h-[300px] overflow-auto">
                                             <h3 className="text-white text-lg mb-4">Escolha uma imagem para o fundo do seu perfil:</h3>
@@ -198,7 +197,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                                         <img
                                                             src={`https://image.tmdb.org/t/p/w300${backdrop.file_path}`}
                                                             alt={`Backdrop ${index + 1}`}
-                                                            className="w-full h-auto rounded-lg"
+                                                            className="w-full h-auto rounded-lg select-none"
                                                         />
                                                         {selectedBackdrop === index && (
                                                             <span className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
@@ -223,10 +222,14 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                     >
                                         &#8249;
                                     </button>
-                                    <img
+                                    <Image
                                         src={`https://image.tmdb.org/t/p/original${backdrops[currentBackdropIndex].file_path}`}
                                         alt={`Backdrop ${currentBackdropIndex + 1}`}
-                                        className="max-w-7xl max-h-[80%] object-contain"
+                                        className="max-w-7xl max-h-[80%] object-contain select-none"
+                                        width={1920}
+                                        height={1080}
+                                        quality={100}
+                                        loading="lazy"
                                     />
                                     <button
                                         className="absolute right-4 text-white text-3xl"
