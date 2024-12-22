@@ -543,7 +543,7 @@ export const fetchUpdateReview = async (userId, reviewId, updatedReview, updated
             const reviewRef = doc.ref // Reference to the document
             await updateDoc(reviewRef, {
                 review: updatedReview,
-                reviewed_at: Timestamp.now(), // Update the reviewed_at timestamp
+                edited_at: Timestamp.now(), // Update the reviewed_at timestamp
                 ...(updatedRating !== undefined && { rating: updatedRating }), // Conditionally update rating
             })
         }

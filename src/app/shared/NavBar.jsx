@@ -11,6 +11,7 @@ import ModalReviewEdit from "../reviews/components/ModalReviewEdit"
 import NotificationDropdown from "./components/NotificationDropdown"
 import { useNotifications } from "../context/notificationProvider"
 import ModalEditProfile from "../profile/[userId]/components/ModalEditProfile"
+import Link from "next/link"
 
 const NavBar = ({userFirestore}) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -99,24 +100,24 @@ const NavBar = ({userFirestore}) => {
                 <div>
                     <ul className="hidden md:flex items-center justify-center">
                         <li>
-                            <a href="/dashboard" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            <Link href="/dashboard" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Dashboard
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Explorar
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Sugestões
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Estatisticas
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>

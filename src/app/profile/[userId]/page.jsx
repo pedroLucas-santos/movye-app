@@ -7,6 +7,7 @@ import UserInfo from "./components/UserInfo"
 import RenderStars from "@/app/shared/RenderStars"
 import ReviewsCard from "@/app/reviews/components/ReviewsCard"
 import { Suspense } from "react"
+import Skeleton from "react-loading-skeleton"
 
 export default async function ProfilePage({ params }) {
     const { userId } = await params
@@ -68,7 +69,7 @@ export default async function ProfilePage({ params }) {
                         </div>
                     </div>
                     <div>
-                        <h2 className="text-3xl text-white text-center">Últimos reviews:</h2>
+                        <h2 className="text-3xl text-white text-center">Últimas reviews:</h2>
                     </div>
                 </div>
 
