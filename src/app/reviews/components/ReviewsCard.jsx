@@ -84,7 +84,7 @@ const ReviewsCard = ({ userId, limit }) => {
 
     return (
         <div className="w-full h-full overflow-y-auto flex flex-col items-center justify-start bg-transparent rounded-lg shadow-2xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 mb-10">
                 {reviewsToDisplay.map((review) => (
                     <div
                         key={review.id_movie}

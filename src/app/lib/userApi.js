@@ -118,7 +118,7 @@ export const saveProfileEdit = async (userId, favoriteMovie, backdropPath, bio) 
         await setDoc(
             userDocRef,
             {
-                bio: bio,
+                bio: bio || "",
                 favoriteMovie: {
                     title: favoriteMovie.title,
                     id: favoriteMovie.id,

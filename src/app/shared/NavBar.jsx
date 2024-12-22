@@ -142,7 +142,7 @@ const NavBar = ({userFirestore}) => {
                     )}
 
                     <div className="flex gap-4 justify-center items-center">
-                        {pathname === `/reviews` && (
+                        {pathname === `/newReviewPage/${user?.uid}` && (
                             <button
                                 onClick={() => setIsSelectingReview(!isSelectingReview)}
                                 className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"

@@ -7,6 +7,8 @@ import UserInfo from "./components/UserInfo"
 import RenderStars from "@/app/shared/RenderStars"
 import ReviewsCard from "@/app/reviews/components/ReviewsCard"
 import { Suspense } from "react"
+import { FiArrowRight } from "react-icons/fi"
+import Link from "next/link"
 
 
 export default async function ProfilePage({ params }) {
@@ -68,8 +70,11 @@ export default async function ProfilePage({ params }) {
                             <span className="text-2xl text-center text-wrap w-96">{user.favoriteMovie?.title}</span>
                         </div>
                     </div>
-                    <div>
+                    <div className="flex flex-col justify-center items-center w-full">
                         <h2 className="text-3xl text-white text-center">Últimas reviews:</h2>
+                        <div className="w-[1300px] flex justify-end">
+                            <Link href={'/'} className="text-lg text-white text-center flex items-center">Ver todas as reviews <FiArrowRight/></Link>
+                        </div>
                     </div>
                 </div>
 

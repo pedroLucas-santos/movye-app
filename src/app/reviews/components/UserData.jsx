@@ -1,3 +1,4 @@
+"use client"
 import { useState, useEffect } from "react"
 import { fetchLastReviewUser } from "../../lib/movieApi" // Importando a função
 import { useAuth } from "../../context/auth-context"
@@ -5,7 +6,7 @@ import Image from "next/image"
 import RenderStars from "@/app/shared/RenderStars"
 import { useMovieUpdate } from "../../context/movieUpdateProvider"
 
-const UserData = () => {
+const UserData = ({userId, actualUser}) => {
     const { user, loading } = useAuth()
     const [userInfo, setUserInfo] = useState({})
     const { triggerUpdate, updateSignal } = useMovieUpdate()
@@ -13,9 +14,17 @@ const UserData = () => {
     useEffect(() => {
         if (!user?.uid) return // Verifica se o user está disponível
 
+        let userIdToUse
+
+        if (userId) {
+            userIdToUse = user.uid === userId ? user.uid : userId
+        } else {
+            userIdToUse = user.uid
+        }
+
         const fetchLastMovieReview = async () => {
             try {
-                const response = await fetchLastReviewUser(user.uid) // Chama a função para pegar a última review
+                const response = await fetchLastReviewUser(userIdToUse) // Chama a função para pegar a última review
                 setUserInfo(response) // Atualiza o estado com a resposta
             } catch (e) {
                 console.error(e)
@@ -28,7 +37,7 @@ const UserData = () => {
         <div id="userInfo" className="flex flex-col w-96 justify-center items-center gap-4 p-4">
             <Image
                 className="rounded-full"
-                src={`${user.photoURL.replace("s96-c", "s400-c")}`}
+                src={`${actualUser.photoURL.replace("s96-c", "s400-c")}`}
                 alt="User's profile picture"
                 width={256}
                 height={256}
@@ -36,8 +45,8 @@ const UserData = () => {
             />
             <div className="flex flex-col">
                 <div className="items-center flex flex-col">
-                    <span className="text-lg font-semibold">{user.displayName}</span>
-                    <span className="text-sm text-gray-500">{user.email}</span>
+                    <span className="text-lg font-semibold">{actualUser.displayName}</span>
+                    <span className="text-sm text-gray-500">{actualUser.email}</span>
                     <div className="mt-4 flex flex-col justify-center items-center gap-4">
                         <span>Reviews: {userInfo.totalReviews}</span>
                         <div>
