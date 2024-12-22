@@ -5,6 +5,7 @@ import Image from "next/image"
 import FriendList from "./components/FriendList"
 import UserInfo from "./components/UserInfo"
 import RenderStars from "@/app/shared/RenderStars"
+import ReviewsCard from "@/app/reviews/components/ReviewsCard"
 
 export default async function ProfilePage({ params }) {
     const { userId } = await params
@@ -25,23 +26,16 @@ export default async function ProfilePage({ params }) {
 
     return (
         <>
-            <div className={`relative w-full h-screen bg-cover shadow-inner shadow-gray-900/80 overflow-y-hidden`}>
-                <Image
-                    src={backdropUrl ? backdropUrl : null}
-                    alt="Backdrop Image"
-                    fill
-                    quality={100}
-                    priority
-                    className="object-top object-cover"
-                />
+            <div className={`relative w-full h-screen bg-cover shadow-inner shadow-gray-900/80 overflow-x-hidden`}>
+                <Image src={backdropUrl ? backdropUrl : null} alt="Backdrop Image" fill quality={100} priority className="object-top object-cover" />
                 <div id="dark-filter" className="absolute inset-0 bg-black opacity-60"></div>
-                <NavBar userFirestore={user}/>
-                <div className="relative flex flex-col justify-center items-center w-full h-[590px]">
+                <NavBar userFirestore={user} />
+                <div className="relative flex flex-col justify-center items-center w-full">
                     <div>
                         <UserInfo user={user} reviewCount={reviewCount} />
                         <FriendList friendList={friendList} />
                     </div>
-                    <div className="grid grid-cols-3 mt-24 bg-black/80 p-4 rounded-xl justify-items-center h-32 content-center">
+                    <div className="grid grid-cols-3 mt-24 bg-black/80 p-4 rounded-xl justify-items-center h-32 content-center mb-12">
                         <div className="flex items-center flex-col h-full">
                             <h2 className="text-2xl">Reviews: </h2>
                             <span className="text-2xl">{reviewCount}</span>

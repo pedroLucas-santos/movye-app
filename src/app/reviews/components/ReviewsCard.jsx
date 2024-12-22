@@ -1,3 +1,4 @@
+"use client"
 import { useAuth } from "@/app/context/auth-context"
 import { fetchDeleteReview, fetchReviewsCard } from "@/app/lib/movieApi"
 import RenderStars from "@/app/shared/RenderStars"
@@ -72,7 +73,7 @@ const ReviewsCard = () => {
     //criar modal para editar review quando clicar no OK
 
     return (
-        <div className="w-full h-full overflow-y-auto flex flex-col items-center justify-start bg-stone-950 rounded-lg shadow-2xl">
+        <div className="w-full h-full overflow-y-auto flex flex-col items-center justify-start bg-transparent rounded-lg shadow-2xl">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 mb-10">
                 {reviewsData.map((review) => (
                     <div

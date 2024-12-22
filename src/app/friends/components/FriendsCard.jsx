@@ -111,7 +111,7 @@ const FriendsCard = () => {
                 <div className="m-12 flex justify-start items-start flex-col gap-2">
                     <span className="text-xl">Código de amizade</span>
                     <div className="p-4 w-72 h-14 bg-white/20 flex justify-between items-center gap-4 rounded-lg overflow-hidden">
-                        <span className="text-3xl overflow-hidden text-ellipsis whitespace-nowrap">{userFriendCode}</span>
+                        <span className="text-3xl md:text-xl overflow-hidden text-ellipsis whitespace-nowrap">{userFriendCode}</span>
                         <button onClick={copyToClipboard} className="bg-primary-dark text-white p-2 rounded-lg hover:bg-primary-dark/50 transition">
                             Copiar
                         </button>
