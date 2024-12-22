@@ -1,3 +1,4 @@
+"use client"
 import { useAuth } from "@/app/context/auth-context"
 import { fetchDeleteReview, fetchReviewsCard } from "@/app/lib/movieApi"
 import RenderStars from "@/app/shared/RenderStars"
@@ -7,9 +8,9 @@ import Image from "next/image"
 import { useMovieUpdate } from "../../context/movieUpdateProvider"
 import { toast } from "react-toastify"
 import ToastCustom from "@/app/dashboard/components/ToastCustom"
-import { FiFilter } from "react-icons/fi";
+import { FiFilter, FiX } from "react-icons/fi"
 
-const ReviewsCard = () => {
+const ReviewsCard = ({ userId, limit }) => {
     const [reviewsData, setReviewsData] = useState([])
     const { user, loading } = useAuth()
     const { isSelectingReview, setSelectedReview, setIsSelectingReview } = useSelectionReview()
@@ -51,16 +52,24 @@ const ReviewsCard = () => {
     useEffect(() => {
         if (!user?.uid) return
 
-        const fetchReviewsData = async () => {
+        let userIdToUse
+
+        if (userId) {
+            userIdToUse = user.uid === userId ? user.uid : userId
+        } else {
+            userIdToUse = user.uid
+        }
+
+        const fetchReviewsData = async (id) => {
             try {
-                const response = await fetchReviewsCard(user.uid)
+                const response = await fetchReviewsCard(id)
                 setReviewsData(response)
             } catch (error) {
                 console.error(error)
             }
         }
 
-        fetchReviewsData()
+        fetchReviewsData(userIdToUse)
     }, [user?.uid, updateSignal])
 
     useEffect(() => {
@@ -71,28 +80,38 @@ const ReviewsCard = () => {
 
     //criar modal para editar review quando clicar no OK
 
+    const reviewsToDisplay = limit > 0 ? reviewsData.slice(0, limit) : reviewsData;
+
     return (
-        <div className="w-full h-full overflow-y-auto flex flex-col items-center justify-start bg-stone-950 rounded-lg shadow-2xl">
+        <div className="w-full h-full overflow-y-auto flex flex-col items-center justify-start bg-transparent rounded-lg shadow-2xl">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 mb-10">
-                {reviewsData.map((review) => (
+                {reviewsToDisplay.map((review) => (
                     <div
                         key={review.id_movie}
                         className={`bg-gray-800 text-white rounded-lg shadow-md overflow-hidden transition-transform transform ${
                             isSelectingReview ? "hover:scale-100" : "hover:scale-105"
                         } duration-300`}
                     >
+                        {console.log(review)}
                         <div className="w-full h-[600px] relative">
-                            <Image
-                                className="select-none object-cover"
-                                src={`${review.posterUrl}`}
-                                alt="Review Movie Poster"
-                                fill
-                                sizes="(max-width: 768px) 100vw, 
-                                        (max-width: 1200px) 50vw, 
-                                        33vw"
-                                priority
-                                quality={100}
-                            />
+                            {review.posterUrl ? (
+                                <Image
+                                    className="select-none object-cover"
+                                    src={`${review.posterUrl}`}
+                                    alt="Review Movie Poster"
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, 
+                                          (max-width: 1200px) 50vw, 
+                                          33vw"
+                                    priority
+                                    quality={100}
+                                />
+                            ) : (
+                                <div className="flex justify-center items-center h-full w-full text-center">
+                                    <FiX className="text-5xl" />
+                                    <p className="text-sm">Imagem não disponível</p>
+                                </div>
+                            )}
                         </div>
                         <div className={`absolute inset-0 ${isSelectingReview ? "bg-black/30" : ""} flex items-start justify-between`}>
                             {isSelectingReview && (
@@ -116,7 +135,7 @@ const ReviewsCard = () => {
                         </div>
 
                         <div className="p-4 flex flex-col gap-2 justify-center">
-                            <h3 className="text-lg font-bold truncate">{review.id}</h3>
+                            <h3 className="text-lg font-bold truncate select-text">{review.id}</h3>
                             <span className="text-sm text-gray-400">{review.genre}</span>
                             <p className="text-sm">{review.review}</p>
                             <div className="flex justify-between items-center mt-4">

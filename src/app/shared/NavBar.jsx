@@ -8,12 +8,20 @@ import { useAuth } from "@/app/context/auth-context"
 import { useRouter, usePathname } from "next/navigation"
 import { useSelectionReview } from "../context/selectionEditReview"
 import ModalReviewEdit from "../reviews/components/ModalReviewEdit"
+import NotificationDropdown from "./components/NotificationDropdown"
+import { useNotifications } from "../context/notificationProvider"
+import ModalEditProfile from "../profile/[userId]/components/ModalEditProfile"
+import Link from "next/link"
 
-const NavBar = () => {
+const NavBar = ({userFirestore}) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
     const [isModalAddMovie, setModalAddMovie] = useState(false)
     const [isModalReviewMovie, setModalReviewMovie] = useState(false)
     const [isModalReviewEdit, setModalReviewEdit] = useState(false)
+    const [isModalEditProfile, setModalEditProfile] = useState(false)
+    const [isNotificationsDropdown, setIsNotificationsDropdown] = useState(false)
+
+    const { notifications, loading } = useNotifications()
     const { user } = useAuth()
     const router = useRouter()
     const pathname = usePathname()
@@ -21,6 +29,10 @@ const NavBar = () => {
 
     const toggleProfileDropdown = () => {
         setProfileDropdown(!isProfileDropdown)
+    }
+
+    const toggleNotificationsDropdown = () => {
+        setIsNotificationsDropdown(!isNotificationsDropdown)
     }
 
     const toggleModalAddMovie = () => {
@@ -33,6 +45,9 @@ const NavBar = () => {
 
     const toggleModalReviewEdit = () => {
         setModalReviewEdit(!isModalReviewEdit)
+    }
+    const toggleModalEditProfile = () => {
+        setModalEditProfile(!isModalEditProfile)
     }
 
     useEffect(() => {
@@ -51,7 +66,15 @@ const NavBar = () => {
     }
 
     const reviewsPage = () => {
-        router.push("/reviews")
+        router.push(`/reviews`)
+    }
+
+    const friendsPage = () => {
+        router.push("/friends")
+    }
+
+    const profilePage = () => {
+        router.push(`/profile/${user.uid}`)
     }
 
     return (
@@ -62,7 +85,9 @@ const NavBar = () => {
 
             {isModalReviewEdit && <ModalReviewEdit toggleModalReviewEdit={toggleModalReviewEdit} isModalReviewEdit={isModalReviewEdit} />}
 
-            <nav className="flex justify-around items-center h-32 w-full">
+            {isModalEditProfile && <ModalEditProfile toggleModalEditProfile={toggleModalEditProfile} isModalEditProfile={isModalEditProfile} userFirestore={userFirestore} />}
+
+            <nav className="flex justify-around items-center h-32 w-full relative">
                 <button id="menu-toggle" className="text-white md:hidden focus:outline-none">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -75,24 +100,24 @@ const NavBar = () => {
                 <div>
                     <ul className="hidden md:flex items-center justify-center">
                         <li>
-                            <a href="/dashboard" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            <Link href="/dashboard" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Dashboard
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Explorar
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Sugestões
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Estatisticas
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>
@@ -117,7 +142,7 @@ const NavBar = () => {
                     )}
 
                     <div className="flex gap-4 justify-center items-center">
-                        {pathname === "/reviews" && (
+                        {pathname === `/reviews` && (
                             <button
                                 onClick={() => setIsSelectingReview(!isSelectingReview)}
                                 className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"
@@ -125,7 +150,30 @@ const NavBar = () => {
                                 Editar Review
                             </button>
                         )}
-                        <img id="avatar" src={user.photoURL} className="rounded-full h-10 w-10 cursor-pointer" onClick={toggleProfileDropdown} />
+                        {pathname === `/profile/${user?.uid}` ? (
+                            <button onClick={toggleModalEditProfile} className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md">
+                                Editar Perfil
+                            </button>
+                        ) : null}
+                        <img id="avatar" src={user?.photoURL} className="rounded-full h-10 w-10 cursor-pointer select-none" onClick={toggleProfileDropdown} />
+                        <button onClick={toggleNotificationsDropdown} id="notifications" className="relative text-white focus:outline-none">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
+                                ></path>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19a2 2 0 100-4 2 2 0 000 4z"></path>
+                            </svg>
+                            {notifications.length > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-4 flex items-center justify-center rounded-full">
+                                    {notifications > 9 ? "+9" : notifications.length}
+                                </span>
+                            )}
+                        </button>
+                        {console.log(notifications)}
+                        <NotificationDropdown isNotificationsDropdown={isNotificationsDropdown} notifications={notifications} loading={loading} />
                         {isProfileDropdown && (
                             <div
                                 id="userDropdown"
@@ -134,7 +182,12 @@ const NavBar = () => {
                             >
                                 <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
                                     <span className="text-xl">{user.displayName}</span>
-                                    <span className="hover:cursor-pointer">Perfil</span>
+                                    <span className="hover:cursor-pointer" onClick={profilePage}>
+                                        Perfil
+                                    </span>
+                                    <span className="hover:cursor-pointer" onClick={friendsPage}>
+                                        Amigos
+                                    </span>
                                     <span className="hover:cursor-pointer" onClick={reviewsPage}>
                                         Reviews
                                     </span>

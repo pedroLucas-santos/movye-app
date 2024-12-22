@@ -183,15 +183,52 @@ export const fetchMovieLastWatched = async () => {
 
 export const fetchMoviesWatched = async () => {
     try {
-        const movieQuery = query(collection(db, "global", "watchedMovies", "movies"), orderBy("watched_at", "desc"))
-        const snapshot = await getDocs(movieQuery)
-        const movies = snapshot.docs.map((doc) => doc.data())
+        // Buscar filmes assistidos
+        const movieQuery = query(
+            collection(db, "global", "watchedMovies", "movies"),
+            orderBy("watched_at", "desc")
+        );
+        const movieSnapshot = await getDocs(movieQuery);
+        const movies = movieSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
 
-        return movies
+        console.log("Filmes assistidos:", movies);
+
+        // Buscar reviews agrupadas pela subcoleção "reviews"
+        const reviewsQuery = query(collectionGroup(db, "reviews"));
+        const reviewsSnapshot = await getDocs(reviewsQuery);
+        const reviews = reviewsSnapshot.docs.map((doc) => doc.data());
+
+        console.log("Reviews encontradas:", reviews);
+
+        // Combinar filmes com suas reviews
+        const moviesWithRatings = movies.map((movie) => {
+            const movieReviews = reviews.filter((review) => review.id_movie === movie.id);
+
+            console.log(`Reviews para o filme ${movie.id}:`, movieReviews);
+
+            // Calcular a média dos ratings
+            const totalReviews = movieReviews.length;
+            const averageRating =
+                totalReviews > 0
+                    ? movieReviews.reduce((sum, review) => sum + (review.rating || 0), 0) / totalReviews
+                    : 0;
+
+            return {
+                ...movie,
+                averageRating,
+            };
+        });
+
+        console.log("Filmes com ratings calculados:", moviesWithRatings);
+
+        return moviesWithRatings;
     } catch (e) {
-        throw new Error("Error fetching watched movies: " + e.message)
+        throw new Error("Error fetching watched movies with ratings: " + e.message);
     }
-}
+};
 
 export const fetchMovieReview = async (movieId, newRating, movieSelected, newReview, uid) => {
     try {
@@ -473,7 +510,6 @@ export const fetchReviewsCard = async (userId) => {
 }
 
 export const fetchEditReview = async (userId, reviewId) => {
-    console.log("teste")
     try {
         const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where("id_movie", "==", reviewId))
         const snapshot = await getDocs(reviewsQuery)
@@ -507,7 +543,7 @@ export const fetchUpdateReview = async (userId, reviewId, updatedReview, updated
             const reviewRef = doc.ref // Reference to the document
             await updateDoc(reviewRef, {
                 review: updatedReview,
-                reviewed_at: Timestamp.now(), // Update the reviewed_at timestamp
+                edited_at: Timestamp.now(), // Update the reviewed_at timestamp
                 ...(updatedRating !== undefined && { rating: updatedRating }), // Conditionally update rating
             })
         }
@@ -538,3 +574,9 @@ export const fetchDeleteReview = async (userId, reviewId) => {
         throw error
     }
 }
+
+export const isFriendCodeUnique = async (code) => {
+    const usersQuery = query(collection(db, "users"), where("friendCode", "==", code));
+    const snapshot = await getDocs(usersQuery);
+    return snapshot.empty; // Retorna true se o código for único
+};
