@@ -3,7 +3,7 @@ import React from "react"
 
 const FriendList = ({ friendList }) => {
     return (
-        <div className="absolute top-24 right-64 flex flex-col justify-center items-center w-64 bg-black/80 p-4 rounded-xl">
+        <div className="absolute top-0 right-64 flex flex-col justify-center items-center w-64 p-4 rounded-xl">
             <h2 className="text-2xl mb-2">Amigos:</h2>
             {friendList.length > 0 ? (
                 <div>
