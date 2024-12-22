@@ -7,7 +7,7 @@ import UserInfo from "./components/UserInfo"
 import RenderStars from "@/app/shared/RenderStars"
 import ReviewsCard from "@/app/reviews/components/ReviewsCard"
 import { Suspense } from "react"
-import Skeleton from "react-loading-skeleton"
+
 
 export default async function ProfilePage({ params }) {
     const { userId } = await params
