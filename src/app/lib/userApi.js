@@ -100,6 +100,7 @@ export const saveProfileEdit = async (userId, favoriteMovie, backdropPath, bio) 
     try {
         // Referência ao documento do usuário no Firestore
         const userDocRef = doc(db, "users", userId)
+        const docSnapshot = await getDoc(userDocRef)
 
         if (!docSnapshot.exists()) {
             // Se o documento não existir, inicializa com os campos desejados
