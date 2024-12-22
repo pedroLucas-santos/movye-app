@@ -50,11 +50,17 @@ export default function LoginPage() {
 
             if (!userDoc.exists()) {
                 await setDoc(userDocRef, {
+                    bio: null,
                     displayName: displayName || "Anonymous",
                     email: email,
                     photoURL: photoURL || "",
                     createdAt: new Date().toISOString(),
                     friendCode: friendCode,
+                    favoriteMovie: [{
+                        backdropPath: null,
+                        id: null,
+                        title: null
+                    }]
                 })
             }
 
