@@ -7,7 +7,7 @@ import { auth } from "@/app/lib/firebase-config"
 import { useAuth } from "@/app/context/auth-context"
 import { useRouter, usePathname } from "next/navigation"
 import { useSelectionReview } from "../context/selectionEditReview"
-import ModalReviewEdit from "../reviews/components/ModalReviewEdit"
+import ModalReviewEdit from "../reviews/[userId]/components/ModalReviewEdit"
 import NotificationDropdown from "./components/NotificationDropdown"
 import { useNotifications } from "../context/notificationProvider"
 import ModalEditProfile from "../profile/[userId]/components/ModalEditProfile"
@@ -66,7 +66,7 @@ const NavBar = ({userFirestore}) => {
     }
 
     const reviewsPage = () => {
-        router.push(`/reviews`)
+        router.push(`/reviews/${user.uid}`)
     }
 
     const friendsPage = () => {
@@ -94,7 +94,7 @@ const NavBar = ({userFirestore}) => {
                     </svg>
                 </button>
                 <div id="logo">
-                    <span className="font-bold text-3xl select-none">Movye</span>
+                    <span onClick={() => router.push('/dashboard')} className="font-bold text-3xl select-none hover:cursor-pointer">Movye</span>
                 </div>
 
                 <div>
@@ -142,7 +142,7 @@ const NavBar = ({userFirestore}) => {
                     )}
 
                     <div className="flex gap-4 justify-center items-center">
-                        {pathname === `/newReviewPage/${user?.uid}` && (
+                        {pathname === `/reviews/${user?.uid}` && (
                             <button
                                 onClick={() => setIsSelectingReview(!isSelectingReview)}
                                 className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"

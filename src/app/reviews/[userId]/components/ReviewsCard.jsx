@@ -3,9 +3,9 @@ import { useAuth } from "@/app/context/auth-context"
 import { fetchDeleteReview, fetchReviewsCard } from "@/app/lib/movieApi"
 import RenderStars from "@/app/shared/RenderStars"
 import { useEffect, useState } from "react"
-import { useSelectionReview } from "../../context/selectionEditReview"
+import { useSelectionReview } from "../../../context/selectionEditReview"
 import Image from "next/image"
-import { useMovieUpdate } from "../../context/movieUpdateProvider"
+import { useMovieUpdate } from "../../../context/movieUpdateProvider"
 import { toast } from "react-toastify"
 import ToastCustom from "@/app/dashboard/components/ToastCustom"
 import { FiFilter, FiX } from "react-icons/fi"
@@ -88,7 +88,7 @@ const ReviewsCard = ({ userId, limit }) => {
                 {reviewsToDisplay.map((review) => (
                     <div
                         key={review.id_movie}
-                        className={`bg-gray-800 text-white rounded-lg shadow-md overflow-hidden transition-transform transform ${
+                        className={`bg-gray-800 w-[300px] md:w-[250px] lg:w-[250px] xl:w-[400px] text-white rounded-lg shadow-md overflow-hidden transition-transform transform ${
                             isSelectingReview ? "hover:scale-100" : "hover:scale-105"
                         } duration-300`}
                     >

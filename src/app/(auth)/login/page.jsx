@@ -71,7 +71,7 @@ export default function LoginPage() {
                 sessionStorage.setItem("authToken", token)
             }
 
-            router.push("/dashboard")
+            router.push("/groups") //alterar para dashboard depois, ou nao nao sei
         } catch (error) {
             console.error(error.message)
         }

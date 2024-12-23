@@ -1,11 +1,11 @@
 import { useAuth } from "@/app/context/auth-context"
 import ToastCustom from "@/app/dashboard/components/ToastCustom"
 import { useState, useEffect, useLayoutEffect } from "react"
-import { useSelectionReview } from "../../context/selectionEditReview"
+import { useSelectionReview } from "../../../context/selectionEditReview"
 import { fetchEditReview, fetchMoviesWatched, fetchUpdateReview } from "@/app/lib/movieApi"
 import { toast } from "react-toastify"
 import StarsReview from "@/app/shared/StarsReview"
-import { useMovieUpdate } from "../../context/movieUpdateProvider"
+import { useMovieUpdate } from "../../../context/movieUpdateProvider"
 
 const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
     const [isModalClosing, setIsModalClosing] = useState(null)
@@ -107,7 +107,7 @@ const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
                                 <div className="bg-secondary-dark flex-grow w-full flex justify-between items-center gap-6 pl-12 pr-12">
                                     <span className="text-sm md:text-lg truncate">{reviewEdit?.title}</span>
                                     <div className="text-center flex flex-col gap-2 items-end">
-                                        <span className="text-sm bg-indigo-700 p-1">{reviewEdit?.genre}</span>
+                                        <span className="text-sm text-white bg-gray-950/20 rounded-lg p-1">{reviewEdit?.genre}</span>
                                     </div>
                                 </div>
                             </div>

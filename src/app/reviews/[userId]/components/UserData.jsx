@@ -1,10 +1,10 @@
 "use client"
 import { useState, useEffect } from "react"
-import { fetchLastReviewUser } from "../../lib/movieApi" // Importando a função
-import { useAuth } from "../../context/auth-context"
+import { fetchLastReviewUser } from "../../../lib/movieApi" // Importando a função
+import { useAuth } from "../../../context/auth-context"
 import Image from "next/image"
 import RenderStars from "@/app/shared/RenderStars"
-import { useMovieUpdate } from "../../context/movieUpdateProvider"
+import { useMovieUpdate } from "../../../context/movieUpdateProvider"
 
 const UserData = ({userId, actualUser}) => {
     const { user, loading } = useAuth()
@@ -62,7 +62,7 @@ const UserData = ({userId, actualUser}) => {
                         <div>
                             <span className="flex flex-col justify-center items-center">
                                 Generos mais assistidos:
-                                <span className="text-sm text-gray-500 bg-gray-950/20 rounded-lg  p-1">{userInfo.mostViewedGenre}</span>
+                                <span className="text-sm text-white bg-gray-950/20 rounded-lg p-1">{userInfo.mostViewedGenre}</span>
                             </span>
                         </div>
                         <span>Última review:</span>

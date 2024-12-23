@@ -169,7 +169,7 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
                         <div className="bg-secondary-dark flex-grow w-full flex justify-between items-center gap-6 pl-12 pr-12">
                             <span className="text-sm md:text-lg truncate">{selectedMovie.title}</span>
                             <div className="text-center flex flex-col gap-2 items-end">
-                                <span className="text-sm bg-indigo-700 p-1">{selectedMovie.genre}</span>
+                                <span className="text-sm text-white bg-gray-950/20 rounded-lg p-1">{selectedMovie.genre}</span>
                             </div>
                         </div>
                     </div>
