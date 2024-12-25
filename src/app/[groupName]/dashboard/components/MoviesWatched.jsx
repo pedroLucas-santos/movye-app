@@ -4,10 +4,12 @@ import { fetchMoviesWatched } from "@/app/lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 import RenderStars from "@/app/shared/RenderStars"
 import "@/app/Header.css"
+import { useGroup } from "@/app/context/groupProvider"
 
 const MoviesWatched = () => {
     const [watchedMovies, setWatchedMovies] = useState([])
     const { updateSignal } = useMovieUpdate()
+    const { selectedGroup } = useGroup()
 
     const [currentPage, setCurrentPage] = useState(1)
     const moviesPerPage = 9
@@ -17,7 +19,7 @@ const MoviesWatched = () => {
     useEffect(() => {
         const fetchWatchedMovies = async () => {
             try {
-                const response = await fetchMoviesWatched()
+                const response = await fetchMoviesWatched(selectedGroup.id)
                 setWatchedMovies(response)
             } catch (e) {
                 console.error(e)
@@ -25,7 +27,7 @@ const MoviesWatched = () => {
         }
 
         fetchWatchedMovies()
-    }, [updateSignal])
+    }, [updateSignal]);
 
     const nextPage = () => {
         if (currentPage < totalPages) {

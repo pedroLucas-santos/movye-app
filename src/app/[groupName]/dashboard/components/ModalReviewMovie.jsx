@@ -6,6 +6,7 @@ import { useAuth } from "@/app/context/auth-context"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 import ToastCustom from "../../../shared/ToastCustom"
 import StarsReview from "@/app/shared/StarsReview"
+import { useGroup } from "@/app/context/groupProvider"
 
 const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
     const [isModalClosing, setIsModalClosing] = useState(null)
@@ -17,6 +18,7 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
     const [review, setReview] = useState("")
     const { user } = useAuth()
     const { triggerUpdate, updateSignal } = useMovieUpdate()
+    const {selectedGroup} = useGroup()
 
     const closeModal = () => {
         setIsModalClosing(true)
@@ -42,8 +44,8 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
     useEffect(() => {
         const fetchMovieList = async () => {
             try {
-                const watchedMoviesResponse = await fetchMoviesWatched()
-                const userReviews = await fetchUserReviews(user.uid)
+                const watchedMoviesResponse = await fetchMoviesWatched(selectedGroup.id)
+                const userReviews = await fetchUserReviews(user.uid, selectedGroup.id)
 
                 const reviewedMovieIds = userReviews.map((review) => review.id_movie)
 
@@ -71,34 +73,10 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
         }
     }, [selectedMovieId, watchedMovies])
 
-    const renderStar = (index) => {
-        const isFilled = index <= (hoveredRating || rating)
-        return (
-            <svg
-                key={index}
-                xmlns="http://www.w3.org/2000/svg"
-                fill={isFilled ? "currentColor" : "none"}
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className={`w-5 h-5 cursor-pointer transition-colors ${isFilled ? "text-white" : "text-white/20"}`}
-                onClick={() => handleRating(index)}
-                onMouseEnter={() => handleMouseEnter(index)}
-                onMouseLeave={handleMouseLeave}
-            >
-                <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 17.75l-5.8 3.04 1.1-6.44-4.7-4.58 6.5-.58L12 2l2.9 6.28 6.5.58-4.7 4.58 1.1 6.44L12 17.75z"
-                />
-            </svg>
-        )
-    }
-
     const addReview = async () => {
         if (rating && selectedMovieId && review !== "") {
             try {
-                const response = await fetchMovieReview(selectedMovieId, rating, selectedMovie, review, user.uid)
+                const response = await fetchMovieReview(selectedMovieId, rating, selectedMovie, review, user.uid, selectedGroup.id)
                 toast.success("Review enviado com sucesso:", response)
 
                 triggerUpdate()

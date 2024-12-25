@@ -71,7 +71,7 @@ export const getGroupsList = async (userId) => {
         const groupsRef = collection(db, "groups");
 
         // Cria a consulta para buscar grupos do usuário
-        const q = query(groupsRef, where("members", "array-contains", userId));
+        const q = query(groupsRef, where("members", "array-contains", userId), orderBy("createdAt", "asc"));
 
         // Executa a consulta
         const querySnapshot = await getDocs(q);

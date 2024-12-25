@@ -50,7 +50,7 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
         if (searchInput !== "") {
             const movieName = async () => {
                 try {
-                    const response = await fetchSearchedMovieName(searchInput)
+                    const response = await fetchSearchedMovieName(searchInput, selectedGroup.id)
                     setMovieName(response)
                 } catch (e) {
                     console.error(e)

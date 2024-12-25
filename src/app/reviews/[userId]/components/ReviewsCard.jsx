@@ -144,7 +144,10 @@ const ReviewsCard = ({ userId, limit }) => {
                                         <RenderStars key={index} index={index + 1} movieRating={review.rating} />
                                     ))}
                                 </span>
-                                <span className="text-xs text-gray-400">{review.reviewed_at}</span>
+                                <div className="flex flex-col justify-center items-center">
+                                    <span className="text-xs text-gray-400">{review.reviewed_at}</span>
+                                    <span className="text-xs text-gray-400">{`Assistido com o grupo: ${review.groupName}`}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

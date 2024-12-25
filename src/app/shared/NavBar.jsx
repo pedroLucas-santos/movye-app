@@ -14,7 +14,7 @@ import ModalEditProfile from "../profile/[userId]/components/ModalEditProfile"
 import Link from "next/link"
 import { useGroup } from "../context/groupProvider"
 
-const NavBar = ({userFirestore}) => {
+const NavBar = ({ userFirestore }) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
     const [isModalAddMovie, setModalAddMovie] = useState(false)
     const [isModalReviewMovie, setModalReviewMovie] = useState(false)
@@ -27,7 +27,7 @@ const NavBar = ({userFirestore}) => {
     const router = useRouter()
     const pathname = usePathname()
     const { isSelectingReview, setIsSelectingReview, selectedReview } = useSelectionReview()
-    const { selectedGroup } = useGroup()
+    const { selectedGroup, setSelectedGroup } = useGroup()
 
     const toggleProfileDropdown = () => {
         setProfileDropdown(!isProfileDropdown)
@@ -80,8 +80,14 @@ const NavBar = ({userFirestore}) => {
     }
 
     const groupsPage = () => {
-        router.push(`/groups/${user.uid}`)
+        setSelectedGroup(null)
     }
+
+    useEffect(() => {
+        if (selectedGroup === null) {
+            router.push(`/groups/${user?.uid}`)
+        }
+    }, [selectedGroup])
 
     return (
         <>
@@ -91,7 +97,13 @@ const NavBar = ({userFirestore}) => {
 
             {isModalReviewEdit && <ModalReviewEdit toggleModalReviewEdit={toggleModalReviewEdit} isModalReviewEdit={isModalReviewEdit} />}
 
-            {isModalEditProfile && <ModalEditProfile toggleModalEditProfile={toggleModalEditProfile} isModalEditProfile={isModalEditProfile} userFirestore={userFirestore} />}
+            {isModalEditProfile && (
+                <ModalEditProfile
+                    toggleModalEditProfile={toggleModalEditProfile}
+                    isModalEditProfile={isModalEditProfile}
+                    userFirestore={userFirestore}
+                />
+            )}
 
             <nav className="flex justify-around items-center h-32 w-full relative">
                 <button id="menu-toggle" className="text-white md:hidden focus:outline-none">
@@ -100,7 +112,12 @@ const NavBar = ({userFirestore}) => {
                     </svg>
                 </button>
                 <div id="logo">
-                    <span onClick={() => router.push(`/${selectedGroup?.name}/dashboard`)} className="font-bold text-3xl select-none hover:cursor-pointer">Movye</span>
+                    <span
+                        onClick={() => router.push(`/${selectedGroup?.name}/dashboard`)}
+                        className="font-bold text-3xl select-none hover:cursor-pointer"
+                    >
+                        Movye
+                    </span>
                 </div>
 
                 <div>
@@ -157,11 +174,19 @@ const NavBar = ({userFirestore}) => {
                             </button>
                         )}
                         {pathname === `/profile/${user?.uid}` ? (
-                            <button onClick={toggleModalEditProfile} className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md">
+                            <button
+                                onClick={toggleModalEditProfile}
+                                className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"
+                            >
                                 Editar Perfil
                             </button>
                         ) : null}
-                        <img id="avatar" src={user?.photoURL} className="rounded-full h-10 w-10 cursor-pointer select-none" onClick={toggleProfileDropdown} />
+                        <img
+                            id="avatar"
+                            src={user?.photoURL}
+                            className="rounded-full h-10 w-10 cursor-pointer select-none"
+                            onClick={toggleProfileDropdown}
+                        />
                         <button onClick={toggleNotificationsDropdown} id="notifications" className="relative text-white focus:outline-none">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -189,7 +214,7 @@ const NavBar = ({userFirestore}) => {
                                 <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
                                     <div className="flex flex-col">
                                         <span className="text-xl">{user.displayName}</span>
-                                        <span className="text-sm text-gray-500">{`Grupo selecionado: ${selectedGroup?.name}`}</span>
+                                        <span className="text-sm text-gray-500">{`Grupo selecionado: ${selectedGroup ? selectedGroup.name : ''}`}</span>
                                     </div>
                                     <span className="hover:cursor-pointer" onClick={profilePage}>
                                         Perfil
