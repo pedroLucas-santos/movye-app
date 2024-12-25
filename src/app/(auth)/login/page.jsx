@@ -71,7 +71,7 @@ export default function LoginPage() {
                 sessionStorage.setItem("authToken", token)
             }
 
-            router.push("/groups") //alterar para dashboard depois, ou nao nao sei
+            router.push(`/groups/${user.uid}`) //alterar para dashboard depois, ou nao nao sei
         } catch (error) {
             console.error(error.message)
         }
@@ -88,7 +88,7 @@ export default function LoginPage() {
             if (token) {
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
-                        router.push("/groups")
+                        router.push(`/groups/${user.uid}`)
                     }
                 })
             }

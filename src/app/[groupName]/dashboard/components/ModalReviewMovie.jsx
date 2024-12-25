@@ -1,10 +1,10 @@
 import "react-toastify/dist/ReactToastify.css"
 import { useState, useEffect } from "react"
-import { fetchMoviesWatched, fetchMovieReview, fetchUserReviews } from "../../lib/movieApi"
+import { fetchMoviesWatched, fetchMovieReview, fetchUserReviews } from "@/app/lib/movieApi"
 import { toast, ToastContainer } from "react-toastify"
 import { useAuth } from "@/app/context/auth-context"
-import { useMovieUpdate } from "../../context/movieUpdateProvider"
-import ToastCustom from "./ToastCustom"
+import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
+import ToastCustom from "../../../shared/ToastCustom"
 import StarsReview from "@/app/shared/StarsReview"
 
 const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {

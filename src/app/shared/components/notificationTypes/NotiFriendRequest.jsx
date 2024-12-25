@@ -1,4 +1,4 @@
-import ToastCustom from "@/app/dashboard/components/ToastCustom"
+import ToastCustom from "@/app/shared/ToastCustom"
 import { acceptFriendRequest } from "@/app/lib/friendApi"
 import { updateNotificationStatus } from "@/app/lib/notificationApi"
 import React, { useLayoutEffect, useState } from "react"

@@ -7,7 +7,7 @@ import { useSelectionReview } from "../../../context/selectionEditReview"
 import Image from "next/image"
 import { useMovieUpdate } from "../../../context/movieUpdateProvider"
 import { toast } from "react-toastify"
-import ToastCustom from "@/app/dashboard/components/ToastCustom"
+import ToastCustom from "@/app/shared/ToastCustom"
 import { FiFilter, FiX } from "react-icons/fi"
 
 const ReviewsCard = ({ userId, limit }) => {

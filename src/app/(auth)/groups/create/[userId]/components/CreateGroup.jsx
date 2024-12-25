@@ -2,7 +2,6 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "react-toastify"
-import ToastCustom from "@/app/dashboard/components/ToastCustom"
 import { createNewGroup } from "@/app/lib/groupApi"
 
 export default function CreateGroup({ userId }) {

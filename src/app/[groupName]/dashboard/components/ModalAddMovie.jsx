@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react"
-import { fetchSearchedMovieName, fetchAddMovie } from "../../lib/movieApi"
-import { useMovieUpdate } from "../../context/movieUpdateProvider"
+import { fetchSearchedMovieName, fetchAddMovie } from "@/app/lib/movieApi"
+import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 import { toast, ToastContainer } from "react-toastify"
-import ToastCustom from "./ToastCustom"
+import ToastCustom from "../../../shared/ToastCustom"
+import { useGroup } from "@/app/context/groupProvider"
 
 const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
     const [searchInput, setSearchInput] = useState("")
@@ -10,6 +11,7 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
     const [selectedMovie, setSelectedMovie] = useState(0)
     const [isModalClosing, setIsModalClosing] = useState(null)
     const { triggerUpdate } = useMovieUpdate()
+    const { selectedGroup } = useGroup()
     const genreMap = {
         28: "Action",
         12: "Adventure",
@@ -61,7 +63,7 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
     const addMovie = async () => {
         if (selectedMovie) {
             try {
-                await fetchAddMovie(selectedMovie)
+                await fetchAddMovie(selectedMovie, selectedGroup.id)
                 toast.success("Filme adicionado com sucesso!")
 
                 triggerUpdate()

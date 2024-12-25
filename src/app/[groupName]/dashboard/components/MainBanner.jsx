@@ -1,8 +1,8 @@
 "use client"
 import { useEffect, useState, useRef } from "react"
-import { fetchMovieLastWatched, fetchUserLastMovieReview } from "../../lib/movieApi"
+import { fetchMovieLastWatched, fetchUserLastMovieReview } from "@/app/lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
-import NavBar from "../../shared/NavBar"
+import NavBar from "@/app/shared/NavBar"
 import RenderStars from "@/app/shared/RenderStars"
 
 const MainBanner = () => {

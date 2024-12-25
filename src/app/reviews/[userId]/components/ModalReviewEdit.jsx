@@ -1,5 +1,5 @@
 import { useAuth } from "@/app/context/auth-context"
-import ToastCustom from "@/app/dashboard/components/ToastCustom"
+import ToastCustom from "@/app/shared/ToastCustom"
 import { useState, useEffect, useLayoutEffect } from "react"
 import { useSelectionReview } from "../../../context/selectionEditReview"
 import { fetchEditReview, fetchMoviesWatched, fetchUpdateReview } from "@/app/lib/movieApi"

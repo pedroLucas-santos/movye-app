@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
-import { fetchMoviesWatched } from "../../lib/movieApi"
+import { fetchMoviesWatched } from "@/app/lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 import RenderStars from "@/app/shared/RenderStars"
 import "@/app/Header.css"

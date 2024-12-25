@@ -1,11 +1,11 @@
 "use client"
-import "../Header.css"
+import "../../Header.css"
 import { useRouter } from "next/navigation"
-import { useAuth } from "../context/auth-context"
+import { useAuth } from "../../context/auth-context"
 import MainBanner from "./components/MainBanner"
 import MoviesWatched from "./components/MoviesWatched"
-import LoadingSpinner from "../shared/LoadingSpinner"
-import MustBeLogged from "../shared/MustBeLogged"
+import LoadingSpinner from "../../shared/LoadingSpinner"
+import MustBeLogged from "../../shared/MustBeLogged"
 
 export default function Dashboard() {
     const { user, loading } = useAuth()

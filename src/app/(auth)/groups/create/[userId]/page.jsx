@@ -1,6 +1,6 @@
 import NavBar from "@/app/shared/NavBar"
 import CreateGroup from "./components/CreateGroup"
-import ToastCustom from "@/app/dashboard/components/ToastCustom"
+import ToastCustom from "@/app/shared/ToastCustom"
 
 const page = async ({ params }) => {
     const { userId } = await params

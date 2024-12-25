@@ -11,7 +11,6 @@ const GroupList = ({ userId }) => {
 
     const handleSelectedGroup = (groupId) => {
         setSelectedGroup(groupId)
-        router.push('/dashboard')
     }
 
     useEffect(() => {
@@ -26,10 +25,17 @@ const GroupList = ({ userId }) => {
         groupsList()
     }, [])
 
+    useEffect(() => {
+        if (selectedGroup) {
+            router.push(`/${selectedGroup.name}/dashboard`)
+        }
+    }, [selectedGroup])
+
     return (
         <>
             {groupsList?.map((group) => (
                 <ul key={group.id} className="flex flex-col items-center cursor-pointer">
+                    {console.log(group)}
                     <li className="hover:scale-105 transition" onClick={() => handleSelectedGroup(group)}>
                         <img src={group.image} alt={group.name} className="w-24 h-24 rounded-full border border-gray-300 shadow-lg object-cover" />
                         <span className="mt-4 font-medium text-lg">{group.name}</span>

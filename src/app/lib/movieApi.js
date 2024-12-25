@@ -86,7 +86,7 @@ export const fetchSearchedMovieName = async (movie) => {
     }
 }
 
-export const fetchAddMovie = async (movieId) => {
+export const fetchAddMovie = async (movieId, groupId) => {
     try {
         console.log("Fetching add movie")
         const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?language=en-US`, options)
@@ -108,6 +108,7 @@ export const fetchAddMovie = async (movieId) => {
                 release_date: movie.release_date,
                 title: movie.original_title,
                 watched_at: Timestamp.now(),
+                group: groupId
             })
 
             //create movies watched
@@ -120,13 +121,14 @@ export const fetchAddMovie = async (movieId) => {
                 release_date: movie.release_date,
                 title: movie.original_title,
                 watched_at: Timestamp.now(),
+                group: groupId
             })
         }
     } catch (e) {
         throw new Error(e)
     }
 }
-
+//TODO: arrumar todas as funções ai para puxar apenas do grupo selecionado
 export const fetchMovieLastWatched = async () => {
     try {
         const movieDocRef = doc(db, "global", "lastWatchedMovie")

@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
-import ModalAddMovie from "../dashboard/components/ModalAddMovie"
-import ModalReviewMovie from "../dashboard/components/ModalReviewMovie"
+import ModalAddMovie from "@/app/[groupName]/dashboard/components/ModalAddMovie"
+import ModalReviewMovie from "@/app/[groupName]/dashboard/components/ModalReviewMovie"
 import { signOut } from "firebase/auth"
 import { auth } from "@/app/lib/firebase-config"
 import { useAuth } from "@/app/context/auth-context"
@@ -100,13 +100,13 @@ const NavBar = ({userFirestore}) => {
                     </svg>
                 </button>
                 <div id="logo">
-                    <span onClick={() => router.push('/dashboard')} className="font-bold text-3xl select-none hover:cursor-pointer">Movye</span>
+                    <span onClick={() => router.push(`/${selectedGroup?.name}/dashboard`)} className="font-bold text-3xl select-none hover:cursor-pointer">Movye</span>
                 </div>
 
                 <div>
                     <ul className="hidden md:flex items-center justify-center">
                         <li>
-                            <Link href="/dashboard" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            <Link href={`/${selectedGroup?.name}/dashboard`} className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Dashboard
                             </Link>
                         </li>
@@ -129,7 +129,7 @@ const NavBar = ({userFirestore}) => {
                 </div>
 
                 <div className="flex justify-center items-center gap-4">
-                    {pathname === "/dashboard" && (
+                    {pathname.match(/\/.*\/dashboard/) && (
                         <div className="flex gap-4">
                             <button
                                 onClick={toggleModalReviewMovie}
@@ -189,7 +189,7 @@ const NavBar = ({userFirestore}) => {
                                 <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
                                     <div className="flex flex-col">
                                         <span className="text-xl">{user.displayName}</span>
-                                        <span className="text-sm text-gray-500">{`Grupo selecionado: ${selectedGroup.name}`}</span>
+                                        <span className="text-sm text-gray-500">{`Grupo selecionado: ${selectedGroup?.name}`}</span>
                                     </div>
                                     <span className="hover:cursor-pointer" onClick={profilePage}>
                                         Perfil
