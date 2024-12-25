@@ -5,7 +5,7 @@ import NavBar from "@/app/shared/NavBar"
 import React from "react"
 
 const page = async ({ params }) => {
-    const { userId } = params
+    const { userId } = await params
     const user = await getUserById(userId)
 
     return (

@@ -6,6 +6,7 @@ const ToastCustom = () => {
         <ToastContainer
             position="top-left"
             hideProgressBar={true}
+            pauseOnHover
             newestOnTop={true}
             toastStyle={{
                 backgroundColor: "#141414",

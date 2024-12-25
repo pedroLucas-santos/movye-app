@@ -12,6 +12,7 @@ import NotificationDropdown from "./components/NotificationDropdown"
 import { useNotifications } from "../context/notificationProvider"
 import ModalEditProfile from "../profile/[userId]/components/ModalEditProfile"
 import Link from "next/link"
+import { useGroup } from "../context/groupProvider"
 
 const NavBar = ({userFirestore}) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -26,6 +27,7 @@ const NavBar = ({userFirestore}) => {
     const router = useRouter()
     const pathname = usePathname()
     const { isSelectingReview, setIsSelectingReview, selectedReview } = useSelectionReview()
+    const { selectedGroup } = useGroup()
 
     const toggleProfileDropdown = () => {
         setProfileDropdown(!isProfileDropdown)
@@ -75,6 +77,10 @@ const NavBar = ({userFirestore}) => {
 
     const profilePage = () => {
         router.push(`/profile/${user.uid}`)
+    }
+
+    const groupsPage = () => {
+        router.push(`/groups/${user.uid}`)
     }
 
     return (
@@ -181,7 +187,10 @@ const NavBar = ({userFirestore}) => {
                                 data-dropdown-target="userDropdown"
                             >
                                 <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
-                                    <span className="text-xl">{user.displayName}</span>
+                                    <div className="flex flex-col">
+                                        <span className="text-xl">{user.displayName}</span>
+                                        <span className="text-sm text-gray-500">{`Grupo selecionado: ${selectedGroup.name}`}</span>
+                                    </div>
                                     <span className="hover:cursor-pointer" onClick={profilePage}>
                                         Perfil
                                     </span>
@@ -190,6 +199,9 @@ const NavBar = ({userFirestore}) => {
                                     </span>
                                     <span className="hover:cursor-pointer" onClick={reviewsPage}>
                                         Reviews
+                                    </span>
+                                    <span className="hover:cursor-pointer" onClick={groupsPage}>
+                                        Selecionar grupo
                                     </span>
                                     <span className="hover:cursor-pointer" onClick={logout}>
                                         Logout

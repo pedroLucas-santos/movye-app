@@ -88,7 +88,7 @@ export default function LoginPage() {
             if (token) {
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
-                        router.push("/dashboard")
+                        router.push("/groups")
                     }
                 })
             }
