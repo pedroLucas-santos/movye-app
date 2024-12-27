@@ -1,5 +1,5 @@
 import { db, storage } from "../lib/firebase-config"
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 
 import {
     getDocs,
@@ -67,25 +67,92 @@ export const createNewGroup = async (groupName, groupImage, userId) => {
 }
 
 export const getGroupsList = async (userId) => {
-    try{
-        const groupsRef = collection(db, "groups");
+    try {
+        const groupsRef = collection(db, "groups")
 
         // Cria a consulta para buscar grupos do usuário
-        const q = query(groupsRef, where("members", "array-contains", userId), orderBy("createdAt", "asc"));
+        const q = query(groupsRef, where("members", "array-contains", userId), orderBy("createdAt", "asc"))
 
         // Executa a consulta
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(q)
 
         // Mapeia os resultados para um array
         const groups = querySnapshot.docs.map((doc) => ({
             id: doc.id, // ID do documento
             ...doc.data(), // Dados do documento
-        }));
+        }))
 
-        return groups;
-    }catch (error) {
+        return groups
+    } catch (error) {
         console.error("Erro ao buscar a lista de grupos:", error)
         return []
     }
 }
 
+export const getGroupData = async (groupId) => {
+    try {
+        // Referência ao documento do grupo
+        const groupRef = doc(db, "groups", groupId)
+
+        // Busca o documento do grupo
+        const querySnapshot = await getDoc(groupRef)
+
+        if (querySnapshot.exists()) {
+            const data = querySnapshot.data()
+
+            let formattedDate = ""
+            if (data.createdAt) {
+                // Verifica e formata a data
+                if (data.createdAt instanceof Timestamp) {
+                    const date = data.createdAt.toDate()
+                    formattedDate = date.toLocaleDateString("pt-BR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                    })
+                } else if (typeof data.createdAt === "number") {
+                    const date = new Date(data.createdAt * 1000) // Converter segundos para milissegundos
+                    formattedDate = date.toLocaleDateString("pt-BR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                    })
+                }
+            }
+
+            // Busca os dados dos membros
+            const membersIds = data.members || [] // Garante que o array exista
+            const usersCollectionRef = collection(db, "users")
+
+            // Aqui buscamos todos os documentos de 'users' e filtramos aqueles cujo ID está em 'membersIds'
+            const membersData = []
+            for (const memberId of membersIds) {
+                const userDocRef = doc(usersCollectionRef, memberId) // Referência ao documento do usuário
+                const userDoc = await getDoc(userDocRef) // Busca o documento do usuário
+
+                if (userDoc.exists()) {
+                    membersData.push({
+                        id: userDoc.id, // ID do documento
+                        ...userDoc.data(), // Dados do documento
+                    })
+                }
+            }
+
+            console.log(membersData)
+
+            return { ...data, createdAt: formattedDate, members: membersData }
+        } else {
+            console.log("No such document!")
+            return null
+        }
+    } catch (error) {
+        console.error("Error fetching group data:", error)
+        return null
+    }
+}

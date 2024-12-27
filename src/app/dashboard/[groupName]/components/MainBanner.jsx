@@ -123,8 +123,9 @@ const MainBanner = () => {
                                 <div className={`italic mt-4 text-[18px] text-white font-normal ${animate ? "animate-fadeIn" : ""}`}>
                                     {currentReview.review}
                                 </div>
-                                <div className={`flex gap-6 text-white text-[12px] mt-4 ${animate ? "animate-fadeIn" : ""}`}>
+                                <div className={`flex flex-col text-white text-[12px] mt-4 ${animate ? "animate-fadeIn" : ""}`}>
                                     <span>{currentReview.reviewed_at}</span>
+                                    <span className="text-xs text-gray-400">{`Assistido com o grupo: ${currentReview.groupName}`}</span>
                                 </div>
                             </div>
                         )}

@@ -9,6 +9,8 @@ import ReviewsCard from "@/app/reviews/[userId]/components/ReviewsCard"
 import { Suspense } from "react"
 import { FiArrowRight } from "react-icons/fi"
 import Link from "next/link"
+import { getGroupsList } from "@/app/lib/groupApi"
+import GroupListProfile from "./components/GroupListProfile"
 
 
 export default async function ProfilePage({ params }) {
@@ -21,6 +23,7 @@ export default async function ProfilePage({ params }) {
 
     // Fetch friend list
     const friendList = await getFriendList(userId)
+    const groupList = await getGroupsList(userId)
 
     if (!user) {
         return <div className="text-center text-red-500">User not found</div>
@@ -50,6 +53,7 @@ export default async function ProfilePage({ params }) {
                     <div>
                         <UserInfo user={user} reviewCount={reviewCount} />
                         <FriendList friendList={friendList} />
+                        <GroupListProfile groupList={groupList} />
                     </div>
 
                     <div className="grid grid-cols-3 mt-24 p-4 rounded-xl justify-items-center h-32 content-center mb-12">

@@ -28,7 +28,7 @@ const GroupList = ({ userId }) => {
 
     useEffect(() => {
         if (selectedGroup) {
-            router.push(`/${selectedGroup.name}/dashboard`)
+            router.push(`/dashboard/${selectedGroup.name}`)
         }
     }, [selectedGroup])
 

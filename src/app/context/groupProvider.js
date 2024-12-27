@@ -1,11 +1,13 @@
 "use client"
 
 import React, { createContext, useContext, useEffect, useState } from "react"
+import { useAuth } from "./auth-context"
 
 const GroupContext = createContext()
 
 export const GroupProvider = ({ children }) => {
     const [selectedGroup, setSelectedGroup] = useState(null)
+    const { user } = useAuth()
 
     useEffect(() => {
         const cachedGroup = localStorage.getItem("selectedGroup");
@@ -20,6 +22,11 @@ export const GroupProvider = ({ children }) => {
             localStorage.setItem("selectedGroup", JSON.stringify(selectedGroup));
         }
     }, [selectedGroup]);
+
+    useEffect(() => {
+        setSelectedGroup(null); // Limpa o estado de selectedGroup
+        localStorage.removeItem("selectedGroup"); // Limpa o localStorage
+    }, [user])
 
     console.log(selectedGroup)
 

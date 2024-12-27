@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
-import ModalAddMovie from "@/app/[groupName]/dashboard/components/ModalAddMovie"
-import ModalReviewMovie from "@/app/[groupName]/dashboard/components/ModalReviewMovie"
+import ModalAddMovie from "@/app/dashboard/[groupName]/components/ModalAddMovie"
+import ModalReviewMovie from "@/app/dashboard/[groupName]/components/ModalReviewMovie"
 import { signOut } from "firebase/auth"
 import { auth } from "@/app/lib/firebase-config"
 import { useAuth } from "@/app/context/auth-context"
@@ -68,7 +68,7 @@ const NavBar = ({ userFirestore }) => {
     }
 
     const reviewsPage = () => {
-        router.push(`/reviews/${user.uid}`)
+        router.push(`/reviews/${user?.uid}`)
     }
 
     const friendsPage = () => {
@@ -76,7 +76,7 @@ const NavBar = ({ userFirestore }) => {
     }
 
     const profilePage = () => {
-        router.push(`/profile/${user.uid}`)
+        router.push(`/profile/${user?.uid}`)
     }
 
     const groupsPage = () => {
@@ -113,7 +113,7 @@ const NavBar = ({ userFirestore }) => {
                 </button>
                 <div id="logo">
                     <span
-                        onClick={() => router.push(`/${selectedGroup?.name}/dashboard`)}
+                        onClick={() => router.push(`/dashboard/${selectedGroup?.name}`)}
                         className="font-bold text-3xl select-none hover:cursor-pointer"
                     >
                         Movye
@@ -123,7 +123,7 @@ const NavBar = ({ userFirestore }) => {
                 <div>
                     <ul className="hidden md:flex items-center justify-center">
                         <li>
-                            <Link href={`/${selectedGroup?.name}/dashboard`} className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            <Link href={`/dashboard/${selectedGroup?.name}`} className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Dashboard
                             </Link>
                         </li>
@@ -146,7 +146,7 @@ const NavBar = ({ userFirestore }) => {
                 </div>
 
                 <div className="flex justify-center items-center gap-4">
-                    {pathname.match(/\/.*\/dashboard/) && (
+                    {pathname.match(/\/dashboard(\/.*)?/) && (
                         <div className="flex gap-4">
                             <button
                                 onClick={toggleModalReviewMovie}
@@ -213,7 +213,7 @@ const NavBar = ({ userFirestore }) => {
                             >
                                 <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
                                     <div className="flex flex-col">
-                                        <span className="text-xl">{user.displayName}</span>
+                                        <span className="text-xl">{user?.displayName}</span>
                                         <span className="text-sm text-gray-500">{`Grupo selecionado: ${selectedGroup ? selectedGroup.name : ''}`}</span>
                                     </div>
                                     <span className="hover:cursor-pointer" onClick={profilePage}>

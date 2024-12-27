@@ -132,7 +132,7 @@ export const fetchAddMovie = async (movieId, groupId) => {
         throw new Error(e.message)
     }
 }
-//TODO: arrumar todas as funções ai para puxar apenas do grupo selecionado
+
 export const fetchMovieLastWatched = async (groupId) => {
     try {
         // Reference the group document
@@ -186,10 +186,21 @@ export const fetchMoviesWatched = async (groupId) => {
         // Reference the "watchedMovies" subcollection inside the specific group
         const watchedMoviesQuery = query(collection(db, "groups", groupId, "watchedMovies"), orderBy("watched_at", "desc"))
         const watchedMoviesSnapshot = await getDocs(watchedMoviesQuery)
-        const movies = watchedMoviesSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        }))
+        const movies = watchedMoviesSnapshot.docs.map((doc) => {
+            const movieData = doc.data()
+
+            // Convert watched_at from Timestamp to a readable string
+            const watchedAtDate =
+                movieData.watched_at instanceof Timestamp
+                    ? movieData.watched_at.toDate().toLocaleDateString("pt-BR") // or you can use toLocaleString() for more detailed format
+                    : null // Fallback if it's not a Timestamp
+
+            return {
+                id: doc.id,
+                ...movieData,
+                watched_at: watchedAtDate, // Include the formatted date
+            }
+        })
 
         console.log("Watched movies:", movies)
 
@@ -232,7 +243,7 @@ export const fetchMovieReview = async (movieId, newRating, movieSelected, newRev
 
         if (!snapshot.empty) {
             snapshot.forEach(async (docSnapshot) => {
-                const docRef = doc(db, "groups", groupId, "watchedMovies", docSnapshot.id);
+                const docRef = doc(db, "groups", groupId, "watchedMovies", docSnapshot.id)
 
                 await updateDoc(docRef, { rating: newRating })
 
@@ -257,18 +268,18 @@ export const fetchMovieReview = async (movieId, newRating, movieSelected, newRev
             title: movieSelected.title,
             backdrop_path: movieSelected.backdrop_path,
             group: groupId,
-            groupName: await fetchGroupNameById(groupId)
+            groupName: await fetchGroupNameById(groupId),
         })
     } catch (e) {
         throw new Error("Error fetching movie review: " + e.message)
     }
 }
 
-export const fetchUserLastMovieReview = async (lastMovieId, groupId) => {
+export const fetchUserLastMovieReview = async (lastMovieId) => {
     try {
         console.log(lastMovieId)
 
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("id_movie", "==", lastMovieId), where('group', '==', groupId))
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("id_movie", "==", lastMovieId))
         const snapshot = await getDocs(reviewsQuery)
 
         const reviews = snapshot.docs.map((doc) => {
@@ -295,7 +306,8 @@ export const fetchUserLastMovieReview = async (lastMovieId, groupId) => {
                 rating: data.rating || 0,
                 reviewed_at: formattedDate,
                 user_id: data.user_id,
-                group: data.group
+                group: data.group,
+                groupName: data.groupName,
             }
         })
 
@@ -308,7 +320,7 @@ export const fetchUserLastMovieReview = async (lastMovieId, groupId) => {
                     displayName: "",
                     photoURL: null,
                 },
-                group: ""
+                group: "",
             }
         }
 
@@ -339,11 +351,11 @@ export const fetchUserLastMovieReview = async (lastMovieId, groupId) => {
     }
 }
 
-export const fetchUserReviews = async (userId, groupId) => {
+export const fetchUserReviews = async (userId) => {
     try {
         console.log(userId)
         // Cria uma referência para a coleção "reviews" no Firestore
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where('group', '==', groupId))
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId))
         const snapshot = await getDocs(reviewsQuery)
 
         // Mapeia os documentos para um array
@@ -453,7 +465,7 @@ export const fetchLastReviewUser = async (userId) => {
             mostViewedGenre: mostViewedGenre, // Gênero mais visto
             totalReviews: totalReviews,
             averageRating: averageRating, // Contagem total de reviews
-            ...userData
+            ...userData,
         }
     } catch (e) {
         throw new Error("Error fetching user's last movie review: " + e.message)
@@ -499,8 +511,8 @@ export const fetchReviewsCard = async (userId) => {
                     reviewed_at: formattedDate,
                     genre: data.genre || "",
                     posterUrl: poster_url || null,
-                    group: data.group || '',
-                    groupName: data.groupName || ''
+                    group: data.group || "",
+                    groupName: data.groupName || "",
                 }
             })
         )
@@ -586,19 +598,93 @@ export const isFriendCodeUnique = async (code) => {
 export const fetchGroupNameById = async (groupId) => {
     try {
         // Reference to the group document
-        const groupDocRef = doc(db, "groups", groupId);
-        const groupDocSnap = await getDoc(groupDocRef);
+        const groupDocRef = doc(db, "groups", groupId)
+        const groupDocSnap = await getDoc(groupDocRef)
 
         // Check if the group exists
         if (!groupDocSnap.exists()) {
-            throw new Error(`Group with ID '${groupId}' not found.`);
+            throw new Error(`Group with ID '${groupId}' not found.`)
         }
 
         // Return the group name
-        const groupData = groupDocSnap.data();
-        return groupData.name || null; // Return null if 'name' field is missing
+        const groupData = groupDocSnap.data()
+        return groupData.name || null // Return null if 'name' field is missing
     } catch (error) {
-        console.error("Error fetching group name:", error.message);
-        throw error;
+        console.error("Error fetching group name:", error.message)
+        throw error
     }
-};
+}
+
+export const fetchGroupReviews = async (groupId) => {
+    try {
+        const usersRef = collection(db, "users") // Coleção principal de usuários
+        const userDocs = await getDocs(usersRef) // Obtém todos os documentos de usuários
+
+        const allReviews = []
+
+        // Itera sobre cada documento de usuário
+        for (const userDoc of userDocs.docs) {
+            const userData = userDoc.data() // Dados do usuário
+            const reviewsRef = collection(userDoc.ref, "reviews") // Subcoleção "reviews" de cada usuário
+            const reviewsQuery = query(reviewsRef, where("group", "==", groupId), orderBy("reviewed_at", "desc")) // Filtra por groupId
+            const reviewsSnapshot = await getDocs(reviewsQuery)
+
+            // Adiciona as reviews encontradas ao array allReviews
+            reviewsSnapshot.forEach((reviewDoc) => {
+                const reviewData = reviewDoc.data() // Dados da review
+                let reviewedAt = reviewData.reviewed_at
+                let editedAt = reviewData.edited_at
+
+                // Verifica se o reviewed_at é um Timestamp do Firestore e converte para Date
+                if (reviewedAt instanceof Timestamp) {
+                    reviewedAt = reviewedAt.toDate() // Converte o Timestamp para um objeto Date
+                }
+
+                // Verifica se o edited_at é um Timestamp do Firestore e converte para Date
+                if (editedAt instanceof Timestamp) {
+                    editedAt = editedAt.toDate() // Converte o Timestamp para um objeto Date
+                }
+
+                // Formata a data da review
+                let formattedReviewedDate = ""
+                if (reviewedAt) {
+                    formattedReviewedDate = reviewedAt.toLocaleDateString("pt-BR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                    })
+                }
+
+                // Formata a data de edição
+                let formattedEditedDate = ""
+                if (editedAt) {
+                    formattedEditedDate = editedAt.toLocaleDateString("pt-BR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                    })
+                }
+
+                allReviews.push({
+                    id: reviewDoc.id, // ID do documento de review
+                    ...reviewData, // Dados da review // ID do usuário que fez a review
+                    displayName: userData.displayName || "Usuário desconhecido",
+                    photoURL: userData.photoURL, // Foto do usuário
+                    reviewed_at: formattedReviewedDate, // Data formatada da review
+                    edited_at: formattedEditedDate, // Data formatada da edição
+                })
+            })
+        }
+
+        return allReviews // Retorna todas as reviews encontradas
+    } catch (error) {
+        console.error("Error fetching group reviews:", error.message)
+        throw error // Repassa o erro para quem chamou a função
+    }
+}

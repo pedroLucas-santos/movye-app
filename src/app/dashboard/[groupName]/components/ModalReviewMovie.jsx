@@ -45,7 +45,7 @@ const ModalReviewMovie = ({ toggleModalReviewMovie, isModalReviewMovie }) => {
         const fetchMovieList = async () => {
             try {
                 const watchedMoviesResponse = await fetchMoviesWatched(selectedGroup.id)
-                const userReviews = await fetchUserReviews(user.uid, selectedGroup.id)
+                const userReviews = await fetchUserReviews(user.uid)
 
                 const reviewedMovieIds = userReviews.map((review) => review.id_movie)
 

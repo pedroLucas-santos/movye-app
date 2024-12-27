@@ -1,7 +1,8 @@
 import Image from "next/image"
+import Link from "next/link"
 import React from "react"
 
-const FriendList = ({friendList}) => {
+const FriendList = ({ friendList }) => {
     return (
         <div className="absolute top-0 right-64 flex flex-col justify-center items-center w-64 p-4 rounded-xl">
             <h2 className="text-2xl mb-2">Amigos:</h2>
@@ -9,20 +10,22 @@ const FriendList = ({friendList}) => {
                 <div>
                     <ul className="list-disc list-inside">
                         {friendList.slice(0, 4).map((friend) => (
-                            <li key={friend.id} className="text-lg text-white flex justify-center items-center gap-4">
+                            <li key={friend.id} className="text-lg text-white flex justify-start items-center gap-4">
                                 <div className="flex-shrink-0 w-12 h-12 mb-3">
-                                    <Image
-                                        src={`${friend?.photoURL?.replace("s96-c", "s400-c")}` || null}
-                                        alt={`${friend.displayName}'s profile picture`}
-                                        className="rounded-full"
-                                        width={50}
-                                        height={50}
-                                        quality={100}
-                                    />
+                                    <Link href={`/profile/${friend.id}`}>
+                                        <Image
+                                            src={`${friend?.photoURL?.replace("s96-c", "s400-c")}` || null}
+                                            alt={`${friend.displayName}'s profile picture`}
+                                            className="rounded-full"
+                                            width={50}
+                                            height={50}
+                                            quality={100}
+                                        />
+                                    </Link>
                                 </div>
-                                <a href={`/profile/${friend.id}`} className="hover:cursor-pointer truncate w-40">
-                                    {friend.displayName}
-                                </a>
+                                <Link href={`/profile/${friend.id}`}>
+                                    <span className="truncate">{friend.displayName}</span>
+                                </Link>
                             </li>
                         ))}
                     </ul>
