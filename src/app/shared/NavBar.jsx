@@ -62,6 +62,8 @@ const NavBar = ({ userFirestore }) => {
         try {
             await signOut(auth)
             router.push("/login")
+            setSelectedGroup(null)
+            localStorage.removeItem("selectedGroup")
         } catch (err) {
             console.error(err)
         }
@@ -81,13 +83,15 @@ const NavBar = ({ userFirestore }) => {
 
     const groupsPage = () => {
         setSelectedGroup(null)
+        localStorage.removeItem("selectedGroup") // Limpa o localStorage
+        router.push(`/groups/${user?.uid}`)
     }
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (selectedGroup === null) {
             router.push(`/groups/${user?.uid}`)
         }
-    }, [selectedGroup])
+    }, [selectedGroup]) */
 
     return (
         <>
@@ -118,6 +122,10 @@ const NavBar = ({ userFirestore }) => {
                     >
                         Movye
                     </span>
+                </div>
+
+                <div>
+                    <span className="text-white/40">{selectedGroup?.name}</span>
                 </div>
 
                 <div>
@@ -214,7 +222,9 @@ const NavBar = ({ userFirestore }) => {
                                 <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
                                     <div className="flex flex-col">
                                         <span className="text-xl">{user?.displayName}</span>
-                                        <span className="text-sm text-gray-500">{`Grupo selecionado: ${selectedGroup ? selectedGroup.name : ''}`}</span>
+                                        <span className="text-sm text-gray-500">{`Grupo selecionado: ${
+                                            selectedGroup ? selectedGroup.name : ""
+                                        }`}</span>
                                     </div>
                                     <span className="hover:cursor-pointer" onClick={profilePage}>
                                         Perfil
