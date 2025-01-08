@@ -23,10 +23,10 @@ export const GroupProvider = ({ children }) => {
         }
     }, [selectedGroup]);
 
-    useEffect(() => {
+   /*  useEffect(() => {
         setSelectedGroup(null); // Limpa o estado de selectedGroup
         localStorage.removeItem("selectedGroup"); // Limpa o localStorage
-    }, [user])
+    }, [user]) */
 
     console.log(selectedGroup)
 

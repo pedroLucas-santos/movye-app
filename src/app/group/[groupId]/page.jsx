@@ -8,6 +8,7 @@ import GroupMoviesWatched from "./components/GroupMoviesWatched"
 import { GroupReviews } from "./components/GroupReviews"
 import Link from "next/link"
 import InviteUsers from "./components/InviteUsers"
+import GroupMembers from "./components/GroupMembers"
 
 const page = async ({ params }) => {
     const { groupId } = await params
@@ -22,7 +23,6 @@ const page = async ({ params }) => {
                 <div className="group-page max-w-4xl mx-auto p-6 bg-primary-dark rounded-lg shadow-md overflow-hidden">
                     {group ? (
                         <>
-                            {/* Header */}
                             <header className="group-header text-center mb-8">
                                 <img
                                     src={group.image}
@@ -35,24 +35,7 @@ const page = async ({ params }) => {
                                 <InviteUsers groupCreatorId={group.creatorId} />
                             </header>
 
-                            {/* Membros */}
-
-                            {/* TODO: listar somente até um numero de membros, após o numero aparecer um botao para expandir */}
-                            <section className="group-members mb-8">
-                                <h2 className="text-xl font-semibold text-gray-200 mb-4">Membros</h2>
-                                {console.log(group)}
-
-                                {group.members.map((member) => (
-                                    <ul key={member.id} className="space-y-2">
-                                        <li className="bg-secondary-dark shadow-sm p-4 rounded-md flex items-center gap-2">
-                                            <Link href={`/profile/${member.id}`} className="flex justify-center items-center gap-2">
-                                                <img src={member.photoURL} alt="" className="rounded-full w-12 h-12" />
-                                                <span className="text-gray-200">{member.displayName}</span>
-                                            </Link>
-                                        </li>
-                                    </ul>
-                                ))}
-                            </section>
+                            <GroupMembers members={group.members} />
 
                             <GroupMoviesWatched watchedMovies={watchedMovies} />
 
