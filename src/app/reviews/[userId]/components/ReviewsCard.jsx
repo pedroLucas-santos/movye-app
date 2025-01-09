@@ -3,11 +3,11 @@ import { useAuth } from "@/app/context/auth-context"
 import { fetchDeleteReview, fetchReviewsCard } from "@/app/lib/movieApi"
 import RenderStars from "@/app/shared/RenderStars"
 import { useEffect, useState } from "react"
-import { useSelectionReview } from "../../context/selectionEditReview"
+import { useSelectionReview } from "../../../context/selectionEditReview"
 import Image from "next/image"
-import { useMovieUpdate } from "../../context/movieUpdateProvider"
+import { useMovieUpdate } from "../../../context/movieUpdateProvider"
 import { toast } from "react-toastify"
-import ToastCustom from "@/app/dashboard/components/ToastCustom"
+import ToastCustom from "@/app/shared/ToastCustom"
 import { FiFilter, FiX } from "react-icons/fi"
 
 const ReviewsCard = ({ userId, limit }) => {
@@ -84,11 +84,11 @@ const ReviewsCard = ({ userId, limit }) => {
 
     return (
         <div className="w-full h-full overflow-y-auto flex flex-col items-center justify-start bg-transparent rounded-lg shadow-2xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 mb-10">
                 {reviewsToDisplay.map((review) => (
                     <div
                         key={review.id_movie}
-                        className={`bg-gray-800 text-white rounded-lg shadow-md overflow-hidden transition-transform transform ${
+                        className={`bg-gray-800 w-[300px] md:w-[250px] lg:w-[250px] xl:w-[400px] text-white rounded-lg shadow-md overflow-hidden transition-transform transform ${
                             isSelectingReview ? "hover:scale-100" : "hover:scale-105"
                         } duration-300`}
                     >
@@ -144,7 +144,10 @@ const ReviewsCard = ({ userId, limit }) => {
                                         <RenderStars key={index} index={index + 1} movieRating={review.rating} />
                                     ))}
                                 </span>
-                                <span className="text-xs text-gray-400">{review.reviewed_at}</span>
+                                <div className="flex flex-col justify-center items-center">
+                                    <span className="text-xs text-gray-400">{review.reviewed_at}</span>
+                                    <span className="text-xs text-gray-400">{`Assistido com o grupo: ${review.groupName}`}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

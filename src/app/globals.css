@@ -48,4 +48,5 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     height: 100dvh;
     width: 100dvw;
+    overflow-x: hidden;
 }

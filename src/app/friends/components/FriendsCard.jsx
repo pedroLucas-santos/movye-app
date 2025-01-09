@@ -1,5 +1,5 @@
 import { useAuth } from "@/app/context/auth-context"
-import ToastCustom from "@/app/dashboard/components/ToastCustom"
+import ToastCustom from "@/app/shared/ToastCustom"
 import { deleteFriend, getFriendList, getUserFriendCode, searchFriendCode, sendFriendRequest } from "@/app/lib/friendApi"
 import Image from "next/image"
 import Link from "next/link"

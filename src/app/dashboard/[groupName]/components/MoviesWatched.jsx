@@ -1,13 +1,15 @@
 "use client"
 import { useEffect, useState } from "react"
-import { fetchMoviesWatched } from "../../lib/movieApi"
+import { fetchMoviesWatched } from "@/app/lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 import RenderStars from "@/app/shared/RenderStars"
 import "@/app/Header.css"
+import { useGroup } from "@/app/context/groupProvider"
 
 const MoviesWatched = () => {
     const [watchedMovies, setWatchedMovies] = useState([])
     const { updateSignal } = useMovieUpdate()
+    const { selectedGroup } = useGroup()
 
     const [currentPage, setCurrentPage] = useState(1)
     const moviesPerPage = 9
@@ -17,7 +19,7 @@ const MoviesWatched = () => {
     useEffect(() => {
         const fetchWatchedMovies = async () => {
             try {
-                const response = await fetchMoviesWatched()
+                const response = await fetchMoviesWatched(selectedGroup.id)
                 setWatchedMovies(response)
             } catch (e) {
                 console.error(e)
@@ -25,7 +27,7 @@ const MoviesWatched = () => {
         }
 
         fetchWatchedMovies()
-    }, [updateSignal])
+    }, [updateSignal]);
 
     const nextPage = () => {
         if (currentPage < totalPages) {
@@ -61,7 +63,7 @@ const MoviesWatched = () => {
                             <div className="bg-secondary-dark flex-grow w-full flex justify-between items-center gap-6 pl-12 pr-12">
                                 <span className="text-sm md:text-lg truncate">{movie.title}</span>
                                 <div className="text-center flex flex-col gap-2 items-end">
-                                    <span className="text-sm text-gray-500 bg-gray-950/20 rounded-lg p-1">{movie.genre}</span>
+                                    <span className="text-sm text-white bg-gray-950/20 rounded-lg p-1">{movie.genre}</span>
                                     <div className="flex">
                                         {Array.from({ length: 5 }, (_, index) => (
                                             <RenderStars key={index} index={index + 1} movieRating={movie.averageRating} />

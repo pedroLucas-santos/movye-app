@@ -1,19 +1,20 @@
 "use client"
 import React, { useEffect, useState } from "react"
-import ModalAddMovie from "../dashboard/components/ModalAddMovie"
-import ModalReviewMovie from "../dashboard/components/ModalReviewMovie"
+import ModalAddMovie from "@/app/dashboard/[groupName]/components/ModalAddMovie"
+import ModalReviewMovie from "@/app/dashboard/[groupName]/components/ModalReviewMovie"
 import { signOut } from "firebase/auth"
 import { auth } from "@/app/lib/firebase-config"
 import { useAuth } from "@/app/context/auth-context"
 import { useRouter, usePathname } from "next/navigation"
 import { useSelectionReview } from "../context/selectionEditReview"
-import ModalReviewEdit from "../reviews/components/ModalReviewEdit"
+import ModalReviewEdit from "../reviews/[userId]/components/ModalReviewEdit"
 import NotificationDropdown from "./components/NotificationDropdown"
 import { useNotifications } from "../context/notificationProvider"
 import ModalEditProfile from "../profile/[userId]/components/ModalEditProfile"
 import Link from "next/link"
+import { useGroup } from "../context/groupProvider"
 
-const NavBar = ({userFirestore}) => {
+const NavBar = ({ userFirestore }) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
     const [isModalAddMovie, setModalAddMovie] = useState(false)
     const [isModalReviewMovie, setModalReviewMovie] = useState(false)
@@ -26,6 +27,7 @@ const NavBar = ({userFirestore}) => {
     const router = useRouter()
     const pathname = usePathname()
     const { isSelectingReview, setIsSelectingReview, selectedReview } = useSelectionReview()
+    const { selectedGroup, setSelectedGroup } = useGroup()
 
     const toggleProfileDropdown = () => {
         setProfileDropdown(!isProfileDropdown)
@@ -60,13 +62,15 @@ const NavBar = ({userFirestore}) => {
         try {
             await signOut(auth)
             router.push("/login")
+            setSelectedGroup(null)
+            localStorage.removeItem("selectedGroup")
         } catch (err) {
             console.error(err)
         }
     }
 
     const reviewsPage = () => {
-        router.push(`/reviews`)
+        router.push(`/reviews/${user?.uid}`)
     }
 
     const friendsPage = () => {
@@ -74,8 +78,20 @@ const NavBar = ({userFirestore}) => {
     }
 
     const profilePage = () => {
-        router.push(`/profile/${user.uid}`)
+        router.push(`/profile/${user?.uid}`)
     }
+
+    const groupsPage = () => {
+        setSelectedGroup(null)
+        localStorage.removeItem("selectedGroup") // Limpa o localStorage
+        router.push(`/groups/${user?.uid}`)
+    }
+
+    /* useEffect(() => {
+        if (selectedGroup === null) {
+            router.push(`/groups/${user?.uid}`)
+        }
+    }, [selectedGroup]) */
 
     return (
         <>
@@ -85,7 +101,13 @@ const NavBar = ({userFirestore}) => {
 
             {isModalReviewEdit && <ModalReviewEdit toggleModalReviewEdit={toggleModalReviewEdit} isModalReviewEdit={isModalReviewEdit} />}
 
-            {isModalEditProfile && <ModalEditProfile toggleModalEditProfile={toggleModalEditProfile} isModalEditProfile={isModalEditProfile} userFirestore={userFirestore} />}
+            {isModalEditProfile && (
+                <ModalEditProfile
+                    toggleModalEditProfile={toggleModalEditProfile}
+                    isModalEditProfile={isModalEditProfile}
+                    userFirestore={userFirestore}
+                />
+            )}
 
             <nav className="flex justify-around items-center h-32 w-full relative">
                 <button id="menu-toggle" className="text-white md:hidden focus:outline-none">
@@ -94,13 +116,22 @@ const NavBar = ({userFirestore}) => {
                     </svg>
                 </button>
                 <div id="logo">
-                    <span className="font-bold text-3xl select-none">Movye</span>
+                    <span
+                        onClick={() => router.push(`/dashboard/${selectedGroup?.name}`)}
+                        className="font-bold text-3xl select-none hover:cursor-pointer"
+                    >
+                        Movye
+                    </span>
+                </div>
+
+                <div>
+                    <span className="text-white/40">{selectedGroup?.name}</span>
                 </div>
 
                 <div>
                     <ul className="hidden md:flex items-center justify-center">
                         <li>
-                            <Link href="/dashboard" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            <Link href={`/dashboard/${selectedGroup?.name}`} className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Dashboard
                             </Link>
                         </li>
@@ -123,7 +154,7 @@ const NavBar = ({userFirestore}) => {
                 </div>
 
                 <div className="flex justify-center items-center gap-4">
-                    {pathname === "/dashboard" && (
+                    {pathname.match(/\/dashboard(\/.*)?/) && (
                         <div className="flex gap-4">
                             <button
                                 onClick={toggleModalReviewMovie}
@@ -142,7 +173,7 @@ const NavBar = ({userFirestore}) => {
                     )}
 
                     <div className="flex gap-4 justify-center items-center">
-                        {pathname === `/reviews` && (
+                        {pathname === `/reviews/${user?.uid}` && (
                             <button
                                 onClick={() => setIsSelectingReview(!isSelectingReview)}
                                 className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"
@@ -151,11 +182,19 @@ const NavBar = ({userFirestore}) => {
                             </button>
                         )}
                         {pathname === `/profile/${user?.uid}` ? (
-                            <button onClick={toggleModalEditProfile} className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md">
+                            <button
+                                onClick={toggleModalEditProfile}
+                                className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"
+                            >
                                 Editar Perfil
                             </button>
                         ) : null}
-                        <img id="avatar" src={user?.photoURL} className="rounded-full h-10 w-10 cursor-pointer select-none" onClick={toggleProfileDropdown} />
+                        <img
+                            id="avatar"
+                            src={user?.photoURL}
+                            className="rounded-full h-10 w-10 cursor-pointer select-none"
+                            onClick={toggleProfileDropdown}
+                        />
                         <button onClick={toggleNotificationsDropdown} id="notifications" className="relative text-white focus:outline-none">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -181,7 +220,12 @@ const NavBar = ({userFirestore}) => {
                                 data-dropdown-target="userDropdown"
                             >
                                 <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
-                                    <span className="text-xl">{user.displayName}</span>
+                                    <div className="flex flex-col">
+                                        <span className="text-xl">{user?.displayName}</span>
+                                        <span className="text-sm text-gray-500">{`Grupo selecionado: ${
+                                            selectedGroup ? selectedGroup.name : ""
+                                        }`}</span>
+                                    </div>
                                     <span className="hover:cursor-pointer" onClick={profilePage}>
                                         Perfil
                                     </span>
@@ -190,6 +234,9 @@ const NavBar = ({userFirestore}) => {
                                     </span>
                                     <span className="hover:cursor-pointer" onClick={reviewsPage}>
                                         Reviews
+                                    </span>
+                                    <span className="hover:cursor-pointer" onClick={groupsPage}>
+                                        Selecionar grupo
                                     </span>
                                     <span className="hover:cursor-pointer" onClick={logout}>
                                         Logout

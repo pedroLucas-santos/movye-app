@@ -1,6 +1,6 @@
 "use client"
 import { useAuth } from "@/app/context/auth-context"
-import ToastCustom from "@/app/dashboard/components/ToastCustom"
+import ToastCustom from "@/app/shared/ToastCustom"
 import { getMovieBackdrop, saveProfileEdit, searchFavoriteMovie } from "@/app/lib/userApi"
 import Image from "next/image"
 import { useRouter } from "next/navigation"

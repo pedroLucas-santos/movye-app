@@ -71,7 +71,7 @@ export default function LoginPage() {
                 sessionStorage.setItem("authToken", token)
             }
 
-            router.push("/dashboard")
+            router.push(`/groups/${user.uid}`) //alterar para dashboard depois, ou nao nao sei
         } catch (error) {
             console.error(error.message)
         }
@@ -88,7 +88,7 @@ export default function LoginPage() {
             if (token) {
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
-                        router.push("/dashboard")
+                        router.push(`/groups/${user.uid}`)
                     }
                 })
             }
@@ -99,7 +99,7 @@ export default function LoginPage() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-primary-dark text-white">
-            <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 mb-12">Movye</h1>
+            <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-zinc-300 via-zinc-500 to-zinc-800 mb-12">Movye</h1>
 
             <div className="mb-6">
                 <label className="flex items-center gap-2">

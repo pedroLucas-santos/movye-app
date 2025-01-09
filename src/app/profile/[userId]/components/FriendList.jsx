@@ -1,4 +1,5 @@
 import Image from "next/image"
+import Link from "next/link"
 import React from "react"
 
 const FriendList = ({ friendList }) => {
@@ -8,21 +9,27 @@ const FriendList = ({ friendList }) => {
             {friendList.length > 0 ? (
                 <div>
                     <ul className="list-disc list-inside">
-                        {friendList.slice(0, 6).map((friend) => (
-                            <li key={friend.id} className="text-lg text-white flex justify-center items-center gap-4">
-                                <Image
-                                    src={`${friend?.photoURL?.replace("s96-c", "s400-c")}` || null}
-                                    alt={`${friend.displayName}'s profile picture`}
-                                    className="rounded-full"
-                                    width={50}
-                                    height={50}
-                                    quality={100}
-                                />
-                                <a href={`/profile/${friend.id}`} className="hover:cursor-pointer truncate">{friend.displayName}</a>
+                        {friendList.slice(0, 4).map((friend) => (
+                            <li key={friend.id} className="text-lg text-white flex justify-start items-center gap-4">
+                                <div className="flex-shrink-0 w-12 h-12 mb-3">
+                                    <Link href={`/profile/${friend.id}`}>
+                                        <Image
+                                            src={`${friend?.photoURL?.replace("s96-c", "s400-c")}` || null}
+                                            alt={`${friend.displayName}'s profile picture`}
+                                            className="rounded-full"
+                                            width={50}
+                                            height={50}
+                                            quality={100}
+                                        />
+                                    </Link>
+                                </div>
+                                <Link href={`/profile/${friend.id}`}>
+                                    <span className="truncate">{friend.displayName}</span>
+                                </Link>
                             </li>
                         ))}
                     </ul>
-                    {friendList.length > 6 && <p className="mt-4 text-gray-400">+{friendList.length - 6} outros amigos</p>}
+                    {friendList.length > 4 && <p className="text-gray-400">+{friendList.length - 4} outros amigos</p>}
                 </div>
             ) : (
                 <p className="mt-8 text-gray-500">Nenhum amigo.</p>
