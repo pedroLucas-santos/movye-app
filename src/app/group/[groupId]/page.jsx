@@ -20,7 +20,7 @@ const page = async ({ params }) => {
         <>
             <NavBar />
             <Suspense>
-                <div className="group-page max-w-4xl mx-auto p-6 bg-primary-dark rounded-lg shadow-md overflow-hidden">
+                <div className="group-page max-w-4xl mx-auto p-6 bg-primary-dark rounded-lg overflow-hidden">
                     {group ? (
                         <>
                             <header className="group-header text-center mb-8">

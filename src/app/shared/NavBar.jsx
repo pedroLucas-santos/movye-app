@@ -13,6 +13,7 @@ import { useNotifications } from "../context/notificationProvider"
 import ModalEditProfile from "../profile/[userId]/components/ModalEditProfile"
 import Link from "next/link"
 import { useGroup } from "../context/groupProvider"
+import ModalOtherGroups from "../profile/[userId]/components/ModalOtherGroups"
 
 const NavBar = ({ userFirestore }) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -87,6 +88,13 @@ const NavBar = ({ userFirestore }) => {
         router.push(`/groups/${user?.uid}`)
     }
 
+    const dashboardPage = () => {
+        if (selectedGroup) {
+            const sanitizedGroupName = selectedGroup.name.replace(/\s/g, "-") // Substituir espaços por "_"
+            router.push(`/dashboard/${sanitizedGroupName}`)
+        }
+    }
+
     /* useEffect(() => {
         if (selectedGroup === null) {
             router.push(`/groups/${user?.uid}`)
@@ -109,32 +117,20 @@ const NavBar = ({ userFirestore }) => {
                 />
             )}
 
-            <nav className="flex justify-around items-center h-32 w-full relative">
+            <nav className="grid grid-cols-3 justify-items-center items-center h-32 w-full relative">
                 <button id="menu-toggle" className="text-white md:hidden focus:outline-none">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
                 <div id="logo">
-                    <span
-                        onClick={() => router.push(`/dashboard/${selectedGroup?.name}`)}
-                        className="font-bold text-3xl select-none hover:cursor-pointer"
-                    >
+                    <span onClick={dashboardPage} className="font-bold text-3xl select-none hover:cursor-pointer">
                         Movye
                     </span>
                 </div>
 
                 <div>
-                    <span className="text-white/40">{selectedGroup?.name}</span>
-                </div>
-
-                <div>
                     <ul className="hidden md:flex items-center justify-center">
-                        <li>
-                            <Link href={`/dashboard/${selectedGroup?.name}`} className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
-                                Dashboard
-                            </Link>
-                        </li>
                         <li>
                             <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Explorar
@@ -189,12 +185,45 @@ const NavBar = ({ userFirestore }) => {
                                 Editar Perfil
                             </button>
                         ) : null}
-                        <img
-                            id="avatar"
-                            src={user?.photoURL}
-                            className="rounded-full h-10 w-10 cursor-pointer select-none"
-                            onClick={toggleProfileDropdown}
-                        />
+                        <div className="relative">
+                            <img
+                                id="avatar"
+                                src={user?.photoURL}
+                                className="rounded-full h-10 w-10 cursor-pointer select-none"
+                                onClick={toggleProfileDropdown}
+                            />
+                            {isProfileDropdown && (
+                                <div
+                                    id="userDropdown"
+                                    className="absolute top-12 right-[-85px] z-10 divide-y divide-gray-100  w-48 bg-secondary-dark rounded-md shadow-md py-2 text-left"
+                                    data-dropdown-target="userDropdown"
+                                >
+                                    <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
+                                        <div className="flex flex-col">
+                                            <span className="text-xl">{user?.displayName}</span>
+                                            <span className="text-sm text-gray-500">{`Grupo selecionado: ${
+                                                selectedGroup ? selectedGroup.name : ""
+                                            }`}</span>
+                                        </div>
+                                        <span className="hover:cursor-pointer" onClick={profilePage}>
+                                            Perfil
+                                        </span>
+                                        <span className="hover:cursor-pointer" onClick={friendsPage}>
+                                            Amigos
+                                        </span>
+                                        <span className="hover:cursor-pointer" onClick={reviewsPage}>
+                                            Reviews
+                                        </span>
+                                        <span className="hover:cursor-pointer" onClick={groupsPage}>
+                                            Selecionar grupo
+                                        </span>
+                                        <span className="hover:cursor-pointer" onClick={logout}>
+                                            Logout
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         <button onClick={toggleNotificationsDropdown} id="notifications" className="relative text-white focus:outline-none">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -210,40 +239,9 @@ const NavBar = ({ userFirestore }) => {
                                     {notifications > 9 ? "+9" : notifications.length}
                                 </span>
                             )}
+                            <NotificationDropdown isNotificationsDropdown={isNotificationsDropdown} notifications={notifications} loading={loading} />
                         </button>
                         {console.log(notifications)}
-                        <NotificationDropdown isNotificationsDropdown={isNotificationsDropdown} notifications={notifications} loading={loading} />
-                        {isProfileDropdown && (
-                            <div
-                                id="userDropdown"
-                                className="absolute top-24 right-auto z-10 divide-y divide-gray-100  w-48 bg-secondary-dark rounded-md shadow-md py-2 text-left"
-                                data-dropdown-target="userDropdown"
-                            >
-                                <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
-                                    <div className="flex flex-col">
-                                        <span className="text-xl">{user?.displayName}</span>
-                                        <span className="text-sm text-gray-500">{`Grupo selecionado: ${
-                                            selectedGroup ? selectedGroup.name : ""
-                                        }`}</span>
-                                    </div>
-                                    <span className="hover:cursor-pointer" onClick={profilePage}>
-                                        Perfil
-                                    </span>
-                                    <span className="hover:cursor-pointer" onClick={friendsPage}>
-                                        Amigos
-                                    </span>
-                                    <span className="hover:cursor-pointer" onClick={reviewsPage}>
-                                        Reviews
-                                    </span>
-                                    <span className="hover:cursor-pointer" onClick={groupsPage}>
-                                        Selecionar grupo
-                                    </span>
-                                    <span className="hover:cursor-pointer" onClick={logout}>
-                                        Logout
-                                    </span>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             </nav>

@@ -10,7 +10,7 @@ export default async function Groups({ params }) {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen">
             <h1 className="text-2xl font-bold mb-8">Selecione seu Grupo</h1>
-            <div className="grid grid-cols-4 gap-8">
+            <div className="grid grid-cols-3 gap-8 justify-items-center">
                 <Suspense>
                     <GroupList userId={userId} />
                 </Suspense>

@@ -11,7 +11,7 @@ import { FiArrowRight } from "react-icons/fi"
 import Link from "next/link"
 import { getGroupsList } from "@/app/lib/groupApi"
 import GroupListProfile from "./components/GroupListProfile"
-
+import ModalOtherGroups from "./components/ModalOtherGroups"
 
 export default async function ProfilePage({ params }) {
     const { userId } = await params
@@ -34,6 +34,7 @@ export default async function ProfilePage({ params }) {
     return (
         <>
             <div className="relative w-full h-screen bg-cover shadow-inner shadow-gray-900/80 overflow-x-hidden">
+                <ModalOtherGroups groupList={groupList}/>
                 {/* Imagem com gradiente no final */}
                 <div className="absolute inset-0">
                     <Suspense>
@@ -77,7 +78,9 @@ export default async function ProfilePage({ params }) {
                     <div className="flex flex-col justify-center items-center w-full">
                         <h2 className="text-3xl text-white text-center">Últimas reviews:</h2>
                         <div className="w-[1300px] flex justify-end">
-                            <Link href={`/reviews/${userId}`} className="text-lg text-white text-center flex items-center">Ver todas as reviews <FiArrowRight/></Link>
+                            <Link href={`/reviews/${userId}`} className="text-lg text-white text-center flex items-center">
+                                Ver todas as reviews <FiArrowRight />
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -86,9 +89,8 @@ export default async function ProfilePage({ params }) {
 
                 <div className="w-full h-full bg-black">
                     <Suspense>
-                        <ReviewsCard userId={userId} limit={3}/>
+                        <ReviewsCard userId={userId} limit={3} />
                     </Suspense>
-                    
                 </div>
             </div>
         </>
