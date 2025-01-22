@@ -34,7 +34,7 @@ export default async function ProfilePage({ params }) {
     return (
         <>
             <div className="relative w-full h-screen bg-cover shadow-inner shadow-gray-900/80 overflow-x-hidden">
-                <ModalOtherGroups groupList={groupList}/>
+                <ModalOtherGroups userId={userId}/>
                 {/* Imagem com gradiente no final */}
                 <div className="absolute inset-0">
                     <Suspense>

@@ -1,9 +1,23 @@
-//TODO: fazer o modal fechar
+//TODO: fazer o modal fechar, ta dano erro
+"use client"
+import { getGroupsList } from "@/app/lib/groupApi"
 import Image from "next/image"
 import Link from "next/link"
-import React from "react"
+import React, { useEffect, useLayoutEffect, useState } from "react"
 
-const ModalOtherGroups = async ({ groupList }) => {
+const ModalOtherGroups = ({ userId }) => {
+    const [groupList, setGroupList] = useState([])
+    useLayoutEffect(() => {
+        const fetchGroupList = async () => {
+            try {
+                const response = await getGroupsList(userId)
+                setGroupList(response.data)
+            } catch (e) {
+                console.error("Error fetching group list", e)
+            }
+        }
+        fetchGroupList()
+    }, [])
     return (
         <div className={`fixed flex justify-center p-12 z-10 w-dvw h-dvh bg-black/40 transition duration-300`}>
             <div className="w-[400px] h-[650px] bg-primary-dark pt-10 pb-10 pl-12 pr-12 overflow-y-auto rounded-md">
