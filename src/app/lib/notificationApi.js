@@ -15,11 +15,17 @@ import {
     deleteDoc,
     addDoc,
 } from "firebase/firestore"
+import { getGroupData } from "./groupApi"
 
 export const createNotification = async (notificationData) => {
     try {
         const { sender, receiverId, type, message, additionalData } = notificationData
         const notificationRef = collection(db, "notifications")
+        //TODO: terminar de fazer a notificacao do grupo request
+        if(type === 'group-request'){
+            const groupData = await getGroupData(additionalData.groupId)
+            additionalData.groupName = groupData.name
+        }
 
         const defaultNotification = {
             receiverId,
@@ -38,6 +44,19 @@ export const createNotification = async (notificationData) => {
                     senderName: sender.displayName,
                     senderPhoto: sender.photoURL,
                     friendRequestId: additionalData?.friendRequestId,
+                })
+
+                break
+            case "group-request":
+                await addDoc(notificationRef, {
+                    ...defaultNotification,
+                    title: "Convite para Grupo",
+                    senderId: sender.uid,
+                    senderName: sender.displayName,
+                    senderPhoto: sender.photoURL,
+                    groupRequestId: additionalData?.groupRequestId,
+                    groupId: additionalData?.groupId,
+                    groupName: additionalData?.groupName,
                 })
 
                 break

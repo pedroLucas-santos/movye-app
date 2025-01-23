@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import NotiFriendRequest from "./notificationTypes/NotiFriendRequest"
 import NotiMessage from "./notificationTypes/NotiMessage"
+import NotiGroupRequest from "./notificationTypes/NotiGroupRequest"
 
 const NotificationDropdown = ({ isNotificationsDropdown, notifications, loading }) => {
     if (!isNotificationsDropdown) return null
@@ -26,6 +27,8 @@ const NotificationDropdown = ({ isNotificationsDropdown, notifications, loading 
                                 switch (notification.type) {
                                     case "friend-request":
                                         return <NotiFriendRequest key={index} notification={notification} />
+                                    case "group-request":
+                                        return <NotiGroupRequest key={index} notification={notification}/>
                                     case "message":
                                         return <NotiMessage key={index} notification={notification} />
                                 }

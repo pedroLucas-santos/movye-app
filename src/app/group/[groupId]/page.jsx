@@ -9,6 +9,7 @@ import { GroupReviews } from "./components/GroupReviews"
 import Link from "next/link"
 import InviteUsers from "./components/InviteUsers"
 import GroupMembers from "./components/GroupMembers"
+import ModalInviteUsers from "./components/ModalInviteUsers"
 
 const page = async ({ params }) => {
     const { groupId } = await params
@@ -19,6 +20,7 @@ const page = async ({ params }) => {
     return (
         <>
             <NavBar />
+            <ModalInviteUsers groupCreatorId={group.creatorId} groupId={groupId}/>
             <Suspense>
                 <div className="group-page max-w-4xl mx-auto p-6 bg-primary-dark rounded-lg overflow-hidden">
                     {group ? (
