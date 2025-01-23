@@ -12,6 +12,7 @@ import Link from "next/link"
 import { getGroupsList } from "@/app/lib/groupApi"
 import GroupListProfile from "./components/GroupListProfile"
 import ModalOtherGroups from "./components/ModalOtherGroups"
+import ModalOtherFriends from "./components/ModalOtherFriends"
 
 export default async function ProfilePage({ params }) {
     const { userId } = await params
@@ -34,7 +35,8 @@ export default async function ProfilePage({ params }) {
     return (
         <>
             <div className="relative w-full h-screen bg-cover shadow-inner shadow-gray-900/80 overflow-x-hidden">
-                <ModalOtherGroups groupList={groupList}/>
+                <ModalOtherGroups userId={userId}/>
+                <ModalOtherFriends userId={userId}/>
                 {/* Imagem com gradiente no final */}
                 <div className="absolute inset-0">
                     <Suspense>

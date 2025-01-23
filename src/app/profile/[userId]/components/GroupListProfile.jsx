@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import React from "react"
+import OtherGroupsButton from "./OtherGroupsButton"
 
 const GroupListProfile = ({ groupList }) => {
     return (
@@ -32,7 +33,7 @@ const GroupListProfile = ({ groupList }) => {
                         </ul>
                         {groupList.length > 4 && (
                             <p className="text-gray-400">
-                                <button className="hover:underline">+{groupList.length - 4} outros grupos</button>
+                                <OtherGroupsButton length={groupList.length}/>
                             </p>
                         )}
                     </div>

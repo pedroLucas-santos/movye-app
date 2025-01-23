@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import React from "react"
+import OtherFriendsButton from "./OtherFriendsButton"
 
 const FriendList = ({ friendList }) => {
     return (
@@ -29,7 +30,7 @@ const FriendList = ({ friendList }) => {
                             </li>
                         ))}
                     </ul>
-                    {friendList.length > 4 && <p className="text-gray-400">+{friendList.length - 4} outros amigos</p>}
+                    {friendList.length > 4 && <OtherFriendsButton length={friendList.length}/>}
                 </div>
             ) : (
                 <p className="mt-8 text-gray-500">Nenhum amigo.</p>
