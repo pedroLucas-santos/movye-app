@@ -2,8 +2,12 @@
 import { useAuth } from "@/app/context/auth-context"
 import React from "react"
 
-const InviteUsers = ({ groupCreatorId }) => {
+const InviteUsers = ({ groupCreatorId, onOpen }) => {
     const { user } = useAuth()
+     const router = useRouter()
+        const inviteUsers = () => {
+            onOpen()
+        }
     return (
         <>
             {user?.uid === groupCreatorId && (
