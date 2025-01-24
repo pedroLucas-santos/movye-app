@@ -22,10 +22,6 @@ export const createNotification = async (notificationData) => {
         const { sender, receiverId, type, message, additionalData } = notificationData
         const notificationRef = collection(db, "notifications")
         //TODO: terminar de fazer a notificacao do grupo request
-        if(type === 'group-request'){
-            const groupData = await getGroupData(additionalData.groupId)
-            additionalData.groupName = groupData.name
-        }
 
         const defaultNotification = {
             receiverId,
@@ -56,7 +52,6 @@ export const createNotification = async (notificationData) => {
                     senderPhoto: sender.photoURL,
                     groupRequestId: additionalData?.groupRequestId,
                     groupId: additionalData?.groupId,
-                    groupName: additionalData?.groupName,
                 })
 
                 break

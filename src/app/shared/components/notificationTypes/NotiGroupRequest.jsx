@@ -8,7 +8,7 @@ import { acceptGroupRequest } from "@/app/lib/groupApi"
 const NotiGroupRequest = ({ notification }) => {
     const acceptGroup = async () => {
         try {
-            await acceptGroupRequest(notification.senderId, notification.receiverId)
+            await acceptGroupRequest(notification.senderId, notification.receiverId, notification.groupId)
             await updateNotificationStatus(notification.id, "read")
         } catch (e) {
             toast.error(`Erro ao aceitar convite de grupo.\n ${e}`)

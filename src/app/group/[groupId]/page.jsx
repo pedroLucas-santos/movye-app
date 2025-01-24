@@ -19,8 +19,8 @@ const page = async ({ params }) => {
 
     return (
         <>
+            <ModalInviteUsers groupCreatorId={group.creatorId} groupId={groupId} />
             <NavBar />
-            <ModalInviteUsers groupCreatorId={group.creatorId} groupId={groupId}/>
             <Suspense>
                 <div className="group-page max-w-4xl mx-auto p-6 bg-primary-dark rounded-lg overflow-hidden">
                     {group ? (

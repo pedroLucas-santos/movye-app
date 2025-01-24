@@ -201,9 +201,9 @@ const NavBar = ({ userFirestore }) => {
                                     <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
                                         <div className="flex flex-col">
                                             <span className="text-xl">{user?.displayName}</span>
-                                            <span className="text-sm text-gray-500">{`Grupo selecionado: ${
+                                            <Link href={`/group/${selectedGroup?.id}`} className="text-sm text-gray-500 self-start">{`${
                                                 selectedGroup ? selectedGroup.name : ""
-                                            }`}</span>
+                                            }`}</Link>
                                         </div>
                                         <span className="hover:cursor-pointer" onClick={profilePage}>
                                             Perfil
@@ -224,8 +224,8 @@ const NavBar = ({ userFirestore }) => {
                                 </div>
                             )}
                         </div>
-                        <button onClick={toggleNotificationsDropdown} id="notifications" className="relative text-white focus:outline-none">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <div className="relative text-white focus:outline-none">
+                            <svg onClick={toggleNotificationsDropdown} id="notifications" className="w-6 h-6 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
@@ -240,7 +240,7 @@ const NavBar = ({ userFirestore }) => {
                                 </span>
                             )}
                             <NotificationDropdown isNotificationsDropdown={isNotificationsDropdown} notifications={notifications} loading={loading} />
-                        </button>
+                        </div>
                         {console.log(notifications)}
                     </div>
                 </div>

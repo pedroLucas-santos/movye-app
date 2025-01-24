@@ -148,7 +148,7 @@ export const getGroupData = async (groupId) => {
 
             console.log(membersData)
 
-            return { ...data, createdAt: formattedDate, members: membersData }
+            return { ...data, id: groupId,createdAt: formattedDate, members: membersData }
         } else {
             console.log("No such document!")
             return null
@@ -159,7 +159,7 @@ export const getGroupData = async (groupId) => {
     }
 }
 
-export const sendGroupRequest = async (sender, receiverId, groupId) => {
+export const sendGroupRequest = async (sender, receiverId, group) => {
     try {
         if (sender.uid === receiverId) {
             console.log("Você não pode convidar você mesmo para o grupo!")
@@ -172,7 +172,7 @@ export const sendGroupRequest = async (sender, receiverId, groupId) => {
             requestRef,
             where("senderId", "==", sender.uid),
             where("receiverId", "==", receiverId),
-            where("groupId", "==", groupId),
+            where("groupId", "==", group.id),
             where("status", "==", "pendente") // Verifica apenas solicitações pendentes
         )
 
@@ -186,7 +186,7 @@ export const sendGroupRequest = async (sender, receiverId, groupId) => {
         const requestDoc = await addDoc(requestRef, {
             senderId: sender.uid,
             receiverId: receiverId,
-            groupId: groupId,
+            groupId: group.id,
             status: "pendente",
             createdAt: Timestamp.now(),
         })
@@ -195,8 +195,8 @@ export const sendGroupRequest = async (sender, receiverId, groupId) => {
             sender: sender,
             receiverId: receiverId,
             type: "group-request",
-            message: "te convidou para um grupo!",
-            additionalData: { groupRequestId: requestDoc.id, groupId: groupId, groupName: ''},
+            message: `te convidou para o grupo ${group.name}`,
+            additionalData: { groupRequestId: requestDoc.id, groupId: group.id},
         })
 
         console.log("Group request sent:", requestDoc.id)
@@ -210,7 +210,7 @@ export const acceptGroupRequest = async (senderId, receiverId, groupId) => {
     try {
         // Atualize o status da solicitação para "aceito"
         const requestRef = collection(db, "groupRequest")
-        const groupRequestSnapshot = await getDocs(query(requestRef, where("senderId", "==", senderId), where("receiverId", "==", receiverId)))
+        const groupRequestSnapshot = await getDocs(query(requestRef, where("senderId", "==", senderId), where("receiverId", "==", receiverId), where("groupId", "==", groupId)))
 
         if (!groupRequestSnapshot.empty) {
             const requestDoc = groupRequestSnapshot.docs[0]
