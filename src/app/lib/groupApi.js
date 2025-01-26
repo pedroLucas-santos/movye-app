@@ -17,6 +17,7 @@ import {
     deleteDoc,
     addDoc,
     arrayUnion,
+    arrayRemove,
 } from "firebase/firestore"
 import { createNotification } from "./notificationApi"
 
@@ -148,7 +149,7 @@ export const getGroupData = async (groupId) => {
 
             console.log(membersData)
 
-            return { ...data, id: groupId,createdAt: formattedDate, members: membersData }
+            return { ...data, id: groupId, createdAt: formattedDate, members: membersData }
         } else {
             console.log("No such document!")
             return null
@@ -196,7 +197,7 @@ export const sendGroupRequest = async (sender, receiverId, group) => {
             receiverId: receiverId,
             type: "group-request",
             message: `te convidou para o grupo ${group.name}`,
-            additionalData: { groupRequestId: requestDoc.id, groupId: group.id},
+            additionalData: { groupRequestId: requestDoc.id, groupId: group.id },
         })
 
         console.log("Group request sent:", requestDoc.id)
@@ -210,19 +211,53 @@ export const acceptGroupRequest = async (senderId, receiverId, groupId) => {
     try {
         // Atualize o status da solicitação para "aceito"
         const requestRef = collection(db, "groupRequest")
-        const groupRequestSnapshot = await getDocs(query(requestRef, where("senderId", "==", senderId), where("receiverId", "==", receiverId), where("groupId", "==", groupId)))
+        const groupRequestSnapshot = await getDocs(
+            query(requestRef, where("senderId", "==", senderId), where("receiverId", "==", receiverId), where("groupId", "==", groupId))
+        )
 
         if (!groupRequestSnapshot.empty) {
             const requestDoc = groupRequestSnapshot.docs[0]
             await updateDoc(requestDoc.ref, { status: "aceito" })
 
             await updateDoc(doc(db, `groups/${groupId}`), {
-                members: arrayUnion(receiverId)
+                members: arrayUnion(receiverId),
             })
 
             console.log("Group request done")
         }
     } catch (error) {
         console.error("Error accepting group request:", error)
+    }
+}
+
+export const refuseGroupRequest = async (senderId, receiverId, groupId) => {
+    try {
+        const requestRef = collection(db, "groupRequest")
+
+        const groupRequestSnapshot = await getDocs(
+            query(requestRef, where("senderId", "==", senderId), where("receiverId", "==", receiverId), where("groupId", "==", groupId), where('status', '==', 'pendente'))
+        )
+
+        if (!groupRequestSnapshot.empty) {
+            const requestDoc = groupRequestSnapshot.docs[0]
+            await updateDoc(requestDoc.ref, { status: "recusado" })
+            console.log("Group request refused")
+        } else {
+            console.log("No pending group request found")
+        }
+    } catch (error) {
+        console.error("Error refusing group request:", error)
+    }
+}
+
+export const removeMemberFromGroup = async (groupId, memberId) => {
+    try {
+        await updateDoc(doc(db, `groups/${groupId}`), {
+            members: arrayRemove(memberId),
+        })
+
+        console.log("Member removed from group")
+    } catch (err) {
+        throw new Error("Error removing member from group", err)
     }
 }

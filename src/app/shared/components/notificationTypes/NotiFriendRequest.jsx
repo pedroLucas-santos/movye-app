@@ -1,5 +1,5 @@
 import ToastCustom from "@/app/shared/ToastCustom"
-import { acceptFriendRequest } from "@/app/lib/friendApi"
+import { acceptFriendRequest, refuseFriendRequest } from "@/app/lib/friendApi"
 import { updateNotificationStatus } from "@/app/lib/notificationApi"
 import React, { useLayoutEffect, useState } from "react"
 import { FiCheck, FiX } from "react-icons/fi"
@@ -15,14 +15,30 @@ const NotiFriendRequest = ({ notification }) => {
         }
     }
 
+    const refuseFriend = async () => {
+        try {
+            await refuseFriendRequest(notification.senderId, notification.receiverId)
+            await updateNotificationStatus(notification.id, "read")
+        }catch (e) {
+            toast.error(`Erro ao rejeitar solicitação de amizade.\n ${e}`)
+        }
+    }
+
     const showToastAndAccept = () => {
         toast.success("Solicitação de amizade aceita!", {
             onClose: () => {
-                // Executa a função acceptFriend após o toast ser fechado
                 acceptFriend();
             },
         });
     };
+
+    const showToastAndRefuse = () => {
+        toast.error("Solicitação de amizade rejeitada!", {
+            onClose: () => {
+                refuseFriend();
+            },
+        });
+    }
 
     return (
         <div className="flex flex-col items-center px-4 py-2 border-2 border-primary-dark gap-1 rounded-xl">
@@ -41,7 +57,7 @@ const NotiFriendRequest = ({ notification }) => {
                 >
                     <FiCheck className="w-5 h-5 text-green-500" />
                 </button>
-                <button className="bg-transparent border-2 border-red-500 text-white rounded-full p-1 flex items-center gap-2 hover:bg-red-800 transition">
+                <button onClick={showToastAndRefuse} className="bg-transparent border-2 border-red-500 text-white rounded-full p-1 flex items-center gap-2 hover:bg-red-800 transition">
                     <FiX className="w-5 h-5 text-red-500" />
                 </button>
             </div>

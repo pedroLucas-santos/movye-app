@@ -158,6 +158,31 @@ export const acceptFriendRequest = async (senderId, receiverId) => {
     }
 }
 
+export const refuseFriendRequest = async (senderId, receiverId) => {
+    try {
+        const requestRef = collection(db, "friendRequest");
+
+        const friendRequestSnapshot = await getDocs(
+            query(
+                requestRef,
+                where("senderId", "==", senderId),
+                where("receiverId", "==", receiverId),
+                where("status", "==", "pendente")
+            )
+        );
+
+        if (!friendRequestSnapshot.empty) {
+            const requestDoc = friendRequestSnapshot.docs[0];
+            await updateDoc(requestDoc.ref, { status: "recusado" });
+            console.log("Friend request refused");
+        } else {
+            console.log("No pending friend request found");
+        }
+    } catch (error) {
+        console.error("Error refusing friend request:", error);
+    }
+};
+
 export const deleteFriend = async (user, friendId) => {
     try {
         const senderFriendsRef = collection(db, "users", user.uid, "friends")
