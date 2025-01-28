@@ -10,6 +10,7 @@ import Link from "next/link"
 import InviteUsers from "./components/InviteUsers"
 import GroupMembers from "./components/GroupMembers"
 import ModalInviteUsers from "./components/ModalInviteUsers"
+import GroupActions from "./components/GroupActions"
 
 const page = async ({ params }) => {
     const { groupId } = await params
@@ -39,6 +40,9 @@ const page = async ({ params }) => {
                                 <GroupMembers members={group.members} groupCreatorId={group.creatorId} groupId={groupId}/>
                                 <GroupMoviesWatched watchedMovies={watchedMovies} />
                                 <GroupReviews reviews={reviews} />
+                                <div className="w-full flex items-center justify-center">
+                                    <GroupActions groupCreatorId={group.creatorId}/>
+                                </div>
                             </>
                         ) : (
                             <p className="text-center text-gray-600">Carregando dados do grupo...</p>
