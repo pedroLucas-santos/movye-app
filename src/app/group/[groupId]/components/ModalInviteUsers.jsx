@@ -17,6 +17,8 @@ const ModalInviteUsers = ({ groupCreatorId, groupId }) => {
     const [isModalClosing, setIsModalClosing] = useState(null)
     const [notMembers, setNotMembers] = useState([])
     const router = useRouter()
+    const [group, setGroup] = useState(null)
+    const [isValidMember, setIsValidMember] = useState(null)
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
@@ -25,6 +27,7 @@ const ModalInviteUsers = ({ groupCreatorId, groupId }) => {
             try {
                 const listF = await getFriendList(groupCreatorId)
                 const listG = await getGroupData(groupId)
+                setGroup(listG)
                 const memberIds = listG.members.map((member) => member.id)
 
                 // Filtra a lista de amigos para excluir aqueles que estão em memberIds
@@ -37,6 +40,22 @@ const ModalInviteUsers = ({ groupCreatorId, groupId }) => {
         fetchNotMembers()
     }, [])
 
+    useEffect(() => {
+        const verifyMember = () => {
+            try{
+                const memberList = group?.members.map((member) => member.id)
+                if(memberList?.includes(user.uid)){
+                    setIsValidMember(true)
+                }else {
+                    setIsValidMember(false)
+                }
+            }catch(e){
+                console.error(e.toString())
+            }
+        }
+        verifyMember()
+    }, [group])
+
     const groupRequest = async (idUser) => {
         try {
             const group = await getGroupData(groupId)
@@ -46,63 +65,61 @@ const ModalInviteUsers = ({ groupCreatorId, groupId }) => {
             toast.error(e.toString())
         }
     }
-    const closeModal = () => {
-        router.replace(`/group/${groupId}`, undefined, { shallow: true })
-        setIsModalClosing(true)
-        setTimeout(() => {
-            setIsModalClosing(false)
-        }, 500)
-    }
+    
     return (
         <>
-            <button
-                onClick={onOpen}
-                className="invite-button px-4 py-2 mt-4 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition"
-            >
-                Convidar Amigos
-            </button>
-            <Modal className="dark" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
-                <ModalContent>
-                    <ModalHeader className="flex flex-col gap-1 justify-center items-center text-2xl">Convidar Amigos</ModalHeader>
-                    <ModalBody>
-                        <div className="flex justify-center items-center">
-                            <ul className="pl-4 mt-4">
-                                {notMembers.map((nMember) => (
-                                    <li key={nMember.id} className="text-sm  flex items-center gap-4">
-                                        <div className="flex-shrink-0 w-16 h-16 mb-3">
-                                            <Link href={`/profile/${nMember.id}`}>
-                                                <Image
-                                                    src={nMember.photoURL === null ? null : nMember.photoURL}
-                                                    alt={`${nMember.displayName}'s profile picture`}
-                                                    className="rounded-full w-full h-full"
-                                                    width={500}
-                                                    height={500}
-                                                    quality={100}
-                                                />
-                                            </Link>
-                                        </div>
-                                        <div className="w-60 flex items-center justify-between gap-4">
-                                            <Link href={`/profile/${nMember.id}`}>
-                                                <span className="truncate">{nMember.displayName}</span>
-                                            </Link>
-                                            <button
-                                                onClick={() => {
-                                                    groupRequest(nMember.id)
-                                                }}
-                                                className="text-white bg-secondary-dark px-4 py-2 text-center rounded-md hover:bg-zinc-900 transition-colors"
-                                            >
-                                                Convidar
-                                            </button>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
+            {isValidMember && (
+                <>
+                    <button
+                        onClick={onOpen}
+                        className="invite-button px-4 py-2 mt-4 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition"
+                    >
+                        Convidar Amigos
+                    </button>
+                    <Modal className="dark" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
+                        <ModalContent>
+                            <ModalHeader className="flex flex-col gap-1 justify-center items-center text-2xl">Convidar Amigos</ModalHeader>
+                            <ModalBody>
+                                <div className="flex justify-center items-center">
+                                    <ul className="pl-4 mt-4">
+                                        {notMembers.map((nMember) => (
+                                            <li key={nMember.id} className="text-sm  flex items-center gap-4">
+                                                <div className="flex-shrink-0 w-16 h-16 mb-3">
+                                                    <Link href={`/profile/${nMember.id}`}>
+                                                        <Image
+                                                            src={nMember.photoURL === null ? null : nMember.photoURL}
+                                                            alt={`${nMember.displayName}'s profile picture`}
+                                                            className="rounded-full w-full h-full"
+                                                            width={500}
+                                                            height={500}
+                                                            quality={100}
+                                                        />
+                                                    </Link>
+                                                </div>
+                                                <div className="w-60 flex items-center justify-between gap-4">
+                                                    <Link href={`/profile/${nMember.id}`}>
+                                                        <span className="truncate">{nMember.displayName}</span>
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => {
+                                                            groupRequest(nMember.id)
+                                                        }}
+                                                        className="text-white bg-secondary-dark px-4 py-2 text-center rounded-md hover:bg-zinc-900 transition-colors"
+                                                    >
+                                                        Convidar
+                                                    </button>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </ModalBody>
+                        </ModalContent>
+                    </Modal>
 
-            <ToastCustom />
+                    <ToastCustom />
+                </>
+            )}
         </>
     )
 }

@@ -49,8 +49,8 @@ const NotificationDropdown = ({ notifications }) => {
                         )}
                     </DropdownItem>
                 </DropdownMenu>
-                <ToastCustom />
             </Dropdown>
+            <ToastCustom />
         </>
     )
 }

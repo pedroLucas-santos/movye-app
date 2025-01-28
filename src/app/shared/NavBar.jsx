@@ -16,6 +16,7 @@ import { useGroup } from "../context/groupProvider"
 import { useDisclosure } from "@heroui/modal"
 import ProfileDropdown from "./components/ProfileDropdown"
 import NotificationDropdown2 from "./components/NotificationDropdown"
+import { toast } from "react-toastify"
 
 const NavBar = ({ userFirestore }) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -140,19 +141,19 @@ const NavBar = ({ userFirestore }) => {
                 <div>
                     <ul className="hidden md:flex items-center justify-center">
                         <li>
-                            <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            {/* <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Explorar
-                            </Link>
+                            </Link> */}
                         </li>
                         <li>
-                            <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            {/* <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Sugestões
-                            </Link>
+                            </Link> */}
                         </li>
                         <li>
-                            <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                           {/*  <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Estatisticas
-                            </Link>
+                            </Link> */}
                         </li>
                     </ul>
                 </div>
@@ -182,7 +183,7 @@ const NavBar = ({ userFirestore }) => {
                             <ProfileDropdown user={user} />
                         </div>
                         <div className="relative text-white focus:outline-none">
-                            <NotificationDropdown notifications={notifications} />
+                            <NotificationDropdown notifications={notifications}/>
                             {notifications.length > 0 && (
                                 <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-4 flex items-center justify-center rounded-full">
                                     {notifications > 9 ? "+9" : notifications.length}

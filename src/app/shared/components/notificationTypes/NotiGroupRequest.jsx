@@ -3,8 +3,9 @@ import { updateNotificationStatus } from "@/app/lib/notificationApi"
 import React, { useLayoutEffect, useState } from "react"
 import { FiCheck, FiX } from "react-icons/fi"
 import { acceptGroupRequest, refuseGroupRequest } from "@/app/lib/groupApi"
+import { toast } from "react-toastify"
 
-const NotiGroupRequest = ({ notification, toasty }) => {
+const NotiGroupRequest = ({ notification }) => {
     const acceptGroup = async () => {
         try {
             await acceptGroupRequest(notification.senderId, notification.receiverId, notification.groupId)
@@ -24,13 +25,13 @@ const NotiGroupRequest = ({ notification, toasty }) => {
     }
 
     const showToastAndAccept = () => {
-        toasty.success("Convite de grupo aceito!")
+        toast.success("Convite de grupo aceito!")
 
         acceptGroup()
     }
 
     const showToastAndRefuse = () => {
-        toasty.error("Convite de grupo rejeitado!")
+        toast.error("Convite de grupo rejeitado!")
 
         refuseGroup()
     }
