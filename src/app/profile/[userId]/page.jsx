@@ -11,8 +11,6 @@ import { FiArrowRight } from "react-icons/fi"
 import Link from "next/link"
 import { getGroupsList } from "@/app/lib/groupApi"
 import GroupListProfile from "./components/GroupListProfile"
-import ModalOtherGroups from "./components/ModalOtherGroups"
-import ModalOtherFriends from "./components/ModalOtherFriends"
 
 export default async function ProfilePage({ params }) {
     const { userId } = await params
@@ -35,8 +33,6 @@ export default async function ProfilePage({ params }) {
     return (
         <>
             <div className="relative w-full h-screen bg-cover shadow-inner shadow-gray-900/80 overflow-x-hidden">
-                <ModalOtherGroups userId={userId}/>
-                <ModalOtherFriends userId={userId}/>
                 {/* Imagem com gradiente no final */}
                 <div className="absolute inset-0">
                     <Suspense>
@@ -55,8 +51,8 @@ export default async function ProfilePage({ params }) {
                 <div className="relative flex flex-col justify-center items-center w-full">
                     <div>
                         <UserInfo user={user} reviewCount={reviewCount} />
-                        <FriendList friendList={friendList} />
-                        <GroupListProfile groupList={groupList} />
+                        <FriendList friendList={friendList} userId={userId}/>
+                        <GroupListProfile groupList={groupList} userId={userId}/>
                     </div>
 
                     <div className="grid grid-cols-3 mt-24 p-4 rounded-xl justify-items-center h-32 content-center mb-12">

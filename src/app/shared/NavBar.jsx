@@ -13,7 +13,7 @@ import { useNotifications } from "../context/notificationProvider"
 import ModalEditProfile from "../profile/[userId]/components/ModalEditProfile"
 import Link from "next/link"
 import { useGroup } from "../context/groupProvider"
-import ModalOtherGroups from "../profile/[userId]/components/ModalOtherGroups"
+import { useDisclosure } from "@heroui/modal"
 
 const NavBar = ({ userFirestore }) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -22,6 +22,8 @@ const NavBar = ({ userFirestore }) => {
     const [isModalReviewEdit, setModalReviewEdit] = useState(false)
     const [isModalEditProfile, setModalEditProfile] = useState(false)
     const [isNotificationsDropdown, setIsNotificationsDropdown] = useState(false)
+
+    const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
     const { notifications, loading } = useNotifications()
     const { user } = useAuth()
@@ -107,7 +109,7 @@ const NavBar = ({ userFirestore }) => {
 
             {isModalReviewMovie && <ModalReviewMovie toggleModalReviewMovie={toggleModalReviewMovie} isModalReviewMovie={isModalReviewMovie} />}
 
-            {isModalReviewEdit && <ModalReviewEdit toggleModalReviewEdit={toggleModalReviewEdit} isModalReviewEdit={isModalReviewEdit} />}
+            {isModalReviewEdit && <ModalReviewEdit toggleModalReviewEdit={toggleModalReviewEdit} isModalReviewEdit={isModalReviewEdit} isOpen={isOpen} onOpen={onOpen} onOpenChange={onOpenChange}/>}
 
             {isModalEditProfile && (
                 <ModalEditProfile
