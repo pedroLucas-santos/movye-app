@@ -31,7 +31,7 @@ const MembesActionsDropdown = ({ groupCreatorId, groupId, memberId }) => {
             {user?.uid === groupCreatorId && (
                 <>
                     <ToastCustom />
-                    <Dropdown className="dark">
+                    <Dropdown className="dark" shouldBlockScroll={false}>
                         <DropdownTrigger>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"

@@ -1,7 +1,6 @@
 import { getGroupsList } from "@/app/lib/groupApi"
 import CreateGroupButton from "./components/CreateGroupButton"
 import GroupList from "./components/GroupList"
-import { Suspense } from "react"
 
 // pages/families.js
 export default async function Groups({ params }) {
@@ -11,9 +10,7 @@ export default async function Groups({ params }) {
         <div className="flex flex-col items-center justify-center min-h-screen">
             <h1 className="text-2xl font-bold mb-8">Selecione seu Grupo</h1>
             <div className="grid grid-cols-3 gap-8 justify-items-center">
-                <Suspense>
-                    <GroupList userId={userId} />
-                </Suspense>
+                <GroupList userId={userId} />
 
                 <CreateGroupButton />
             </div>

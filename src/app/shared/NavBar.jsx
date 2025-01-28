@@ -14,6 +14,7 @@ import ModalEditProfile from "../profile/[userId]/components/ModalEditProfile"
 import Link from "next/link"
 import { useGroup } from "../context/groupProvider"
 import { useDisclosure } from "@heroui/modal"
+import ProfileDropdown from "./components/ProfileDropdown"
 
 const NavBar = ({ userFirestore }) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -188,7 +189,7 @@ const NavBar = ({ userFirestore }) => {
                             </button>
                         ) : null}
                         <div className="relative">
-                            <img
+                            {/* <img
                                 id="avatar"
                                 src={user?.photoURL}
                                 className="rounded-full h-10 w-10 cursor-pointer select-none"
@@ -224,7 +225,8 @@ const NavBar = ({ userFirestore }) => {
                                         </span>
                                     </div>
                                 </div>
-                            )}
+                            )} */}
+                            <ProfileDropdown user={user}/>
                         </div>
                         <div className="relative text-white focus:outline-none">
                             <svg onClick={toggleNotificationsDropdown} id="notifications" className="w-6 h-6 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
