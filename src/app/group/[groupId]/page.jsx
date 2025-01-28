@@ -19,7 +19,6 @@ const page = async ({ params }) => {
 
     return (
         <>
-            <ModalInviteUsers groupCreatorId={group.creatorId} groupId={groupId} />
             <NavBar />
             <Suspense>
                 <div className="flex flex-col w-full bg-primary-dark">
@@ -35,7 +34,7 @@ const page = async ({ params }) => {
                                     <h1 className="text-2xl font-bold mt-4 text-gray-200">{group.name}</h1>
                                     <p className="text-gray-600 mt-2">{"Descrição do grupo aqui"}</p>
                                     <p className="text-gray-600 mt-2">{`Criado em: ${group.createdAt}`}</p>
-                                    <InviteUsers groupCreatorId={group.creatorId} />
+                                    <ModalInviteUsers groupCreatorId={group.creatorId} groupId={groupId}/>
                                 </header>
                                 <GroupMembers members={group.members} groupCreatorId={group.creatorId} groupId={groupId}/>
                                 <GroupMoviesWatched watchedMovies={watchedMovies} />

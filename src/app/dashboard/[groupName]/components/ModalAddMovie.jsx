@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react"
 import { fetchSearchedMovieName, fetchAddMovie } from "@/app/lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
-import { toast, ToastContainer } from "react-toastify"
+import { toast } from "react-toastify"
 import ToastCustom from "../../../shared/ToastCustom"
 import { useGroup } from "@/app/context/groupProvider"
+import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from "@heroui/modal"
 
-const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
+const ModalAddMovie = () => {
     const [searchInput, setSearchInput] = useState("")
     const [movieName, setMovieName] = useState([])
     const [selectedMovie, setSelectedMovie] = useState(0)
-    const [isModalClosing, setIsModalClosing] = useState(null)
     const { triggerUpdate } = useMovieUpdate()
     const { selectedGroup } = useGroup()
+    const { isOpen, onOpen, onOpenChange } = useDisclosure()
     const genreMap = {
         28: "Action",
         12: "Adventure",
@@ -36,14 +37,6 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
 
     const selectMovie = (movieId) => {
         setSelectedMovie(movieId)
-    }
-
-    const closeModal = () => {
-        setIsModalClosing(true)
-        setTimeout(() => {
-            setIsModalClosing(false)
-            toggleModalAddMovie()
-        }, 500)
     }
 
     useEffect(() => {
@@ -84,31 +77,30 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
 
         if (movieAdded) {
             setTimeout(() => {
-                closeModal()
+                onOpenChange()
             }, 1200)
+            setSelectedMovie(null)
+            setSearchInput("")
         }
     }
 
     return (
         <>
-            {isModalAddMovie && (
-                <div
-                    className={`fixed flex justify-center p-12 z-10 w-dvw h-dvh bg-black/40 transition duration-300 ${
-                        isModalClosing ? "animate-fadeOut" : "animate-fadeIn"
-                    }`}
-                >
-                    <div className="w-[600px] bg-secondary-dark pt-10 pb-10 pl-12 pr-12 overflow-y-auto rounded-md">
-                        <div className="flex justify-between items-center">
-                            <span className="text-2xl">Adicionar filme</span>
-                            <button onClick={closeModal} className="cursor-pointer">
-                                X
-                            </button>
-                        </div>
-                        <div className="flex justify-center items-center gap-4 mt-4">
+            <button
+                onClick={onOpen}
+                className="bg-transparent text-white border-2 transition duration-150 hover:border-white/10 hover:bg-secondary-dark p-2 rounded-md"
+            >
+                Adicionar Filme
+            </button>
+            <Modal className="dark" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
+                <ModalContent>
+                    <ModalHeader className="text-2xl">Adicionar filme</ModalHeader>
+                    <ModalBody>
+                        <div className="flex justify-center items-center gap-4 pb-2">
                             <input
                                 type="text"
                                 placeholder="Procurar filme..."
-                                className="border-2 border-gray-300 p-4 w-full rounded-md text-black"
+                                className="border-2 border-gray-300 p-4 w-full rounded-md text-white"
                                 value={searchInput}
                                 onChange={(e) => setSearchInput(e.target.value)}
                             />
@@ -144,17 +136,19 @@ const ModalAddMovie = ({ toggleModalAddMovie, isModalAddMovie }) => {
                                                     />
                                                     <div className="bg-primary-dark w-full flex-grow flex justify-center items-center p-2 flex-col">
                                                         <span className="text-sm md:text-lg truncate max-w-full">{movie.title}</span>
-                                                        <span className="text-xs md:text-sm text-gray-500 bg-gray-950/20 rounded-lg p-1 mt-1">{firstGenre}</span>
+                                                        <span className="text-xs md:text-sm text-gray-500 bg-gray-950/20 rounded-lg p-1 mt-1">
+                                                            {firstGenre}
+                                                        </span>
                                                     </div>
                                                 </li>
                                             </ul>
                                         </div>
                                     )
                                 })}
-                    </div>
-                    <ToastCustom />
-                </div>
-            )}
+                    </ModalBody>
+                </ModalContent>
+                <ToastCustom />
+            </Modal>
         </>
     )
 }

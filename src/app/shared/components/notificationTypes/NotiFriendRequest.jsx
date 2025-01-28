@@ -5,13 +5,13 @@ import React, { useLayoutEffect, useState } from "react"
 import { FiCheck, FiX } from "react-icons/fi"
 import { toast } from "react-toastify"
 
-const NotiFriendRequest = ({ notification }) => {
+const NotiFriendRequest = ({ notification, toasty }) => {
     const acceptFriend = async () => {
         try {
             await acceptFriendRequest(notification.senderId, notification.receiverId)
             await updateNotificationStatus(notification.id, "read")
         } catch (e) {
-            toast.error(`Erro ao aceitar solicitação de amizade.\n ${e}`)
+            toasty.error(`Erro ao aceitar solicitação de amizade.\n ${e}`)
         }
     }
 
@@ -19,29 +19,25 @@ const NotiFriendRequest = ({ notification }) => {
         try {
             await refuseFriendRequest(notification.senderId, notification.receiverId)
             await updateNotificationStatus(notification.id, "read")
-        }catch (e) {
-            toast.error(`Erro ao rejeitar solicitação de amizade.\n ${e}`)
+        } catch (e) {
+            toasty.error(`Erro ao rejeitar solicitação de amizade.\n ${e}`)
         }
     }
 
     const showToastAndAccept = () => {
-        toast.success("Solicitação de amizade aceita!", {
-            onClose: () => {
-                acceptFriend();
-            },
-        });
-    };
+        toasty.success("Solicitação de amizade aceita!")
+
+        acceptFriend()
+    }
 
     const showToastAndRefuse = () => {
-        toast.error("Solicitação de amizade rejeitada!", {
-            onClose: () => {
-                refuseFriend();
-            },
-        });
+        toasty.error("Solicitação de amizade rejeitada!")
+
+        refuseFriend()
     }
 
     return (
-        <div className="flex flex-col items-center px-4 py-2 border-2 border-primary-dark gap-1 rounded-xl">
+        <div className="flex flex-col items-center px-4 py-2 border-2 border-primary-dark gap-1 rounded-xl w-64">
             <div className="flex items-center gap-2">
                 <img src={notification.senderPhoto} alt={`${notification.senderName} photo`} className="w-10 h-10 rounded-full object-cover" />
                 <div className="flex flex-col">
@@ -57,11 +53,14 @@ const NotiFriendRequest = ({ notification }) => {
                 >
                     <FiCheck className="w-5 h-5 text-green-500" />
                 </button>
-                <button onClick={showToastAndRefuse} className="bg-transparent border-2 border-red-500 text-white rounded-full p-1 flex items-center gap-2 hover:bg-red-800 transition">
+                <button
+                    onClick={showToastAndRefuse}
+                    className="bg-transparent border-2 border-red-500 text-white rounded-full p-1 flex items-center gap-2 hover:bg-red-800 transition"
+                >
                     <FiX className="w-5 h-5 text-red-500" />
                 </button>
             </div>
-            <ToastCustom/>
+            <ToastCustom />
         </div>
     )
 }

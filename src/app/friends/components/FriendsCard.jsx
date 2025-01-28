@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import React, { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
+import FriendsActionsDropdown from "./FriendsActionsDropdown"
 
 const FriendsCard = () => {
     const [inputCode, setInputCode] = useState("")
@@ -164,21 +165,7 @@ const FriendsCard = () => {
                                         Perfil
                                     </Link>
                                 </div>
-                                <button onClick={() => toggleActionDropdown(friend.id)}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v.01M12 12v.01M12 18v.01" />
-                                    </svg>
-                                </button>
-                                {dropdownFriendId === friend.id && (
-                                    <div ref={dropdownRef} className="absolute right-32 mt-2 bg-primary-dark rounded-lg shadow-lg w-32">
-                                        <button
-                                            onClick={() => deleteFriendHandler(user, friend.id)}
-                                            className="w-full text-left text-red-600 p-2 hover:bg-red-600 hover:text-white rounded-lg"
-                                        >
-                                            Excluir
-                                        </button>
-                                    </div>
-                                )}
+                                <FriendsActionsDropdown user={user} friendId={friend.id} deleteFriendHandler={deleteFriendHandler}/>
                             </div>
                         ))}
                 </div>

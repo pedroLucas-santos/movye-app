@@ -15,6 +15,7 @@ import Link from "next/link"
 import { useGroup } from "../context/groupProvider"
 import { useDisclosure } from "@heroui/modal"
 import ProfileDropdown from "./components/ProfileDropdown"
+import NotificationDropdown2 from "./components/NotificationDropdown"
 
 const NavBar = ({ userFirestore }) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -106,11 +107,15 @@ const NavBar = ({ userFirestore }) => {
 
     return (
         <>
-            {isModalAddMovie && <ModalAddMovie toggleModalAddMovie={toggleModalAddMovie} isModalAddMovie={isModalAddMovie} />}
-
-            {isModalReviewMovie && <ModalReviewMovie toggleModalReviewMovie={toggleModalReviewMovie} isModalReviewMovie={isModalReviewMovie} />}
-
-            {isModalReviewEdit && <ModalReviewEdit toggleModalReviewEdit={toggleModalReviewEdit} isModalReviewEdit={isModalReviewEdit} isOpen={isOpen} onOpen={onOpen} onOpenChange={onOpenChange}/>}
+            {isModalReviewEdit && (
+                <ModalReviewEdit
+                    toggleModalReviewEdit={toggleModalReviewEdit}
+                    isModalReviewEdit={isModalReviewEdit}
+                    isOpen={isOpen}
+                    onOpen={onOpen}
+                    onOpenChange={onOpenChange}
+                />
+            )}
 
             {isModalEditProfile && (
                 <ModalEditProfile
@@ -155,19 +160,9 @@ const NavBar = ({ userFirestore }) => {
                 <div className="flex justify-center items-center gap-4">
                     {pathname.match(/\/dashboard(\/.*)?/) && (
                         <div className="flex gap-4">
-                            <button
-                                onClick={toggleModalReviewMovie}
-                                className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"
-                            >
-                                Adicionar Review
-                            </button>
+                            <ModalReviewMovie/>
 
-                            <button
-                                onClick={toggleModalAddMovie}
-                                className="bg-transparent text-white border-2 transition duration-150 hover:border-white/10 hover:bg-secondary-dark p-2 rounded-md"
-                            >
-                                Adicionar Filme
-                            </button>
+                            <ModalAddMovie/>
                         </div>
                     )}
 
@@ -181,69 +176,18 @@ const NavBar = ({ userFirestore }) => {
                             </button>
                         )}
                         {pathname === `/profile/${user?.uid}` ? (
-                            <button
-                                onClick={toggleModalEditProfile}
-                                className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"
-                            >
-                                Editar Perfil
-                            </button>
+                            <ModalEditProfile/>
                         ) : null}
                         <div className="relative">
-                            {/* <img
-                                id="avatar"
-                                src={user?.photoURL}
-                                className="rounded-full h-10 w-10 cursor-pointer select-none"
-                                onClick={toggleProfileDropdown}
-                            />
-                            {isProfileDropdown && (
-                                <div
-                                    id="userDropdown"
-                                    className="absolute top-12 right-[-85px] z-10 divide-y divide-gray-100  w-48 bg-secondary-dark rounded-md shadow-md py-2 text-left"
-                                    data-dropdown-target="userDropdown"
-                                >
-                                    <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
-                                        <div className="flex flex-col">
-                                            <span className="text-xl">{user?.displayName}</span>
-                                            <Link href={`/group/${selectedGroup?.id}`} className="text-sm text-gray-500 self-start">{`${
-                                                selectedGroup ? selectedGroup.name : ""
-                                            }`}</Link>
-                                        </div>
-                                        <span className="hover:cursor-pointer" onClick={profilePage}>
-                                            Perfil
-                                        </span>
-                                        <span className="hover:cursor-pointer" onClick={friendsPage}>
-                                            Amigos
-                                        </span>
-                                        <span className="hover:cursor-pointer" onClick={reviewsPage}>
-                                            Reviews
-                                        </span>
-                                        <span className="hover:cursor-pointer" onClick={groupsPage}>
-                                            Selecionar grupo
-                                        </span>
-                                        <span className="hover:cursor-pointer" onClick={logout}>
-                                            Logout
-                                        </span>
-                                    </div>
-                                </div>
-                            )} */}
-                            <ProfileDropdown user={user}/>
+                            <ProfileDropdown user={user} />
                         </div>
                         <div className="relative text-white focus:outline-none">
-                            <svg onClick={toggleNotificationsDropdown} id="notifications" className="w-6 h-6 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
-                                ></path>
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19a2 2 0 100-4 2 2 0 000 4z"></path>
-                            </svg>
+                            <NotificationDropdown notifications={notifications} />
                             {notifications.length > 0 && (
                                 <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-4 flex items-center justify-center rounded-full">
                                     {notifications > 9 ? "+9" : notifications.length}
                                 </span>
                             )}
-                            <NotificationDropdown isNotificationsDropdown={isNotificationsDropdown} notifications={notifications} loading={loading} />
                         </div>
                         {console.log(notifications)}
                     </div>

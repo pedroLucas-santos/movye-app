@@ -2,45 +2,40 @@ import ToastCustom from "@/app/shared/ToastCustom"
 import { updateNotificationStatus } from "@/app/lib/notificationApi"
 import React, { useLayoutEffect, useState } from "react"
 import { FiCheck, FiX } from "react-icons/fi"
-import { toast } from "react-toastify"
 import { acceptGroupRequest, refuseGroupRequest } from "@/app/lib/groupApi"
 
-const NotiGroupRequest = ({ notification }) => {
+const NotiGroupRequest = ({ notification, toasty }) => {
     const acceptGroup = async () => {
         try {
             await acceptGroupRequest(notification.senderId, notification.receiverId, notification.groupId)
             await updateNotificationStatus(notification.id, "read")
         } catch (e) {
-            toast.error(`Erro ao aceitar convite de grupo.\n ${e}`)
+            toasty.error(`Erro ao aceitar convite de grupo.\n ${e}`)
         }
     }
 
     const refuseGroup = async () => {
-        try{
+        try {
             await refuseGroupRequest(notification.senderId, notification.receiverId, notification.groupId)
             await updateNotificationStatus(notification.id, "read")
-        }catch (e) {
-            toast.error(`Erro ao recusar convite de grupo.\n ${e}`)
+        } catch (e) {
+            toasty.error(`Erro ao recusar convite de grupo.\n ${e}`)
         }
     }
 
     const showToastAndAccept = () => {
-        toast.success("Convite de grupo aceito!", {
-            onClose: () => {
-                acceptGroup()
-            },
-        })
+        toasty.success("Convite de grupo aceito!")
+
+        acceptGroup()
     }
 
     const showToastAndRefuse = () => {
-        toast.error("Convite de grupo rejeitado!", {
-            onClose: () => {
-                refuseGroup()
-            },
-        })
+        toasty.error("Convite de grupo rejeitado!")
+
+        refuseGroup()
     }
     return (
-        <div className="flex flex-col items-center px-4 py-2 border-2 border-primary-dark gap-1 rounded-xl">
+        <div className="flex flex-col items-center px-4 py-2 border-2 border-primary-dark gap-1 rounded-xl w-64">
             <div className="flex items-center gap-2">
                 <img src={notification.senderPhoto} alt={`${notification.senderName} photo`} className="w-10 h-10 rounded-full object-cover" />
                 <div className="flex flex-col">
@@ -56,11 +51,13 @@ const NotiGroupRequest = ({ notification }) => {
                 >
                     <FiCheck className="w-5 h-5 text-green-500" />
                 </button>
-                <button onClick={showToastAndRefuse} className="bg-transparent border-2 border-red-500 text-white rounded-full p-1 flex items-center gap-2 hover:bg-red-800 transition">
+                <button
+                    onClick={showToastAndRefuse}
+                    className="bg-transparent border-2 border-red-500 text-white rounded-full p-1 flex items-center gap-2 hover:bg-red-800 transition"
+                >
                     <FiX className="w-5 h-5 text-red-500" />
                 </button>
             </div>
-            <ToastCustom />
         </div>
     )
 }

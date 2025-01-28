@@ -38,14 +38,9 @@
     scrollbar-color: var(--thumb-bg) var(--track-bg); /* Thumb and track colors */
 }
 
-html {
-    scroll-behavior: smooth;
-}
-
 body {
     color: var(--foreground);
     background: var(--background);
-    font-family: Arial, Helvetica, sans-serif;
     height: 100dvh;
     width: 100dvw;
     overflow-x: hidden;

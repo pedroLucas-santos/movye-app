@@ -7,6 +7,7 @@ import { toast } from "react-toastify"
 import StarsReview from "@/app/shared/StarsReview"
 import { useMovieUpdate } from "../../../context/movieUpdateProvider"
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/modal"
+import Image from "next/image"
 
 const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
     const [isModalClosing, setIsModalClosing] = useState(null)
@@ -98,10 +99,14 @@ const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
                         <ModalBody>
                             <div className={`gap-8 items-center flex-wrap justify-center`}>
                                 <div className=" border-dashed border-stone-950 flex flex-col items-center rounded-lg overflow-hidden shadow-md">
-                                    <img
+                                    <Image
                                         src={`https://image.tmdb.org/t/p/original${reviewEdit?.backdrop_path}`}
-                                        alt=""
+                                        alt="Movie Picture"
                                         className="bg-slate h-[70%] w-full object-cover select-none"
+                                        width={1920}
+                                        height={1080}
+                                        quality={100}
+                                        priority
                                     />
                                     <div className="bg-secondary-dark flex-grow w-full h-14 flex justify-between items-center gap-6 pl-12 pr-12">
                                         <span className="text-sm md:text-lg truncate">{reviewEdit?.title}</span>

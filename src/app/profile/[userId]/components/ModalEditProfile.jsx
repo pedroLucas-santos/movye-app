@@ -6,6 +6,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { toast } from "react-toastify"
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/modal"
 
 const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFirestore }) => {
     const { user } = useAuth()
@@ -18,6 +19,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
     const [selectedBackdrop, setSelectedBackdrop] = useState(null)
     const [isModalClosing, setIsModalClosing] = useState(null)
     const router = useRouter()
+    const { isOpen, onOpen, onOpenChange } = useDisclosure()
     const genreMap = {
         28: "Action",
         12: "Adventure",
@@ -103,26 +105,27 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
 
         if (profileEdited) {
             setTimeout(() => {
-                closeModal()
                 router.refresh()
-            }, 1200)
+                onOpenChange()
+                clear()
+            }, 1000)
         }
+    }
+
+    const clear = () => {
+        setSelectedMovie(null)
+        setSelectedBackdrop(null)
+        setMovies([])
     }
     return (
         <>
-            {isModalEditProfile && (
-                <div
-                    className={`fixed flex justify-center p-12 z-50 w-dvw h-dvh bg-black/40 transition duration-300 ${
-                        isModalClosing ? "animate-fadeOut" : "animate-fadeIn"
-                    }`}
-                >
-                    <div className="w-[600px] h-[650px] bg-secondary-dark pt-10 pb-10 pl-12 pr-12 overflow-auto rounded-md">
-                        <div className="flex justify-between items-center">
-                            <span className="text-2xl">Editar Perfil</span>
-                            <button onClick={closeModal} className="cursor-pointer">
-                                X
-                            </button>
-                        </div>
+            <button onClick={onOpen} className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md">
+                Editar Perfil
+            </button>
+            <Modal className="dark" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
+                <ModalContent>
+                    <ModalHeader className="text-2xl">Editar Perfil</ModalHeader>
+                    <ModalBody>
                         <div className="flex items-center w-full mt-4 space-x-4">
                             <textarea
                                 value={bio}
@@ -248,17 +251,35 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                     </button>
                                 </div>
                             )}
-                            <div className="mt-8 flex justify-end items-center">
-                                <button
-                                    onClick={handleEditProfile}
-                                    className="bg-primary-dark text-white p-4 rounded-md transition hover:bg-primary-dark/50"
-                                >
-                                    Finalizar
-                                </button>
-                            </div>
+                        </div>
+                    </ModalBody>
+                    <ModalFooter>
+                        <div className="mt-8 flex justify-end items-center">
+                            <button
+                                onClick={handleEditProfile}
+                                className="bg-primary-dark text-white p-4 rounded-md transition hover:bg-primary-dark/50"
+                            >
+                                Finalizar
+                            </button>
+                        </div>
+                    </ModalFooter>
+                </ModalContent>
+                <ToastCustom />
+            </Modal>
+            {isModalEditProfile && (
+                <div
+                    className={`fixed flex justify-center p-12 z-50 w-dvw h-dvh bg-black/40 transition duration-300 ${
+                        isModalClosing ? "animate-fadeOut" : "animate-fadeIn"
+                    }`}
+                >
+                    <div className="w-[600px] h-[650px] bg-secondary-dark pt-10 pb-10 pl-12 pr-12 overflow-auto rounded-md">
+                        <div className="flex justify-between items-center">
+                            <span className="text-2xl">Editar Perfil</span>
+                            <button onClick={closeModal} className="cursor-pointer">
+                                X
+                            </button>
                         </div>
                     </div>
-                    <ToastCustom />
                 </div>
             )}
         </>
