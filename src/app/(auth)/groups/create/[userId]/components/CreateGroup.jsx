@@ -9,6 +9,7 @@ export default function CreateGroup({ userId }) {
     const [groupImage, setGroupImage] = useState(null)
     const [file, setFile] = useState(null)
     const router = useRouter()
+    const [loading, setLoading] = useState(false)
 
     const handleImageUpload = (e) => {
         const selectedFile = e.target.files[0]
@@ -30,8 +31,10 @@ export default function CreateGroup({ userId }) {
         }
 
         try {
+            setLoading(true)
             await createNewGroup(groupName, groupImage, userId)
             toast.success("Grupo criado com sucesso!")
+            setLoading(false)
 
             setTimeout(() => {
                 router.push(`/groups/${userId}`)
@@ -67,7 +70,7 @@ export default function CreateGroup({ userId }) {
                     className="w-full px-4 py-2 border bg-secondary-dark rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-white"
                 />
 
-                <button onClick={createGroup} className="px-6 py-2 bg-secondary-dark text-white rounded-md hover:bg-zinc-800 transition">
+                <button onClick={createGroup} disabled={loading} className='px-6 py-2 bg-secondary-dark text-white rounded-md hover:bg-zinc-800 transition'>
                     Criar Grupo
                 </button>
             </div>

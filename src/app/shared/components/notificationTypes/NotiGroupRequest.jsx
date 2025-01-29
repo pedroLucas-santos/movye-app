@@ -1,41 +1,40 @@
 import ToastCustom from "@/app/shared/ToastCustom"
-import { acceptFriendRequest, refuseFriendRequest } from "@/app/lib/friendApi"
 import { updateNotificationStatus } from "@/app/lib/notificationApi"
 import React, { useLayoutEffect, useState } from "react"
 import { FiCheck, FiX } from "react-icons/fi"
+import { acceptGroupRequest, refuseGroupRequest } from "@/app/lib/groupApi"
 import { toast } from "react-toastify"
 
-const NotiFriendRequest = ({ notification, toasty }) => {
-    const acceptFriend = async () => {
+const NotiGroupRequest = ({ notification }) => {
+    const acceptGroup = async () => {
         try {
-            await acceptFriendRequest(notification.senderId, notification.receiverId)
+            await acceptGroupRequest(notification.senderId, notification.receiverId, notification.groupId)
             await updateNotificationStatus(notification.id, "read")
         } catch (e) {
-            toasty.error(`Erro ao aceitar solicitação de amizade.\n ${e}`)
+            toasty.error(`Erro ao aceitar convite de grupo.\n ${e}`)
         }
     }
 
-    const refuseFriend = async () => {
+    const refuseGroup = async () => {
         try {
-            await refuseFriendRequest(notification.senderId, notification.receiverId)
+            await refuseGroupRequest(notification.senderId, notification.receiverId, notification.groupId)
             await updateNotificationStatus(notification.id, "read")
         } catch (e) {
-            toasty.error(`Erro ao rejeitar solicitação de amizade.\n ${e}`)
+            toasty.error(`Erro ao recusar convite de grupo.\n ${e}`)
         }
     }
 
     const showToastAndAccept = () => {
-        toasty.success("Solicitação de amizade aceita!")
+        toast.success("Convite de grupo aceito!")
 
-        acceptFriend()
+        acceptGroup()
     }
 
     const showToastAndRefuse = () => {
-        toasty.error("Solicitação de amizade rejeitada!")
+        toast.error("Convite de grupo rejeitado!")
 
-        refuseFriend()
+        refuseGroup()
     }
-
     return (
         <div className="flex flex-col items-center px-4 py-2 border-2 border-primary-dark gap-1 rounded-xl w-64">
             <div className="flex items-center gap-2">
@@ -60,9 +59,8 @@ const NotiFriendRequest = ({ notification, toasty }) => {
                     <FiX className="w-5 h-5 text-red-500" />
                 </button>
             </div>
-            <ToastCustom />
         </div>
     )
 }
 
-export default NotiFriendRequest
+export default NotiGroupRequest

@@ -9,6 +9,8 @@ import { GroupReviews } from "./components/GroupReviews"
 import Link from "next/link"
 import InviteUsers from "./components/InviteUsers"
 import GroupMembers from "./components/GroupMembers"
+import ModalInviteUsers from "./components/ModalInviteUsers"
+import GroupActions from "./components/GroupActions"
 
 const page = async ({ params }) => {
     const { groupId } = await params
@@ -20,30 +22,32 @@ const page = async ({ params }) => {
         <>
             <NavBar />
             <Suspense>
-                <div className="group-page max-w-4xl mx-auto p-6 bg-primary-dark rounded-lg shadow-md overflow-hidden">
-                    {group ? (
-                        <>
-                            <header className="group-header text-center mb-8">
-                                <img
-                                    src={group.image}
-                                    alt={`Imagem do grupo ${group.name}`}
-                                    className="group-image w-32 h-32 mx-auto rounded-full object-cover shadow-md"
-                                />
-                                <h1 className="text-2xl font-bold mt-4 text-gray-200">{group.name}</h1>
-                                <p className="text-gray-600 mt-2">{"Descrição do grupo aqui"}</p>
-                                <p className="text-gray-600 mt-2">{`Criado em: ${group.createdAt}`}</p>
-                                <InviteUsers groupCreatorId={group.creatorId} />
-                            </header>
-
-                            <GroupMembers members={group.members} />
-
-                            <GroupMoviesWatched watchedMovies={watchedMovies} />
-
-                            <GroupReviews reviews={reviews} />
-                        </>
-                    ) : (
-                        <p className="text-center text-gray-600">Carregando dados do grupo...</p>
-                    )}
+                <div className="flex flex-col w-full bg-primary-dark">
+                    <div className="group-page max-w-4xl mx-auto p-6 bg-primary-dark rounded-lg overflow-hidden">
+                        {group ? (
+                            <>
+                                <header className="group-header text-center mb-8">
+                                    <img
+                                        src={group.image}
+                                        alt={`Imagem do grupo ${group.name}`}
+                                        className="group-image w-32 h-32 mx-auto rounded-full object-cover shadow-md"
+                                    />
+                                    <h1 className="text-2xl font-bold mt-4 text-gray-200">{group.name}</h1>
+                                    <p className="text-gray-600 mt-2">{"Descrição do grupo aqui"}</p>
+                                    <p className="text-gray-600 mt-2">{`Criado em: ${group.createdAt}`}</p>
+                                    <ModalInviteUsers groupCreatorId={group.creatorId} groupId={groupId}/>
+                                </header>
+                                <GroupMembers members={group.members} groupCreatorId={group.creatorId} groupId={groupId}/>
+                                <GroupMoviesWatched watchedMovies={watchedMovies} />
+                                <GroupReviews reviews={reviews} />
+                                <div className="w-full flex items-center justify-center">
+                                    <GroupActions groupCreatorId={group.creatorId} groupId={groupId} groupName={group.name} groupMembers={group.members}/>
+                                </div>
+                            </>
+                        ) : (
+                            <p className="text-center text-gray-600">Carregando dados do grupo...</p>
+                        )}
+                    </div>
                 </div>
             </Suspense>
         </>

@@ -12,7 +12,6 @@ import Link from "next/link"
 import { getGroupsList } from "@/app/lib/groupApi"
 import GroupListProfile from "./components/GroupListProfile"
 
-
 export default async function ProfilePage({ params }) {
     const { userId } = await params
 
@@ -52,8 +51,8 @@ export default async function ProfilePage({ params }) {
                 <div className="relative flex flex-col justify-center items-center w-full">
                     <div>
                         <UserInfo user={user} reviewCount={reviewCount} />
-                        <FriendList friendList={friendList} />
-                        <GroupListProfile groupList={groupList} />
+                        <FriendList friendList={friendList} userId={userId}/>
+                        <GroupListProfile groupList={groupList} userId={userId}/>
                     </div>
 
                     <div className="grid grid-cols-3 mt-24 p-4 rounded-xl justify-items-center h-32 content-center mb-12">
@@ -77,7 +76,9 @@ export default async function ProfilePage({ params }) {
                     <div className="flex flex-col justify-center items-center w-full">
                         <h2 className="text-3xl text-white text-center">Últimas reviews:</h2>
                         <div className="w-[1300px] flex justify-end">
-                            <Link href={`/reviews/${userId}`} className="text-lg text-white text-center flex items-center">Ver todas as reviews <FiArrowRight/></Link>
+                            <Link href={`/reviews/${userId}`} className="text-lg text-white text-center flex items-center">
+                                Ver todas as reviews <FiArrowRight />
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -86,9 +87,8 @@ export default async function ProfilePage({ params }) {
 
                 <div className="w-full h-full bg-black">
                     <Suspense>
-                        <ReviewsCard userId={userId} limit={3}/>
+                        <ReviewsCard userId={userId} limit={3} />
                     </Suspense>
-                    
                 </div>
             </div>
         </>

@@ -2,8 +2,9 @@
 import { useState } from "react"
 import Link from "next/link"
 import { FaChevronDown, FaChevronUp } from "react-icons/fa"
+import MembesActionsDropdown from "./MembesActionsDropdown"
 
-export default function GroupMembers({ members }) {
+export default function GroupMembers({ members, groupCreatorId, groupId }) {
     const [isExpanded, setIsExpanded] = useState(false)
 
     // Lógica para determinar os membros a serem exibidos
@@ -17,11 +18,14 @@ export default function GroupMembers({ members }) {
 
             <ul className="space-y-2">
                 {members.slice(0, membersToShow).map((member) => (
-                    <li key={member.id} className="bg-secondary-dark shadow-sm p-4 flex items-center gap-2">
-                        <Link href={`/profile/${member.id}`} className="flex justify-center items-center gap-2">
-                            <img src={member.photoURL} alt="" className="rounded-full w-12 h-12" />
-                            <span className="text-gray-200">{member.displayName}</span>
-                        </Link>
+                    <li key={member.id} className="bg-secondary-dark shadow-sm p-4 flex items-center gap-2 justify-between">
+                        <div>
+                            <Link href={`/profile/${member.id}`} className="flex justify-center items-center gap-2">
+                                <img src={member.photoURL} alt="" className="rounded-full w-12 h-12" />
+                                <span className="text-gray-200">{member.displayName}</span>
+                            </Link>
+                        </div>
+                        <MembesActionsDropdown groupCreatorId={groupCreatorId} groupId={groupId} memberId={member.id}/>
                     </li>
                 ))}
             </ul>

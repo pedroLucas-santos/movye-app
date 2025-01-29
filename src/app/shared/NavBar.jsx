@@ -13,6 +13,10 @@ import { useNotifications } from "../context/notificationProvider"
 import ModalEditProfile from "../profile/[userId]/components/ModalEditProfile"
 import Link from "next/link"
 import { useGroup } from "../context/groupProvider"
+import { useDisclosure } from "@heroui/modal"
+import ProfileDropdown from "./components/ProfileDropdown"
+import NotificationDropdown2 from "./components/NotificationDropdown"
+import { toast } from "react-toastify"
 
 const NavBar = ({ userFirestore }) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -21,6 +25,8 @@ const NavBar = ({ userFirestore }) => {
     const [isModalReviewEdit, setModalReviewEdit] = useState(false)
     const [isModalEditProfile, setModalEditProfile] = useState(false)
     const [isNotificationsDropdown, setIsNotificationsDropdown] = useState(false)
+
+    const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
     const { notifications, loading } = useNotifications()
     const { user } = useAuth()
@@ -87,6 +93,13 @@ const NavBar = ({ userFirestore }) => {
         router.push(`/groups/${user?.uid}`)
     }
 
+    const dashboardPage = () => {
+        if (selectedGroup) {
+            const sanitizedGroupName = selectedGroup.name.replace(/\s/g, "-") // Substituir espaços por "_"
+            router.push(`/dashboard/${sanitizedGroupName}`)
+        }
+    }
+
     /* useEffect(() => {
         if (selectedGroup === null) {
             router.push(`/groups/${user?.uid}`)
@@ -95,11 +108,15 @@ const NavBar = ({ userFirestore }) => {
 
     return (
         <>
-            {isModalAddMovie && <ModalAddMovie toggleModalAddMovie={toggleModalAddMovie} isModalAddMovie={isModalAddMovie} />}
-
-            {isModalReviewMovie && <ModalReviewMovie toggleModalReviewMovie={toggleModalReviewMovie} isModalReviewMovie={isModalReviewMovie} />}
-
-            {isModalReviewEdit && <ModalReviewEdit toggleModalReviewEdit={toggleModalReviewEdit} isModalReviewEdit={isModalReviewEdit} />}
+            {isModalReviewEdit && (
+                <ModalReviewEdit
+                    toggleModalReviewEdit={toggleModalReviewEdit}
+                    isModalReviewEdit={isModalReviewEdit}
+                    isOpen={isOpen}
+                    onOpen={onOpen}
+                    onOpenChange={onOpenChange}
+                />
+            )}
 
             {isModalEditProfile && (
                 <ModalEditProfile
@@ -109,46 +126,34 @@ const NavBar = ({ userFirestore }) => {
                 />
             )}
 
-            <nav className="flex justify-around items-center h-32 w-full relative">
+            <nav className="grid grid-cols-3 justify-items-center items-center h-32 w-full relative">
                 <button id="menu-toggle" className="text-white md:hidden focus:outline-none">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
                 <div id="logo">
-                    <span
-                        onClick={() => router.push(`/dashboard/${selectedGroup?.name}`)}
-                        className="font-bold text-3xl select-none hover:cursor-pointer"
-                    >
+                    <span onClick={dashboardPage} className="font-bold text-3xl select-none hover:cursor-pointer">
                         Movye
                     </span>
                 </div>
 
                 <div>
-                    <span className="text-white/40">{selectedGroup?.name}</span>
-                </div>
-
-                <div>
                     <ul className="hidden md:flex items-center justify-center">
                         <li>
-                            <Link href={`/dashboard/${selectedGroup?.name}`} className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
-                                Dashboard
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            {/* <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Explorar
-                            </Link>
+                            </Link> */}
                         </li>
                         <li>
-                            <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            {/* <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Sugestões
-                            </Link>
+                            </Link> */}
                         </li>
                         <li>
-                            <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                           {/*  <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Estatisticas
-                            </Link>
+                            </Link> */}
                         </li>
                     </ul>
                 </div>
@@ -156,19 +161,9 @@ const NavBar = ({ userFirestore }) => {
                 <div className="flex justify-center items-center gap-4">
                     {pathname.match(/\/dashboard(\/.*)?/) && (
                         <div className="flex gap-4">
-                            <button
-                                onClick={toggleModalReviewMovie}
-                                className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"
-                            >
-                                Adicionar Review
-                            </button>
+                            <ModalReviewMovie/>
 
-                            <button
-                                onClick={toggleModalAddMovie}
-                                className="bg-transparent text-white border-2 transition duration-150 hover:border-white/10 hover:bg-secondary-dark p-2 rounded-md"
-                            >
-                                Adicionar Filme
-                            </button>
+                            <ModalAddMovie/>
                         </div>
                     )}
 
@@ -182,68 +177,20 @@ const NavBar = ({ userFirestore }) => {
                             </button>
                         )}
                         {pathname === `/profile/${user?.uid}` ? (
-                            <button
-                                onClick={toggleModalEditProfile}
-                                className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"
-                            >
-                                Editar Perfil
-                            </button>
+                            <ModalEditProfile/>
                         ) : null}
-                        <img
-                            id="avatar"
-                            src={user?.photoURL}
-                            className="rounded-full h-10 w-10 cursor-pointer select-none"
-                            onClick={toggleProfileDropdown}
-                        />
-                        <button onClick={toggleNotificationsDropdown} id="notifications" className="relative text-white focus:outline-none">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
-                                ></path>
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19a2 2 0 100-4 2 2 0 000 4z"></path>
-                            </svg>
+                        <div className="relative">
+                            <ProfileDropdown user={user} />
+                        </div>
+                        <div className="relative text-white focus:outline-none">
+                            <NotificationDropdown notifications={notifications}/>
                             {notifications.length > 0 && (
                                 <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-4 flex items-center justify-center rounded-full">
                                     {notifications > 9 ? "+9" : notifications.length}
                                 </span>
                             )}
-                        </button>
+                        </div>
                         {console.log(notifications)}
-                        <NotificationDropdown isNotificationsDropdown={isNotificationsDropdown} notifications={notifications} loading={loading} />
-                        {isProfileDropdown && (
-                            <div
-                                id="userDropdown"
-                                className="absolute top-24 right-auto z-10 divide-y divide-gray-100  w-48 bg-secondary-dark rounded-md shadow-md py-2 text-left"
-                                data-dropdown-target="userDropdown"
-                            >
-                                <div className="px-4 py-3 text-sm text-white flex flex-col gap-2">
-                                    <div className="flex flex-col">
-                                        <span className="text-xl">{user?.displayName}</span>
-                                        <span className="text-sm text-gray-500">{`Grupo selecionado: ${
-                                            selectedGroup ? selectedGroup.name : ""
-                                        }`}</span>
-                                    </div>
-                                    <span className="hover:cursor-pointer" onClick={profilePage}>
-                                        Perfil
-                                    </span>
-                                    <span className="hover:cursor-pointer" onClick={friendsPage}>
-                                        Amigos
-                                    </span>
-                                    <span className="hover:cursor-pointer" onClick={reviewsPage}>
-                                        Reviews
-                                    </span>
-                                    <span className="hover:cursor-pointer" onClick={groupsPage}>
-                                        Selecionar grupo
-                                    </span>
-                                    <span className="hover:cursor-pointer" onClick={logout}>
-                                        Logout
-                                    </span>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             </nav>

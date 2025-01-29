@@ -9,7 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroui/drawer": "^2.2.8",
+    "@heroui/dropdown": "^2.3.10",
+    "@heroui/modal": "^2.2.8",
+    "@heroui/skeleton": "^2.2.6",
+    "@heroui/system": "^2.4.7",
+    "@heroui/theme": "^2.4.6",
+    "@heroui/tooltip": "^2.2.8",
     "firebase": "^11.1.0",
+    "framer-motion": "^12.0.5",
     "next": "^15.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

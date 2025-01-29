@@ -19,7 +19,7 @@ export const GroupReviews = ({ reviews }) => {
             <h2 className="text-xl font-semibold text-gray-200 mb-4">Reviews</h2>
             <ul className="space-y-4">
                 {reviews.slice(0, reviewsToShow).map((review, index) => (
-                    <li key={index} className="bg-secondary-dark shadow-sm p-4 rounded-md flex items-center gap-2">
+                    <li key={index} className="bg-secondary-dark  p-4 rounded-md flex items-center gap-2">
                         <Link href={`/profile/${review.user_id}`} className="w-32">
                             <img src={review.photoURL} alt="" className="rounded-full w-12 h-12" />
                         </Link>

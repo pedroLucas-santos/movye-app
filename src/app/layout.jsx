@@ -23,9 +23,9 @@ export default function RootLayout({ children }) {
                 <SelectionProvider>
                     <NotificationProvider>
                         <GroupProvider>
-                            <html lang="pt">
-                                <body className={`${comfortaa.className} antialiased`}>{children}</body>
-                            </html>
+                                <html lang="pt">
+                                    <body className={`${comfortaa.className} antialiased`}>{children}</body>
+                                </html>
                         </GroupProvider>
                     </NotificationProvider>
                 </SelectionProvider>

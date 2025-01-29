@@ -51,10 +51,9 @@ export const searchFriendCode = async (friendCode) => {
 
         if (friendSnapshot.empty) {
             console.log("No matching friend found.")
-            return null // Retorna `null` se nenhum amigo for encontrado
+            return null
         }
 
-        // Retorna o primeiro item encontrado (já que friendCode é único)
         const friendData = { id: friendSnapshot.docs[0].id, ...friendSnapshot.docs[0].data() }
         console.log(friendData)
         return friendData
@@ -77,7 +76,6 @@ export const sendFriendRequest = async (sender, receiverId) => {
         const senderFriendsSnapshot = await getDocs(senderFriendsRef)
         const receiverFriendsSnapshot = await getDocs(receiverFriendsRef)
 
-        // Verifica se o receiverId está na lista de amigos do sender e se o senderId está na lista de amigos do receiver
         if (senderFriendsSnapshot.docs.some((doc) => doc.id === receiverId) || receiverFriendsSnapshot.docs.some((doc) => doc.id === sender.uid)) {
             console.log("Você já é amigo dessa pessoa.")
             throw new Error("Você já é amigo dessa pessoa.")
@@ -89,7 +87,7 @@ export const sendFriendRequest = async (sender, receiverId) => {
             requestRef,
             where("senderId", "==", sender.uid),
             where("receiverId", "==", receiverId),
-            where("status", "==", "pendente") // Verifica apenas solicitações pendentes
+            where("status", "==", "pendente")
         )
 
         const existingRequestSnapshot = await getDocs(existingRequestQuery)
@@ -122,7 +120,6 @@ export const sendFriendRequest = async (sender, receiverId) => {
 
 export const acceptFriendRequest = async (senderId, receiverId) => {
     try {
-        // Atualize o status da solicitação para "aceito"
         const requestRef = collection(db, "friendRequest")
         const friendRequestSnapshot = await getDocs(query(requestRef, where("senderId", "==", senderId), where("receiverId", "==", receiverId)))
 
@@ -130,11 +127,9 @@ export const acceptFriendRequest = async (senderId, receiverId) => {
             const requestDoc = friendRequestSnapshot.docs[0]
             await updateDoc(requestDoc.ref, { status: "aceito" })
 
-            // Obtenha os dados do amigo a partir do documento da solicitação de amizade
             const senderData = (await getDoc(doc(db, "users", senderId))).data()
             const receiverData = (await getDoc(doc(db, "users", receiverId))).data()
 
-            // Adicione os dados do amigo na subcoleção `friends`
             await setDoc(doc(db, `users/${senderId}/friends`, receiverId), {
                 id: receiverId,
                 displayName: receiverData.displayName,
@@ -158,6 +153,31 @@ export const acceptFriendRequest = async (senderId, receiverId) => {
     }
 }
 
+export const refuseFriendRequest = async (senderId, receiverId) => {
+    try {
+        const requestRef = collection(db, "friendRequest");
+
+        const friendRequestSnapshot = await getDocs(
+            query(
+                requestRef,
+                where("senderId", "==", senderId),
+                where("receiverId", "==", receiverId),
+                where("status", "==", "pendente")
+            )
+        );
+
+        if (!friendRequestSnapshot.empty) {
+            const requestDoc = friendRequestSnapshot.docs[0];
+            await updateDoc(requestDoc.ref, { status: "recusado" });
+            console.log("Friend request refused");
+        } else {
+            console.log("No pending friend request found");
+        }
+    } catch (error) {
+        console.error("Error refusing friend request:", error);
+    }
+};
+
 export const deleteFriend = async (user, friendId) => {
     try {
         const senderFriendsRef = collection(db, "users", user.uid, "friends")
@@ -173,7 +193,6 @@ export const deleteFriend = async (user, friendId) => {
             await deleteDoc(doc(db, "users", user.uid, "friends", docSnap.id))
         })
 
-        // Delete the document from the receiver's collection
         receiverFriendsSnapshot.forEach(async (docSnap) => {
             await deleteDoc(doc(db, "users", friendId, "friends", docSnap.id))
         })

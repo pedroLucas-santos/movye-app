@@ -20,13 +20,13 @@ const Friends = () => {
     }
 
     return (
-        <main id="view" className="w-full h-full scroll-smooth flex flex-col">
+        <div id="view" className="w-full h-full scroll-smooth flex flex-col">
             <NavBar/>
             <div className="p-4 flex gap-4 h-full flex-grow overflow-y-hidden">
                 <UserData actualUser={user}/>
                 <FriendsCard/>
             </div>
-        </main>
+        </div>
     )
 }
 
