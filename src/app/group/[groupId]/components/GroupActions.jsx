@@ -14,7 +14,7 @@ const GroupActions = ({ groupCreatorId, groupId, groupName, groupMembers }) => {
     const { user } = useAuth()
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
     const router = useRouter()
-    const {setSelectedGroup} = useGroup()
+    const { setSelectedGroup } = useGroup()
 
     const leaveGroup = async () => {
         try {
@@ -33,7 +33,8 @@ const GroupActions = ({ groupCreatorId, groupId, groupName, groupMembers }) => {
                 onClose: () => {
                     router.push(`/groups/${user?.uid}`)
                     setSelectedGroup(null)
-                }
+                    localStorage.removeItem("selectedGroup")
+                },
             })
         } catch (err) {
             toast.error(err.toString())
