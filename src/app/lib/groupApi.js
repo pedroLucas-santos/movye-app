@@ -212,7 +212,7 @@ export const acceptGroupRequest = async (senderId, receiverId, groupId) => {
         // Atualize o status da solicitação para "aceito"
         const requestRef = collection(db, "groupRequest")
         const groupRequestSnapshot = await getDocs(
-            query(requestRef, where("senderId", "==", senderId), where("receiverId", "==", receiverId), where("groupId", "==", groupId))
+            query(requestRef, where("senderId", "==", senderId), where("receiverId", "==", receiverId), where("groupId", "==", groupId), where('status', '==', 'pendente'))
         )
 
         if (!groupRequestSnapshot.empty) {
@@ -259,5 +259,27 @@ export const removeMemberFromGroup = async (groupId, memberId) => {
         console.log("Member removed from group")
     } catch (err) {
         throw new Error("Error removing member from group", err)
+    }
+}
+
+export const deleteGroup = async (groupCreatorId, groupId ) => {
+    try {
+        const groupRef = doc(db, "groups", groupId);
+        const groupDoc = await getDoc(groupRef);
+        
+        if (!groupDoc.exists()) {
+            console.log("Grupo não existe!");
+            throw new Error("Grupo não existe!");
+        }
+
+        if (groupCreatorId !== groupDoc.data().creatorId) {
+            console.log("You are not the group creator!");
+            throw new Error("Você não é o criador do grupo!");
+        }
+
+        await deleteDoc(groupRef);
+    }catch(e){
+        console.error("Error checking group creator permissions:", e);
+        throw e;
     }
 }

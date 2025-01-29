@@ -41,7 +41,7 @@ const page = async ({ params }) => {
                                 <GroupMoviesWatched watchedMovies={watchedMovies} />
                                 <GroupReviews reviews={reviews} />
                                 <div className="w-full flex items-center justify-center">
-                                    <GroupActions groupCreatorId={group.creatorId}/>
+                                    <GroupActions groupCreatorId={group.creatorId} groupId={groupId} groupName={group.name} groupMembers={group.members}/>
                                 </div>
                             </>
                         ) : (

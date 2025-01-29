@@ -47,7 +47,7 @@ const ProfileDropdown = ({ user }) => {
             <Dropdown className="dark mt-2 overflow-hidden" shouldBlockScroll={false}>
                 <DropdownTrigger>
                     <Image
-                        src={user?.photoURL}
+                        src={user?.photoURL ? user.photoURL : null}
                         width={100}
                         height={100}
                         quality={100}
@@ -57,7 +57,7 @@ const ProfileDropdown = ({ user }) => {
                     />
                 </DropdownTrigger>
                 <DropdownMenu aria-label="dropdown" variant="faded">
-                    <DropdownItem>
+                    <DropdownItem variant="none" className="hover:cursor-auto" isReadOnly> 
                         <div className="flex flex-col">
                             <span className="">{user?.displayName}</span>
                             <Link

@@ -30,8 +30,8 @@ const NotificationDropdown = ({ notifications }) => {
                     </svg>
                 </DropdownTrigger>
                 <DropdownMenu>
-                    <DropdownItem variant="light">
-                        {notifications.length > 0 ? (
+                    {notifications.length > 0 ? (
+                        <DropdownItem variant="light">
                             <div className="flex flex-col gap-4 h-full overflow-y-auto">
                                 {notifications.map((notification, index) => {
                                     switch (notification.type) {
@@ -44,10 +44,12 @@ const NotificationDropdown = ({ notifications }) => {
                                     }
                                 })}
                             </div>
-                        ) : (
-                            <div className="px-4 py-2 text-sm">Sem novas notificações</div>
-                        )}
-                    </DropdownItem>
+                        </DropdownItem>
+                    ): (
+                        <DropdownItem variant="none">
+                            <div className="px-4 py-2 text-sm hover:cursor-auto">Sem novas notificações</div>
+                        </DropdownItem>
+                    )}
                 </DropdownMenu>
             </Dropdown>
             <ToastCustom />
