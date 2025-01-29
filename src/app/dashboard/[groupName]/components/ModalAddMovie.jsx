@@ -86,10 +86,7 @@ const ModalAddMovie = () => {
 
     return (
         <>
-            <button
-                onClick={onOpen}
-                className="bg-transparent text-white border-2 transition duration-150 hover:border-white/10 hover:bg-secondary-dark p-2 rounded-md"
-            >
+            <button onClick={onOpen} className="bg-transparent text-white border-2 transition duration-150 hover:bg-secondary-dark p-2 rounded-md">
                 Adicionar Filme
             </button>
             <Modal className="dark" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -147,7 +144,6 @@ const ModalAddMovie = () => {
                                 })}
                     </ModalBody>
                 </ModalContent>
-                <ToastCustom />
             </Modal>
         </>
     )

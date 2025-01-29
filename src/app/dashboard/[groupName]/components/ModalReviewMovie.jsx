@@ -105,7 +105,10 @@ const ModalReviewMovie = () => {
 
     return (
         <>
-            <button onClick={onOpen} className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md">
+           <button
+                onClick={onOpen}
+                className="bg-transparent text-white border-2 transition duration-150 border-secondary-dark hover:bg-secondary-dark p-2 py-2 rounded-md"
+            >
                 Adicionar Review
             </button>
             <Modal className="dark" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -184,7 +187,6 @@ const ModalReviewMovie = () => {
                         </div>
                     </ModalFooter>
                 </ModalContent>
-                <ToastCustom />
             </Modal>
         </>
     )

@@ -14,7 +14,7 @@ const ToastCustom = () => {
                 borderRadius: "8px",
                 padding: "12px",
                 fontSize: "14px",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.4)"
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.4)",
             }}
         />
     )
