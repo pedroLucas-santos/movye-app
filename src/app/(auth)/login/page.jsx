@@ -3,7 +3,7 @@
 import { signInWithPopup, onAuthStateChanged } from "firebase/auth"
 import { useRouter } from "next/navigation"
 import { auth, googleProdiver, db } from "@/app/lib/firebase-config"
-import { doc, setDoc, getDoc } from "firebase/firestore"
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore"
 import { useEffect, useState } from "react"
 import { isFriendCodeUnique } from "@/app/lib/movieApi"
 import Image from "next/image"
@@ -54,7 +54,7 @@ export default function LoginPage() {
                     bio: null,
                     displayName: displayName || "Anonymous",
                     email: email,
-                    photoURL: photoURL || "",
+                    photoURL: photoURL || null,
                     createdAt: new Date().toISOString(),
                     friendCode: friendCode,
                     favoriteMovie: {
@@ -63,6 +63,13 @@ export default function LoginPage() {
                         title: null,
                     },
                 })
+            } else {
+                //nao foi testado
+                if (userDoc.data().photoURL !== photoURL) {
+                    await updateDoc(userDocRef, {
+                        photoURL: photoURL
+                    })
+                }
             }
 
             const token = await user.getIdToken()
