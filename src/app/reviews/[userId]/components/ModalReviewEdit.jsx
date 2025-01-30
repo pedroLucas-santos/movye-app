@@ -1,5 +1,4 @@
 import { useAuth } from "@/app/context/auth-context"
-import ToastCustom from "@/app/shared/ToastCustom"
 import { useState, useEffect, useLayoutEffect } from "react"
 import { useSelectionReview } from "../../../context/selectionEditReview"
 import { fetchEditReview, fetchMoviesWatched, fetchUpdateReview } from "@/app/lib/movieApi"
@@ -151,7 +150,6 @@ const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
                                 >
                                     Finalizar review
                                 </button>
-                                <ToastCustom />
                             </div>
                         </ModalFooter>
                     </ModalContent>

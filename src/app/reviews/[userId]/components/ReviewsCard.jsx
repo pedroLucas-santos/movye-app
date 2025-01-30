@@ -7,7 +7,6 @@ import { useSelectionReview } from "../../../context/selectionEditReview"
 import Image from "next/image"
 import { useMovieUpdate } from "../../../context/movieUpdateProvider"
 import { toast } from "react-toastify"
-import ToastCustom from "@/app/shared/ToastCustom"
 import { FiFilter, FiX } from "react-icons/fi"
 
 const ReviewsCard = ({ userId, limit }) => {
@@ -41,7 +40,7 @@ const ReviewsCard = ({ userId, limit }) => {
 
                 triggerUpdate()
 
-                toast.success("Review deletada!")
+                toast.success("Review excluída!")
             } catch (error) {
                 toast.error("Ocorreu um erro ao deletar a review.")
                 console.error(error)
@@ -152,7 +151,6 @@ const ReviewsCard = ({ userId, limit }) => {
                         </div>
                     </div>
                 ))}
-                <ToastCustom />
             </div>
         </div>
     )

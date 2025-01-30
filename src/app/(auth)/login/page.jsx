@@ -6,35 +6,36 @@ import { auth, googleProdiver, db } from "@/app/lib/firebase-config"
 import { doc, setDoc, getDoc } from "firebase/firestore"
 import { useEffect, useState } from "react"
 import { isFriendCodeUnique } from "@/app/lib/movieApi"
+import Image from "next/image"
 
 export default function LoginPage() {
     const router = useRouter()
     const [rememberMe, setRememberMe] = useState(false)
 
     function generateFriendCode() {
-        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        const codeLength = 8; // Tamanho do código
-        let code = "";
-    
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        const codeLength = 8 // Tamanho do código
+        let code = ""
+
         for (let i = 0; i < codeLength; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            code += characters[randomIndex];
+            const randomIndex = Math.floor(Math.random() * characters.length)
+            code += characters[randomIndex]
         }
-    
-        return code;
+
+        return code
     }
 
     const generateUniqueFriendCode = async () => {
-        let code;
-        let isUnique = false;
-    
+        let code
+        let isUnique = false
+
         while (!isUnique) {
-            code = generateFriendCode();
-            isUnique = await isFriendCodeUnique(code);
+            code = generateFriendCode()
+            isUnique = await isFriendCodeUnique(code)
         }
-    
-        return code;
-    };
+
+        return code
+    }
 
     // Função de login
     const signInWithGoogle = async () => {
@@ -56,11 +57,13 @@ export default function LoginPage() {
                     photoURL: photoURL || "",
                     createdAt: new Date().toISOString(),
                     friendCode: friendCode,
-                    favoriteMovie: [{
-                        backdropPath: null,
-                        id: null,
-                        title: null
-                    }]
+                    favoriteMovie: [
+                        {
+                            backdropPath: null,
+                            id: null,
+                            title: null,
+                        },
+                    ],
                 })
             }
 
@@ -119,7 +122,15 @@ export default function LoginPage() {
                 className="flex items-center gap-2 px-6 py-3 bg-white text-gray-800 rounded-lg shadow-md 
                            hover:bg-gray-100 hover:shadow-lg transition duration-200 ease-in-out"
             >
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Icon" className="w-5 h-5" />
+                <Image
+                    src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                    alt="Google Icon"
+                    className="w-5 h-5"
+                    width={1920}
+                    height={1080}
+                    quality={100}
+                    priority
+                />
                 <span className="font-medium">Login com Google</span>
             </button>
         </div>

@@ -1,7 +1,6 @@
 "use client"
 import { useAuth } from "@/app/context/auth-context"
 import { removeMemberFromGroup } from "@/app/lib/groupApi"
-import ToastCustom from "@/app/shared/ToastCustom"
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown"
 import { useRouter } from "next/navigation"
 import React from "react"
@@ -30,7 +29,6 @@ const MembesActionsDropdown = ({ groupCreatorId, groupId, memberId }) => {
         <>
             {user?.uid === groupCreatorId && (
                 <>
-                    <ToastCustom />
                     <Dropdown className="dark" shouldBlockScroll={false}>
                         <DropdownTrigger>
                             <svg

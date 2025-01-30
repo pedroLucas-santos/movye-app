@@ -48,6 +48,8 @@ export const createNewGroup = async (groupName, groupImage, userId) => {
             const storageRef = ref(storage, `groups/${groupName}-${Date.now()}`)
             const snapshot = await uploadBytes(storageRef, groupImage)
             imageUrl = await getDownloadURL(snapshot.ref) // Obtém a URL da imagem
+        }else {
+            throw new Error('Nenhuma imagem selecionada!')
         }
 
         const groupData = {

@@ -2,7 +2,6 @@
 import { useAuth } from "@/app/context/auth-context"
 import { getFriendList } from "@/app/lib/friendApi"
 import { getGroupData, sendGroupRequest } from "@/app/lib/groupApi"
-import ToastCustom from "@/app/shared/ToastCustom"
 import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from "@heroui/modal"
 import Image from "next/image"
 import Link from "next/link"
@@ -116,8 +115,6 @@ const ModalInviteUsers = ({ groupCreatorId, groupId }) => {
                             </ModalBody>
                         </ModalContent>
                     </Modal>
-
-                    <ToastCustom />
                 </>
             )}
         </>

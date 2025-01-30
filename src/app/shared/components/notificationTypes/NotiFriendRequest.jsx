@@ -1,4 +1,3 @@
-import ToastCustom from "@/app/shared/ToastCustom"
 import { acceptFriendRequest, refuseFriendRequest } from "@/app/lib/friendApi"
 import { updateNotificationStatus } from "@/app/lib/notificationApi"
 import React, { useLayoutEffect, useState } from "react"
@@ -60,7 +59,6 @@ const NotiFriendRequest = ({ notification, toasty }) => {
                     <FiX className="w-5 h-5 text-red-500" />
                 </button>
             </div>
-            <ToastCustom />
         </div>
     )
 }

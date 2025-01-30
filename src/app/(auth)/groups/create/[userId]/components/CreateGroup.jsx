@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "react-toastify"
 import { createNewGroup } from "@/app/lib/groupApi"
+import Image from "next/image"
 
 export default function CreateGroup({ userId }) {
     const [groupName, setGroupName] = useState("")
@@ -30,17 +31,22 @@ export default function CreateGroup({ userId }) {
             return
         }
 
+        if (!groupImage) {
+            toast.error("Por favor, escolha uma imagem para o grupo!")
+            return
+        }
+
         try {
             setLoading(true)
             await createNewGroup(groupName, groupImage, userId)
             toast.success("Grupo criado com sucesso!")
-            setLoading(false)
 
             setTimeout(() => {
                 router.push(`/groups/${userId}`)
-            }, 2000)
+            }, 1000)
         } catch (error) {
-            toast.error("Erro ao criar o grupo. Tente novamente.")
+            setLoading(false)
+            toast.error(error.toString())
             console.error("Erro no createGroup:", error.message)
         }
     }
@@ -54,7 +60,14 @@ export default function CreateGroup({ userId }) {
                         className="flex items-center justify-center w-32 h-32 rounded-full border-2 border-dashed border-gray-400 cursor-pointer"
                     >
                         {file ? (
-                            <img src={file} alt="Pré-visualização do avatar do grupo" className="w-full h-full rounded-full object-cover" />
+                            <Image
+                                src={file ? file : null}
+                                alt="Pré-visualização do avatar do grupo"
+                                className="w-full h-full rounded-full object-cover"
+                                width={1920}
+                                height={1080}
+                                quality={100}
+                            />
                         ) : (
                             <span className="text-gray-400">Upload</span>
                         )}
@@ -70,7 +83,11 @@ export default function CreateGroup({ userId }) {
                     className="w-full px-4 py-2 border bg-secondary-dark rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-white"
                 />
 
-                <button onClick={createGroup} disabled={loading} className='px-6 py-2 bg-secondary-dark text-white rounded-md hover:bg-zinc-800 transition'>
+                <button
+                    onClick={createGroup}
+                    disabled={loading}
+                    className="px-6 py-2 bg-secondary-dark text-white rounded-md hover:bg-zinc-800 transition"
+                >
                     Criar Grupo
                 </button>
             </div>

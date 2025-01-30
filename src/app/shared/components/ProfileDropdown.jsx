@@ -8,6 +8,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import React from "react"
+import { FiList, FiLogOut, FiStar, FiUser, FiUsers } from "react-icons/fi"
 
 const ProfileDropdown = ({ user }) => {
     const { onOpen } = useDisclosure()
@@ -66,11 +67,11 @@ const ProfileDropdown = ({ user }) => {
                             >{`${selectedGroup ? selectedGroup.name : ""}`}</Link>
                         </div>
                     </DropdownItem>
-                    <DropdownItem onPress={profilePage}>Perfil</DropdownItem>
-                    <DropdownItem onPress={friendsPage}>Amigos</DropdownItem>
-                    <DropdownItem onPress={reviewsPage}>Reviews</DropdownItem>
-                    <DropdownItem onPress={groupsPage}>Selecionar Grupo</DropdownItem>
-                    <DropdownItem onPress={logout}>Logout</DropdownItem>
+                    <DropdownItem startContent={<FiUser size={20} />} onPress={profilePage}>Perfil</DropdownItem>
+                    <DropdownItem startContent={<FiUsers size={20} />} onPress={friendsPage}>Amigos</DropdownItem>
+                    <DropdownItem startContent={<FiStar size={20} />} onPress={reviewsPage}>Reviews</DropdownItem>
+                    <DropdownItem startContent={<FiList size={20}/>} onPress={groupsPage}>Selecionar Grupo</DropdownItem>
+                    <DropdownItem startContent={<FiLogOut size={20}/>} onPress={logout}>Logout</DropdownItem>
                 </DropdownMenu>
             </Dropdown>
         </>

@@ -1,11 +1,11 @@
 import { useAuth } from "@/app/context/auth-context"
-import ToastCustom from "@/app/shared/ToastCustom"
 import { deleteFriend, getFriendList, getUserFriendCode, searchFriendCode, sendFriendRequest } from "@/app/lib/friendApi"
 import Image from "next/image"
 import Link from "next/link"
 import React, { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import FriendsActionsDropdown from "./FriendsActionsDropdown"
+import { FiClipboard } from "react-icons/fi"
 
 const FriendsCard = () => {
     const [inputCode, setInputCode] = useState("")
@@ -113,8 +113,8 @@ const FriendsCard = () => {
                     <span className="text-xl">Código de amizade</span>
                     <div className="p-4 w-72 h-14 bg-white/20 flex justify-between items-center gap-4 rounded-lg overflow-hidden">
                         <span className="text-3xl md:text-xl overflow-hidden text-ellipsis whitespace-nowrap">{userFriendCode}</span>
-                        <button onClick={copyToClipboard} className="bg-primary-dark text-white p-2 rounded-lg hover:bg-primary-dark/50 transition">
-                            Copiar
+                        <button onClick={copyToClipboard} className="bg-primary-dark text-white p-2 rounded-lg hover:bg-primary-dark/50 transition flex items-center gap-2 justify-center">
+                            {<FiClipboard/>}Copiar
                         </button>
                     </div>
                     <span className="opacity-40">Digite o codigo de amizade de quem você deseja adicionar</span>
@@ -170,7 +170,6 @@ const FriendsCard = () => {
                         ))}
                 </div>
             </div>
-            <ToastCustom />
         </div>
     )
 }

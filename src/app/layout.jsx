@@ -5,6 +5,7 @@ import { NotificationProvider } from "./context/notificationProvider"
 import { SelectionProvider } from "./context/selectionEditReview"
 import "./globals.css"
 import { Comfortaa } from "next/font/google"
+import { ToastContainer } from "react-toastify"
 
 const comfortaa = Comfortaa({
     subsets: ["latin"],
@@ -23,9 +24,25 @@ export default function RootLayout({ children }) {
                 <SelectionProvider>
                     <NotificationProvider>
                         <GroupProvider>
-                                <html lang="pt">
-                                    <body className={`${comfortaa.className} antialiased`}>{children}</body>
-                                </html>
+                            <html lang="pt">
+                                <body className={`${comfortaa.className} antialiased`}>
+                                    {children}{" "}
+                                    <ToastContainer
+                                        position="top-left"
+                                        hideProgressBar={true}
+                                        pauseOnHover
+                                        newestOnTop={true}
+                                        toastStyle={{
+                                            backgroundColor: "#141414",
+                                            color: "#ffffff",
+                                            borderRadius: "8px",
+                                            padding: "12px",
+                                            fontSize: "14px",
+                                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.4)",
+                                        }}
+                                    />
+                                </body>
+                            </html>
                         </GroupProvider>
                     </NotificationProvider>
                 </SelectionProvider>

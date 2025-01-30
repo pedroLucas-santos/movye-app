@@ -5,6 +5,7 @@ import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 import NavBar from "@/app/shared/NavBar"
 import RenderStars from "@/app/shared/RenderStars"
 import { useGroup } from "@/app/context/groupProvider"
+import Image from "next/image"
 
 const MainBanner = () => {
     const [lastWatchedMovie, setLastWatchedMovie] = useState({})

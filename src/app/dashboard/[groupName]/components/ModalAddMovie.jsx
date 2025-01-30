@@ -2,9 +2,9 @@ import { useState, useEffect } from "react"
 import { fetchSearchedMovieName, fetchAddMovie } from "@/app/lib/movieApi"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 import { toast } from "react-toastify"
-import ToastCustom from "../../../shared/ToastCustom"
 import { useGroup } from "@/app/context/groupProvider"
 import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from "@heroui/modal"
+import Image from "next/image"
 
 const ModalAddMovie = () => {
     const [searchInput, setSearchInput] = useState("")
@@ -59,8 +59,8 @@ const ModalAddMovie = () => {
                 await fetchAddMovie(selectedMovie, selectedGroup.id)
                 toast.success("Filme adicionado com sucesso!")
 
-                triggerUpdate()
-
+                //arrumar o bug do toast
+                
                 return true
             } catch (e) {
                 console.log(e)
@@ -78,6 +78,8 @@ const ModalAddMovie = () => {
         if (movieAdded) {
             setTimeout(() => {
                 onOpenChange()
+                triggerUpdate()
+                toast.done()
             }, 1200)
             setSelectedMovie(null)
             setSearchInput("")
@@ -129,7 +131,11 @@ const ModalAddMovie = () => {
                                                 onClick={() => selectMovie(movie.id)}
                                             >
                                                 <li key={movie.id} className="h-[250px] flex flex-col items-center opacity-0 animate-fadeIn">
-                                                    <img
+                                                    <Image
+                                                        width={1280}
+                                                        height={1720}
+                                                        quality={100}
+                                                        priority
                                                         src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
                                                         alt={movie.title || "Movie Image"}
                                                         className="bg-slate h-[70%] w-full object-cover"
@@ -147,7 +153,6 @@ const ModalAddMovie = () => {
                                 })}
                     </ModalBody>
                 </ModalContent>
-                <ToastCustom />
             </Modal>
         </>
     )
