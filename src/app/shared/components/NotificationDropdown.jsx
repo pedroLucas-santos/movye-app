@@ -4,7 +4,6 @@ import React from "react"
 import NotiFriendRequest from "./notificationTypes/NotiFriendRequest"
 import NotiGroupRequest from "./notificationTypes/NotiGroupRequest"
 import NotiMessage from "./notificationTypes/NotiMessage"
-import ToastCustom from "../ToastCustom"
 import { toast } from "react-toastify"
 
 const NotificationDropdown = ({ notifications }) => {
@@ -52,7 +51,6 @@ const NotificationDropdown = ({ notifications }) => {
                     )}
                 </DropdownMenu>
             </Dropdown>
-            <ToastCustom />
         </>
     )
 }

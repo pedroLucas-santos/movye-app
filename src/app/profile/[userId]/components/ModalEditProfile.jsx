@@ -1,6 +1,5 @@
 "use client"
 import { useAuth } from "@/app/context/auth-context"
-import ToastCustom from "@/app/shared/ToastCustom"
 import { getMovieBackdrop, saveProfileEdit, searchFavoriteMovie } from "@/app/lib/userApi"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -159,7 +158,10 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                                 favoriteMovieBackdrop(movie.id)
                                             }}
                                         >
-                                            <img
+                                            <Image
+                                                width={1280}
+                                                height={720}
+                                                quality={100}
                                                 src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
                                                 alt={movie.title}
                                                 className="w-12 h-18 object-cover mr-4 select-none"
@@ -172,7 +174,10 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                             {selectedMovie && (
                                 <>
                                     <div className="flex justify-around items-center mt-2 p-4 bg-primary-dark rounded-lg">
-                                        <img
+                                        <Image
+                                            width={1280}
+                                            height={720}
+                                            quality={100}
                                             src={`https://image.tmdb.org/t/p/w185${selectedMovie.poster_path}`}
                                             alt={selectedMovie.title}
                                             className="w-28 h-40 object-cover mr-4 select-none"
@@ -232,7 +237,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                         width={1920}
                                         height={1080}
                                         quality={100}
-                                        loading="lazy"
+                                        loading="eager"
                                     />
                                     <button
                                         className="absolute right-4 text-white text-3xl"
@@ -264,7 +269,6 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                         </div>
                     </ModalFooter>
                 </ModalContent>
-                <ToastCustom />
             </Modal>
             {isModalEditProfile && (
                 <div

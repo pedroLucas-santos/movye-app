@@ -4,11 +4,11 @@ import { fetchMoviesWatched, fetchMovieReview, fetchUserReviews } from "@/app/li
 import { toast } from "react-toastify"
 import { useAuth } from "@/app/context/auth-context"
 import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
-import ToastCustom from "../../../shared/ToastCustom"
 import StarsReview from "@/app/shared/StarsReview"
 import { useGroup } from "@/app/context/groupProvider"
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/modal"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 const ModalReviewMovie = () => {
     const [hoveredRating, setHoveredRating] = useState(0)
@@ -139,7 +139,10 @@ const ModalReviewMovie = () => {
                         </div>
                         <div className={`gap-8 items-center flex-wrap justify-center mt-4 ${selectedMovieId ? "flex animate-fadeIn" : "hidden"}`}>
                             <div className=" border-dashed border-stone-950 w-[500px] h-[300px] flex flex-col items-center rounded-lg overflow-hidden shadow-md">
-                                <img
+                                <Image
+                                    width={1280}
+                                    height={720}
+                                    quality={100}
                                     src={selectedMovie ? `https://image.tmdb.org/t/p/original${selectedMovie.backdrop_path}` : null}
                                     alt=""
                                     className="bg-slate h-[70%] w-full object-cover select-none"
@@ -153,7 +156,7 @@ const ModalReviewMovie = () => {
                             </div>
                         </div>
                         <div className="flex items-center w-full mt-4 space-x-4">
-                            <img src={user.photoURL} alt="User" className="rounded-full w-10 h-10" />
+                            <Image width={1280} height={720} src={user.photoURL ? user.photoURL : null} alt="User" className="rounded-full w-10 h-10" />
                             <textarea
                                 value={review}
                                 onChange={(e) => setReview(e.target.value)}
