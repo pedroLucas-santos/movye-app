@@ -28,7 +28,7 @@ const GroupList = ({ userId }) => {
 
     useEffect(() => {
         if (selectedGroup) {
-            const sanitizedGroupName = selectedGroup.name.replace(/\s/g, "-"); // Substituir espaços por "_"
+            const sanitizedGroupName = selectedGroup.name.replace(/\s/g, "-");
             router.push(`/dashboard/${sanitizedGroupName}`);
         }
     }, [selectedGroup]);

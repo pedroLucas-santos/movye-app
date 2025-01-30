@@ -30,17 +30,22 @@ export default function CreateGroup({ userId }) {
             return
         }
 
+        if (!groupImage) {
+            toast.error("Por favor, escolha uma imagem para o grupo!")
+            return
+        }
+
         try {
             setLoading(true)
             await createNewGroup(groupName, groupImage, userId)
             toast.success("Grupo criado com sucesso!")
-            setLoading(false)
 
             setTimeout(() => {
+                setLoading(false)
                 router.push(`/groups/${userId}`)
-            }, 2000)
+            }, 1000)
         } catch (error) {
-            toast.error("Erro ao criar o grupo. Tente novamente.")
+            toast.error(error.toString())
             console.error("Erro no createGroup:", error.message)
         }
     }
