@@ -17,6 +17,7 @@ export default async function ProfilePage({ params }) {
 
     // Fetch user data
     const user = await getUserById(userId)
+    console.log(user)
     const reviewCount = await getUserReviews(userId)
     const avgReview = await getUserAvgReviews(userId)
 
