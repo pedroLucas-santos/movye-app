@@ -15,8 +15,7 @@ import Link from "next/link"
 import { useGroup } from "../context/groupProvider"
 import { useDisclosure } from "@heroui/modal"
 import ProfileDropdown from "./components/ProfileDropdown"
-import NotificationDropdown2 from "./components/NotificationDropdown"
-import { toast } from "react-toastify"
+import ToastCustom from "./ToastCustom"
 
 const NavBar = ({ userFirestore }) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)

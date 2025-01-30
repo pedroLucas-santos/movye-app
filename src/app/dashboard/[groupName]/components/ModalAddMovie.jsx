@@ -59,6 +59,7 @@ const ModalAddMovie = () => {
                 await fetchAddMovie(selectedMovie, selectedGroup.id)
                 toast.success("Filme adicionado com sucesso!")
 
+                //arrumar o bug do toast
                 triggerUpdate()
 
                 return true
@@ -147,7 +148,7 @@ const ModalAddMovie = () => {
                                 })}
                     </ModalBody>
                 </ModalContent>
-                <ToastCustom />
+                <ToastCustom/>
             </Modal>
         </>
     )

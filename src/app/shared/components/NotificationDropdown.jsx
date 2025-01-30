@@ -45,7 +45,7 @@ const NotificationDropdown = ({ notifications }) => {
                                 })}
                             </div>
                         </DropdownItem>
-                    ): (
+                    ) : (
                         <DropdownItem variant="none">
                             <div className="px-4 py-2 text-sm hover:cursor-auto">Sem novas notificações</div>
                         </DropdownItem>

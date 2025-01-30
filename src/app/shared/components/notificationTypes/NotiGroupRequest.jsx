@@ -1,17 +1,16 @@
-import ToastCustom from "@/app/shared/ToastCustom"
 import { updateNotificationStatus } from "@/app/lib/notificationApi"
 import React, { useLayoutEffect, useState } from "react"
 import { FiCheck, FiX } from "react-icons/fi"
 import { acceptGroupRequest, refuseGroupRequest } from "@/app/lib/groupApi"
 import { toast } from "react-toastify"
 
-const NotiGroupRequest = ({ notification }) => {
+const NotiGroupRequest = ({ notification, toasty }) => {
     const acceptGroup = async () => {
         try {
             await acceptGroupRequest(notification.senderId, notification.receiverId, notification.groupId)
             await updateNotificationStatus(notification.id, "read")
         } catch (e) {
-            toasty.error(`Erro ao aceitar convite de grupo.\n ${e}`)
+            toast.error(`Erro ao aceitar convite de grupo.\n ${e}`)
         }
     }
 
@@ -20,7 +19,7 @@ const NotiGroupRequest = ({ notification }) => {
             await refuseGroupRequest(notification.senderId, notification.receiverId, notification.groupId)
             await updateNotificationStatus(notification.id, "read")
         } catch (e) {
-            toasty.error(`Erro ao recusar convite de grupo.\n ${e}`)
+            toast.error(`Erro ao recusar convite de grupo.\n ${e}`)
         }
     }
 
