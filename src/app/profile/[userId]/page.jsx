@@ -36,7 +36,7 @@ export default async function ProfilePage({ params }) {
                 {/* Imagem com gradiente no final */}
                 <div className="absolute inset-0">
                     <Suspense>
-                        {user.favoriteMovie?.backdropPath !== "" || null && (
+                        {user.favoriteMovie?.backdropPath !== "" || user.favoriteMovie?.backdropPath !== null && (
                             <Image src={backdropUrl} alt="Backdrop Image" fill quality={100} priority className="object-top object-cover" />
                         )}
                     </Suspense>
