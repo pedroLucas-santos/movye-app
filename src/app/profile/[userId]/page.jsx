@@ -36,7 +36,9 @@ export default async function ProfilePage({ params }) {
                 {/* Imagem com gradiente no final */}
                 <div className="absolute inset-0">
                     <Suspense>
-                        <Image src={backdropUrl} alt="Backdrop Image" fill quality={100} priority className="object-top object-cover" />
+                        {user.favoriteMovie?.backdropPath !== "" && (
+                            <Image src={backdropUrl} alt="Backdrop Image" fill quality={100} priority className="object-top object-cover" />
+                        )}
                     </Suspense>
 
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black"></div>
@@ -51,8 +53,8 @@ export default async function ProfilePage({ params }) {
                 <div className="relative flex flex-col justify-center items-center w-full">
                     <div>
                         <UserInfo user={user} reviewCount={reviewCount} />
-                        <FriendList friendList={friendList} userId={userId}/>
-                        <GroupListProfile groupList={groupList} userId={userId}/>
+                        <FriendList friendList={friendList} userId={userId} />
+                        <GroupListProfile groupList={groupList} userId={userId} />
                     </div>
 
                     <div className="grid grid-cols-3 mt-24 p-4 rounded-xl justify-items-center h-32 content-center mb-12">
