@@ -57,13 +57,11 @@ export default function LoginPage() {
                     photoURL: photoURL || "",
                     createdAt: new Date().toISOString(),
                     friendCode: friendCode,
-                    favoriteMovie: [
-                        {
-                            backdropPath: null,
-                            id: null,
-                            title: null,
-                        },
-                    ],
+                    favoriteMovie: {
+                        backdropPath: null,
+                        id: null,
+                        title: null,
+                    },
                 })
             }
 
