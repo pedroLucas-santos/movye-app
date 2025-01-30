@@ -47,15 +47,16 @@ const ProfileDropdown = ({ user }) => {
         <>
             <Dropdown className="dark mt-2 overflow-hidden" shouldBlockScroll={false}>
                 <DropdownTrigger>
-                    <Image
-                        src={user?.photoURL ? user.photoURL : null}
+                    {user?.photoURL ? <Image
+                        src={user?.photoURL ? user?.photoURL : null}
                         width={100}
                         height={100}
                         quality={100}
                         className="rounded-full h-10 w-10 cursor-pointer select-none"
                         onClick={onOpen}
                         alt="avatar"
-                    />
+                    /> : <div></div>}
+                    
                 </DropdownTrigger>
                 <DropdownMenu aria-label="dropdown" variant="faded">
                     <DropdownItem variant="none" className="hover:cursor-auto" isReadOnly> 

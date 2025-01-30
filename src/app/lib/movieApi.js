@@ -189,11 +189,21 @@ export const fetchMoviesWatched = async (groupId) => {
         const movies = watchedMoviesSnapshot.docs.map((doc) => {
             const movieData = doc.data()
 
-            // Convert watched_at from Timestamp to a readable string
             const watchedAtDate =
                 movieData.watched_at instanceof Timestamp
-                    ? movieData.watched_at.toDate().toLocaleDateString("pt-BR") // or you can use toLocaleString() for more detailed format
-                    : null // Fallback if it's not a Timestamp
+                    ? movieData.watched_at
+                          .toDate()
+                          .toLocaleString("pt-BR", {
+                              day: "2-digit",
+                              month: "long",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: false,
+                          })
+                          .replace(",", " às")
+                    : null
 
             return {
                 id: doc.id,
