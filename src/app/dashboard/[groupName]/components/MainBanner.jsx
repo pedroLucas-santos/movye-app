@@ -94,7 +94,7 @@ const MainBanner = () => {
                         <span className="text-2xl antialiased w-3/4 text-center ml-4 text-white">{lastWatchedMovie.title}</span>
 
                         {currentReview && (
-                            <div className="flex flex-col p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark mt-2">
+                            <div className="hidden flex-col p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark mt-2 md:flex">
                                 <div className="flex">
                                     <div className={`flex gap-4 ${animate ? "animate-fadeIn" : ""}`}>
                                         {currentReview.user?.photoURL && (

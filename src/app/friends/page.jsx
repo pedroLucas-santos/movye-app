@@ -24,9 +24,12 @@ const Friends = () => {
     return (
         <div id="view" className="w-full h-full scroll-smooth flex flex-col">
             <NavBar/>
-            <div className="p-4 flex gap-4 h-full flex-grow overflow-y-hidden">
-                <UserData actualUser={user}/>
-                <FriendsCard/>
+            <div className="p-4 flex gap-4 h-full flex-grow overflow-y-auto md:overflow-y-hidden">
+                <div className="md:hidden"><FriendsCard/></div>
+                <div className="hidden md:flex flex-grow gap-4">
+                    <UserData actualUser={user}/>
+                    <FriendsCard/>
+                </div>
             </div>
         </div>
     )

@@ -34,7 +34,7 @@ const UserData = ({userId, actualUser}) => {
         fetchLastMovieReview() // Chama a função
     }, [user?.uid, updateSignal]) // A dependência é o `user?.uid`, para que a função seja chamada toda vez que o user mudar
     return (
-        <div id="userInfo" className="flex flex-col w-96 justify-center items-center gap-4 p-4">
+        <div id="userInfo" className="flex flex-col w-96 justify-center items-center gap-4 p-28">
             <Image
                 className="rounded-full"
                 src={`${actualUser.photoURL.replace("s96-c", "s400-c")}`}

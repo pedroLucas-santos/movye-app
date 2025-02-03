@@ -107,12 +107,12 @@ const FriendsCard = () => {
 
     return (
         <div className="w-full h-full overflow-y-auto flex flex-col items-start justify-start bg-stone-950 rounded-lg shadow-2xl">
-            <div className="grid grid-cols-2 w-full h-full gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 w-full h-full gap-8">
                 {/* Coluna Esquerda */}
                 <div className="m-12 flex justify-start items-start flex-col gap-2">
                     <span className="text-xl text-white">Código de amizade</span>
                     <div className="p-4 w-72 h-14 bg-white/20 flex justify-between items-center gap-4 rounded-lg overflow-hidden">
-                        <span className="text-3xl md:text-xl overflow-hidden text-ellipsis whitespace-nowrap text-white">{userFriendCode}</span>
+                        <span className="text-xl overflow-hidden text-ellipsis whitespace-nowrap text-white">{userFriendCode}</span>
                         <button onClick={copyToClipboard} className="bg-primary-dark text-white p-2 rounded-lg hover:bg-primary-dark/50 transition flex items-center gap-2 justify-center">
                             {<FiClipboard/>}Copiar
                         </button>
@@ -127,7 +127,7 @@ const FriendsCard = () => {
                     {inputCode !== "" && friendData && (
                         <div className="relative w-full bg-secondary-dark flex justify-start items-start p-2 rounded-lg">
                             {console.log(friendData)}
-                            <div className="flex justify-center items-center gap-4">
+                            <div className="flex justify-center items-center gap-4 flex-col md:flex-row">
                                 <Image src={friendData.photoURL} className="select-none" alt="User's profile picture" width={100} height={100} quality={100} />
                                 <div className="flex flex-col">
                                     <span className="font-bold text-2xl text-white">{friendData.displayName}</span>
