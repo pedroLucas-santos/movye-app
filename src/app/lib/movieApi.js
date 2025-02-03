@@ -206,7 +206,7 @@ export const fetchMoviesWatched = async (groupId) => {
                     : null
 
             return {
-                id: doc.id,
+                doc_id: doc.id,
                 ...movieData,
                 watched_at: watchedAtDate, // Include the formatted date
             }
@@ -285,43 +285,86 @@ export const fetchMovieReview = async (movieId, newRating, movieSelected, newRev
     }
 }
 
-export const fetchUserLastMovieReview = async (lastMovieId) => {
+export const fetchUserLastMovieReview = async (groupId, lastMovieId) => {
     try {
-        console.log(lastMovieId)
+        console.log(groupId, lastMovieId)
 
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("id_movie", "==", lastMovieId))
-        const snapshot = await getDocs(reviewsQuery)
+        const groupDocRef = doc(db, "groups", groupId)
+        const groupDoc = await getDoc(groupDocRef)
 
-        const reviews = snapshot.docs.map((doc) => {
-            const data = doc.data()
-            let formattedDate = ""
+        if (!groupDoc.exists()) {
+            throw new Error(`Grupo com ID ${groupId} não encontrado.`)
+        }
 
-            // Formata a data da review
-            if (data.reviewed_at) {
-                const timestamp = data.reviewed_at
-                const date = timestamp.toDate()
-                formattedDate = date.toLocaleDateString("pt-BR", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
+        const groupData = groupDoc.data()
+        const members = groupData.members || []
+
+        const reviewsPromises = members.map(async (memberId) => {
+            const reviewsQuery = query(collection(db, "users", memberId, "reviews"))
+            const snapshot = await getDocs(reviewsQuery)
+
+            const reviews = snapshot.docs
+                .map((doc) => {
+                    const data = doc.data()
+                    const idMovie = data.id_movie
+
+                    let formattedDate = ""
+
+                    if (idMovie === lastMovieId) {
+                        if (data.reviewed_at) {
+                            const timestamp = data.reviewed_at
+                            const date = timestamp.toDate()
+                            formattedDate = date.toLocaleDateString("pt-BR", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                            })
+                        }
+
+                        return {
+                            id: doc.id,
+                            review: data.review || "",
+                            rating: data.rating || 0,
+                            reviewed_at: formattedDate,
+                            user_id: data.user_id,
+                            group: data.group,
+                            groupName: data.groupName,
+                        }
+                    }
+
+                    return null
                 })
+                .filter((review) => review !== null)
+
+            if (reviews.length > 0) {
+                const userDocRef = doc(db, "users", memberId)
+                const userDoc = await getDoc(userDocRef)
+
+                if (!userDoc.exists()) {
+                    throw new Error(`Usuário com ID ${memberId} não encontrado.`)
+                }
+
+                const userData = userDoc.data()
+
+                return reviews.map((review) => ({
+                    ...review,
+                    user: {
+                        displayName: userData.displayName || "",
+                        photoURL: userData.photoURL || null,
+                    },
+                }))
             }
 
-            return {
-                id: doc.id,
-                review: data.review || "",
-                rating: data.rating || 0,
-                reviewed_at: formattedDate,
-                user_id: data.user_id,
-                group: data.group,
-                groupName: data.groupName,
-            }
+            return []
         })
 
-        if (reviews.length === 0) {
+        const reviewsWithUsers = await Promise.all(reviewsPromises)
+        const allReviews = reviewsWithUsers.flat()
+
+        if (allReviews.length === 0) {
             return {
                 review: "",
                 rating: null,
@@ -334,28 +377,7 @@ export const fetchUserLastMovieReview = async (lastMovieId) => {
             }
         }
 
-        const userPromises = reviews.map(async (review) => {
-            const userDocRef = doc(db, "users", review.user_id)
-            const userDoc = await getDoc(userDocRef)
-
-            if (!userDoc.exists()) {
-                throw new Error(`Usuário com ID ${review.user_id} não encontrado.`)
-            }
-
-            const userData = userDoc.data()
-
-            return {
-                ...review,
-                user: {
-                    displayName: userData.displayName || "",
-                    photoURL: userData.photoURL || null,
-                },
-            }
-        })
-
-        const reviewsWithUser = await Promise.all(userPromises)
-
-        return reviewsWithUser
+        return allReviews
     } catch (e) {
         throw new Error("Error fetching user last movie review: " + e.message)
     }
@@ -632,6 +654,11 @@ export const fetchGroupReviews = async (groupId) => {
 
         const allReviews = []
 
+        // Primeiro, obtém os filmes assistidos do grupo
+        const groupWatchedMoviesRef = collection(db, "groups", groupId, "watchedMovies")
+        const watchedMoviesSnapshot = await getDocs(groupWatchedMoviesRef)
+        const watchedMoviesIds = watchedMoviesSnapshot.docs.map((doc) => doc.data().id) // Extrai os ids dos filmes assistidos
+
         // Itera sobre cada documento de usuário
         for (const userDoc of userDocs.docs) {
             const userData = userDoc.data() // Dados do usuário
@@ -642,53 +669,58 @@ export const fetchGroupReviews = async (groupId) => {
             // Adiciona as reviews encontradas ao array allReviews
             reviewsSnapshot.forEach((reviewDoc) => {
                 const reviewData = reviewDoc.data() // Dados da review
-                let reviewedAt = reviewData.reviewed_at
-                let editedAt = reviewData.edited_at
+                const idMovie = reviewData.id_movie
 
-                // Verifica se o reviewed_at é um Timestamp do Firestore e converte para Date
-                if (reviewedAt instanceof Timestamp) {
-                    reviewedAt = reviewedAt.toDate() // Converte o Timestamp para um objeto Date
-                }
+                // Verifica se a review corresponde a um filme assistido no grupo
+                if (watchedMoviesIds.includes(idMovie)) {
+                    let reviewedAt = reviewData.reviewed_at
+                    let editedAt = reviewData.edited_at
 
-                // Verifica se o edited_at é um Timestamp do Firestore e converte para Date
-                if (editedAt instanceof Timestamp) {
-                    editedAt = editedAt.toDate() // Converte o Timestamp para um objeto Date
-                }
+                    // Verifica se o reviewed_at é um Timestamp do Firestore e converte para Date
+                    if (reviewedAt instanceof Timestamp) {
+                        reviewedAt = reviewedAt.toDate() // Converte o Timestamp para um objeto Date
+                    }
 
-                // Formata a data da review
-                let formattedReviewedDate = ""
-                if (reviewedAt) {
-                    formattedReviewedDate = reviewedAt.toLocaleDateString("pt-BR", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
+                    // Verifica se o edited_at é um Timestamp do Firestore e converte para Date
+                    if (editedAt instanceof Timestamp) {
+                        editedAt = editedAt.toDate() // Converte o Timestamp para um objeto Date
+                    }
+
+                    // Formata a data da review
+                    let formattedReviewedDate = ""
+                    if (reviewedAt) {
+                        formattedReviewedDate = reviewedAt.toLocaleDateString("pt-BR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                        })
+                    }
+
+                    // Formata a data de edição
+                    let formattedEditedDate = ""
+                    if (editedAt) {
+                        formattedEditedDate = editedAt.toLocaleDateString("pt-BR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                        })
+                    }
+
+                    allReviews.push({
+                        id: reviewDoc.id, // ID do documento de review
+                        ...reviewData, // Dados da review
+                        displayName: userData.displayName || "Usuário desconhecido",
+                        photoURL: userData.photoURL, // Foto do usuário
+                        reviewed_at: formattedReviewedDate, // Data formatada da review
+                        edited_at: formattedEditedDate, // Data formatada da edição
                     })
                 }
-
-                // Formata a data de edição
-                let formattedEditedDate = ""
-                if (editedAt) {
-                    formattedEditedDate = editedAt.toLocaleDateString("pt-BR", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                    })
-                }
-
-                allReviews.push({
-                    id: reviewDoc.id, // ID do documento de review
-                    ...reviewData, // Dados da review // ID do usuário que fez a review
-                    displayName: userData.displayName || "Usuário desconhecido",
-                    photoURL: userData.photoURL, // Foto do usuário
-                    reviewed_at: formattedReviewedDate, // Data formatada da review
-                    edited_at: formattedEditedDate, // Data formatada da edição
-                })
             })
         }
 

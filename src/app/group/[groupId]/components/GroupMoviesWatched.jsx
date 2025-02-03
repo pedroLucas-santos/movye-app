@@ -1,9 +1,11 @@
 "use client"
+
 import RenderStars from "@/app/shared/RenderStars"
 import React, { useState } from "react"
 import { FaChevronDown, FaChevronUp } from "react-icons/fa"
+import MoviesActions from "./MoviesActions"
 
-const GroupMoviesWatched = ({ watchedMovies }) => {
+const GroupMoviesWatched = ({ watchedMovies, groupId }) => {
     const [isExpanded, setIsExpanded] = useState(false)
 
     // Função para alternar a visibilidade da lista
@@ -31,10 +33,13 @@ const GroupMoviesWatched = ({ watchedMovies }) => {
                             <p className="text-gray-400 text-sm mb-4">{movie.genre}</p>
 
                             {/* Estrelas de Avaliação */}
-                            <div className="flex">
-                                {Array.from({ length: 5 }, (_, index) => (
-                                    <RenderStars key={index} index={index + 1} movieRating={movie.averageRating} />
-                                ))}
+                            <div className="flex w-full justify-between">
+                                <div className="flex">
+                                    {Array.from({ length: 5 }, (_, index) => (
+                                        <RenderStars key={index} index={index + 1} movieRating={movie.averageRating} />
+                                    ))}
+                                </div>
+                                <MoviesActions groupId={groupId} movieId={movie.doc_id} movieTitle={movie.title}/>
                             </div>
                         </div>
                     </li>

@@ -35,7 +35,7 @@ const MainBanner = () => {
         const fetchLastMovieReview = async () => {
             try {
                 console.log(lastWatchedMovie)
-                const reviews = await fetchUserLastMovieReview(lastWatchedMovie.id, selectedGroup.id)
+                const reviews = await fetchUserLastMovieReview(selectedGroup.id,lastWatchedMovie.id)
                 setAllReviews(reviews) //
                 if (reviews && reviews.length > 0) {
                     setCurrentReview(reviews[0]) // Exibe a primeira review ao iniciar
