@@ -35,7 +35,7 @@ const MainBanner = () => {
         const fetchLastMovieReview = async () => {
             try {
                 console.log(lastWatchedMovie)
-                const reviews = await fetchUserLastMovieReview(lastWatchedMovie.id, selectedGroup.id)
+                const reviews = await fetchUserLastMovieReview(selectedGroup.id,lastWatchedMovie.id)
                 setAllReviews(reviews) //
                 if (reviews && reviews.length > 0) {
                     setCurrentReview(reviews[0]) // Exibe a primeira review ao iniciar
@@ -90,11 +90,11 @@ const MainBanner = () => {
                 <NavBar />
                 <div className="w-full h-[500px] mt-8 flex justify-evenly items-center">
                     <div className="flex justify-center flex-col gap-2">
-                        <span className="text-4xl font-bold antialiased">Último filme assistido:</span>
-                        <span className="text-2xl antialiased w-3/4 text-center ml-4">{lastWatchedMovie.title}</span>
+                        <span className="text-4xl font-bold antialiased text-white">Último filme assistido:</span>
+                        <span className="text-2xl antialiased w-3/4 text-center ml-4 text-white">{lastWatchedMovie.title}</span>
 
                         {currentReview && (
-                            <div className="flex flex-col p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark mt-2">
+                            <div className="hidden flex-col p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark mt-2 md:flex">
                                 <div className="flex">
                                     <div className={`flex gap-4 ${animate ? "animate-fadeIn" : ""}`}>
                                         {currentReview.user?.photoURL && (
@@ -108,7 +108,7 @@ const MainBanner = () => {
                                         <div className="flex flex-col">
                                             <div className="flex gap-3 items-center -mt-1">
                                                 {currentReview.user?.displayName && (
-                                                    <p className="font-semibold cursor-pointer">{currentReview.user.displayName}</p>
+                                                    <p className="font-semibold cursor-pointer text-white">{currentReview.user.displayName}</p>
                                                 )}
                                             </div>
                                             {currentReview.rating && (
@@ -121,7 +121,7 @@ const MainBanner = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className={`italic mt-4 text-[18px] text-white font-normal ${animate ? "animate-fadeIn" : ""}`}>
+                                <div className={`italic mt-4 text-[18px] text-white font-normal break-words w-[500px] ${animate ? "animate-fadeIn" : ""}`}>
                                     {currentReview.review}
                                 </div>
                                 <div className={`flex flex-col text-white text-[12px] mt-4 ${animate ? "animate-fadeIn" : ""}`}>

@@ -11,9 +11,12 @@ const page = async ({ params }) => {
     return (
         <main id="view" className="w-full h-full scroll-smooth flex flex-col">
             <NavBar />
-            <div className="p-4 flex gap-4 h-full flex-grow overflow-y-hidden">
-                <UserData userId={userId} actualUser={user}/>
-                <ReviewsCard userId={userId}/>
+            <div className="p-4 flex gap-4 h-full flex-grow overflow-y-hidden justify-center">
+                <div className="md:hidden"><ReviewsCard userId={userId}/></div>
+                <div className="hidden md:flex flex-grow gap-4">
+                    <UserData userId={userId} actualUser={user}/>
+                    <ReviewsCard userId={userId}/>
+                </div>
             </div>
         </main>
     )

@@ -41,7 +41,7 @@ const MembesActionsDropdown = ({ groupCreatorId, groupId, memberId }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v.01M12 12v.01M12 18v.01" />
                             </svg>
                         </DropdownTrigger>
-                        <DropdownMenu aria-label="Action event example" onAction={removeMember}>
+                        <DropdownMenu aria-label="Member action" onAction={removeMember}>
                             <DropdownItem key="remove" className="text-danger transition-colors" color="danger">
                                 Remover
                             </DropdownItem>

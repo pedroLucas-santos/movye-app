@@ -18,6 +18,7 @@ import {
     addDoc,
     arrayUnion,
     arrayRemove,
+    deleteField,
 } from "firebase/firestore"
 import { createNotification } from "./notificationApi"
 
@@ -48,8 +49,8 @@ export const createNewGroup = async (groupName, groupImage, userId) => {
             const storageRef = ref(storage, `groups/${groupName}-${Date.now()}`)
             const snapshot = await uploadBytes(storageRef, groupImage)
             imageUrl = await getDownloadURL(snapshot.ref) // Obtém a URL da imagem
-        }else {
-            throw new Error('Nenhuma imagem selecionada!')
+        } else {
+            throw new Error("Nenhuma imagem selecionada!")
         }
 
         const groupData = {
@@ -214,7 +215,13 @@ export const acceptGroupRequest = async (senderId, receiverId, groupId) => {
         // Atualize o status da solicitação para "aceito"
         const requestRef = collection(db, "groupRequest")
         const groupRequestSnapshot = await getDocs(
-            query(requestRef, where("senderId", "==", senderId), where("receiverId", "==", receiverId), where("groupId", "==", groupId), where('status', '==', 'pendente'))
+            query(
+                requestRef,
+                where("senderId", "==", senderId),
+                where("receiverId", "==", receiverId),
+                where("groupId", "==", groupId),
+                where("status", "==", "pendente")
+            )
         )
 
         if (!groupRequestSnapshot.empty) {
@@ -237,7 +244,13 @@ export const refuseGroupRequest = async (senderId, receiverId, groupId) => {
         const requestRef = collection(db, "groupRequest")
 
         const groupRequestSnapshot = await getDocs(
-            query(requestRef, where("senderId", "==", senderId), where("receiverId", "==", receiverId), where("groupId", "==", groupId), where('status', '==', 'pendente'))
+            query(
+                requestRef,
+                where("senderId", "==", senderId),
+                where("receiverId", "==", receiverId),
+                where("groupId", "==", groupId),
+                where("status", "==", "pendente")
+            )
         )
 
         if (!groupRequestSnapshot.empty) {
@@ -264,24 +277,56 @@ export const removeMemberFromGroup = async (groupId, memberId) => {
     }
 }
 
-export const deleteGroup = async (groupCreatorId, groupId ) => {
+export const deleteGroup = async (groupCreatorId, groupId) => {
     try {
-        const groupRef = doc(db, "groups", groupId);
-        const groupDoc = await getDoc(groupRef);
-        
+        const groupRef = doc(db, "groups", groupId)
+        const groupDoc = await getDoc(groupRef)
+
         if (!groupDoc.exists()) {
-            console.log("Grupo não existe!");
-            throw new Error("Grupo não existe!");
+            console.log("Grupo não existe!")
+            throw new Error("Grupo não existe!")
         }
 
         if (groupCreatorId !== groupDoc.data().creatorId) {
-            console.log("You are not the group creator!");
-            throw new Error("Você não é o criador do grupo!");
+            console.log("You are not the group creator!")
+            throw new Error("Você não é o criador do grupo!")
         }
 
-        await deleteDoc(groupRef);
-    }catch(e){
-        console.error("Error checking group creator permissions:", e);
-        throw e;
+        await deleteDoc(groupRef)
+    } catch (e) {
+        console.error("Error checking group creator permissions:", e)
+        throw e
+    }
+}
+
+export const deleteMovieFromGroup = async (groupId, movieId) => {
+    try {
+        if (!groupId || !movieId) {
+            throw new Error("Missing groupId or movieId")
+        }
+        console.log(groupId + " " + movieId)
+
+        // Reference the movie document inside the watchedMovies subcollection
+        const movieRef = doc(db, "groups", groupId, "watchedMovies", movieId)
+
+        // Delete the document
+        await deleteDoc(movieRef)
+
+        const watchedMoviesRef = collection(db, "groups", groupId, "watchedMovies")
+        const watchedMoviesSnapshot = await getDocs(watchedMoviesRef)
+
+        // If there are no more movies, delete the lastWatchedMovie field
+        if (watchedMoviesSnapshot.empty) {
+            const groupRef = doc(db, "groups", groupId)
+            await updateDoc(groupRef, {
+                lastWatchedMovie: deleteField(),
+            })
+            console.log(`lastWatchedMovie field deleted from group (${groupId})`)
+        }
+
+        console.log(`Successfully deleted movie (${movieId}) from group (${groupId})`)
+    } catch (e) {
+        console.error("Error deleting movie from group:", e)
+        throw e // Re-throw error for better error handling
     }
 }

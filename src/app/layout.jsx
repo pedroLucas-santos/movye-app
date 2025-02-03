@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
                     <NotificationProvider>
                         <GroupProvider>
                             <html lang="pt">
-                                <body className={`${comfortaa.className} antialiased`}>
+                                <body className={`${comfortaa.className} antialiased bg-primary-dark`}>
                                     {children}{" "}
                                     <ToastContainer
                                         position="top-left"

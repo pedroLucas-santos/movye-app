@@ -8,6 +8,7 @@ import Image from "next/image"
 import { useMovieUpdate } from "../../../context/movieUpdateProvider"
 import { toast } from "react-toastify"
 import { FiFilter, FiX } from "react-icons/fi"
+import StarsReview from "@/app/shared/StarsReview"
 
 const ReviewsCard = ({ userId, limit }) => {
     const [reviewsData, setReviewsData] = useState([])
@@ -79,79 +80,76 @@ const ReviewsCard = ({ userId, limit }) => {
 
     //criar modal para editar review quando clicar no OK
 
-    const reviewsToDisplay = limit > 0 ? reviewsData.slice(0, limit) : reviewsData;
+    const reviewsToDisplay = limit > 0 ? reviewsData.slice(0, limit) : reviewsData
 
     return (
-        <div className="w-full h-full overflow-y-auto flex flex-col items-center justify-start bg-transparent rounded-lg shadow-2xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 mb-10">
-                {reviewsToDisplay.map((review) => (
-                    <div
-                        key={review.id_movie}
-                        className={`bg-gray-800 w-[300px] md:w-[250px] lg:w-[250px] xl:w-[400px] text-white rounded-lg shadow-md overflow-hidden transition-transform transform ${
-                            isSelectingReview ? "hover:scale-100" : "hover:scale-105"
-                        } duration-300`}
-                    >
-                        {console.log(review)}
-                        <div className="w-full h-[600px] relative">
-                            {review.posterUrl ? (
-                                <Image
-                                    className="select-none object-cover"
-                                    src={`${review.posterUrl}`}
-                                    alt="Review Movie Poster"
-                                    fill
-                                    sizes="(max-width: 768px) 100vw, 
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-12 ${limit > 0 ? '' : 'overflow-y-auto'}`}>
+            {reviewsToDisplay.map((review) => (
+                <div key={review.id_movie} className="bg-gray-900/50 antialiased overflow-y-auto scrollbar-hide backdrop-blur-sm rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:bg-gray-900/70 h-[900px] flex flex-col border border-gray-800">
+                    <div className="relative min-h-[600px]">
+                        {review.posterUrl ? (
+                            <Image
+                                className="select-none object-cover"
+                                src={`${review.posterUrl}`}
+                                alt="Review Movie Poster"
+                                fill
+                                sizes="(max-width: 768px) 100vw, 
                                           (max-width: 1200px) 50vw, 
                                           33vw"
-                                    priority
-                                    quality={100}
-                                />
-                            ) : (
-                                <div className="flex justify-center items-center h-full w-full text-center">
-                                    <FiX className="text-5xl" />
-                                    <p className="text-sm">Imagem não disponível</p>
-                                </div>
-                            )}
-                        </div>
-                        <div className={`absolute inset-0 ${isSelectingReview ? "bg-black/30" : ""} flex items-start justify-between`}>
-                            {isSelectingReview && (
-                                <input
-                                    type="checkbox"
-                                    className="w-6 h-6 m-2"
-                                    checked={currentSelection === review.id_movie}
-                                    onChange={() => handleCheckboxChange(review.id_movie)}
-                                />
-                            )}
-                            {currentSelection === review.id_movie && isSelectingReview && (
-                                <div>
-                                    <button onClick={handleReviewSelection} className="m-2 p-2 bg-green-700 text-white rounded-lg shadow-md">
-                                        Editar
-                                    </button>
-                                    <button onClick={handleReviewDelete} className="m-2 p-2 bg-red-700 text-white rounded-lg shadow-md">
-                                        Excluir
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="p-4 flex flex-col gap-2 justify-center">
-                            <h3 className="text-lg font-bold truncate select-text">{review.id}</h3>
-                            <span className="text-sm text-gray-400">{review.genre}</span>
-                            <p className="text-sm">{review.review}</p>
-                            <div className="flex justify-between items-center mt-4">
-                                <span className="px-2 py-1 rounded-lg flex">
-                                    {Array.from({ length: 5 }, (_, index) => (
-                                        <RenderStars key={index} index={index + 1} movieRating={review.rating} />
-                                    ))}
-                                </span>
-                                <div className="flex flex-col justify-center items-center">
-                                    <span className="text-xs text-gray-400">{review.reviewed_at}</span>
-                                    <span className="text-xs text-gray-400">{`Assistido com o grupo: ${review.groupName}`}</span>
-                                </div>
+                                priority
+                                quality={100}
+                            />
+                        ) : (
+                            <div className="flex justify-center items-center h-full w-full text-center">
+                                <FiX className="text-5xl" />
+                                <p className="text-sm">Imagem não disponível</p>
+                            </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-50"></div>
+                    </div>
+                    <div className={`absolute inset-0 ${isSelectingReview ? "bg-black/30" : ""} flex items-start justify-between`}>
+                        {isSelectingReview && (
+                            <input
+                                type="checkbox"
+                                className="w-6 h-6 m-2"
+                                checked={currentSelection === review.id_movie}
+                                onChange={() => handleCheckboxChange(review.id_movie)}
+                            />
+                        )}
+                        {currentSelection === review.id_movie && isSelectingReview && (
+                            <div>
+                                <button onClick={handleReviewSelection} className="m-2 p-2 bg-green-700 text-white rounded-lg shadow-md">
+                                    Editar
+                                </button>
+                                <button onClick={handleReviewDelete} className="m-2 p-2 bg-red-700 text-white rounded-lg shadow-md">
+                                    Excluir
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                    <div className="p-6 flex flex-col flex-grow">
+                        <div className="mb-4">
+                            <h3 className="text-2xl font-bold text-gray-100 mb-2 hover:text-amber-400 transition-colors">{review.id}</h3>
+                            <div className="flex">
+                                {Array.from({ length: 5 }, (_, index) => (
+                                    <RenderStars key={index} index={index + 1} movieRating={review.rating} />
+                                ))}
                             </div>
                         </div>
+
+                        <div className="flex-grow overflow-y-auto scrollbar-hide mb-4">
+                            <p className="text-gray-400 leading-relaxed pr-2">{review.review}</p>
+                        </div>
+
+                        <div className="mt-auto">
+                            <span className="text-sm text-gray-500 font-medium flex">
+                                <span>{review.reviewed_at}</span>
+                                <span>Assistido com o grupo {review.groupName}</span>
+                            </span>
+                        </div>
                     </div>
-                ))}
-            </div>
+                </div>
+            ))}
         </div>
     )
 }

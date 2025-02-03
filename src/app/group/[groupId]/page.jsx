@@ -37,7 +37,7 @@ const page = async ({ params }) => {
                                     <ModalInviteUsers groupCreatorId={group.creatorId} groupId={groupId}/>
                                 </header>
                                 <GroupMembers members={group.members} groupCreatorId={group.creatorId} groupId={groupId}/>
-                                <GroupMoviesWatched watchedMovies={watchedMovies} />
+                                <GroupMoviesWatched watchedMovies={watchedMovies} groupId={groupId}/>
                                 <GroupReviews reviews={reviews} />
                                 <div className="w-full flex items-center justify-center">
                                     <GroupActions groupCreatorId={group.creatorId} groupId={groupId} groupName={group.name} groupMembers={group.members}/>

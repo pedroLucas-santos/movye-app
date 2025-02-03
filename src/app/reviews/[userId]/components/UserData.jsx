@@ -34,7 +34,7 @@ const UserData = ({userId, actualUser}) => {
         fetchLastMovieReview() // Chama a função
     }, [user?.uid, updateSignal]) // A dependência é o `user?.uid`, para que a função seja chamada toda vez que o user mudar
     return (
-        <div id="userInfo" className="flex flex-col w-96 justify-center items-center gap-4 p-4">
+        <div id="userInfo" className="flex flex-col w-96 justify-center items-center gap-4 p-28">
             <Image
                 className="rounded-full"
                 src={`${actualUser.photoURL.replace("s96-c", "s400-c")}`}
@@ -45,12 +45,11 @@ const UserData = ({userId, actualUser}) => {
             />
             <div className="flex flex-col">
                 <div className="items-center flex flex-col">
-                    <span className="text-lg font-semibold">{actualUser.displayName}</span>
-                    <span className="text-sm text-gray-500">{actualUser.email}</span>
+                    <span className="text-lg font-semibold text-white">{actualUser.displayName}</span>
                     <div className="mt-4 flex flex-col justify-center items-center gap-4">
-                        <span>Reviews: {userInfo.totalReviews}</span>
+                        <span className="text-white">Reviews: {userInfo.totalReviews}</span>
                         <div>
-                            <span className="flex flex-col justify-center items-center">
+                            <span className="flex flex-col justify-center items-center text-white">
                                 Média de avaliação
                                 <span className="flex">
                                     {Array.from({ length: 5 }, (_, index) => (
@@ -60,18 +59,18 @@ const UserData = ({userId, actualUser}) => {
                             </span>
                         </div>
                         <div>
-                            <span className="flex flex-col justify-center items-center">
+                            <span className="flex flex-col justify-center items-center text-white">
                                 Generos mais assistidos:
                                 <span className="text-sm text-white bg-gray-950/20 rounded-lg p-1">{userInfo.mostViewedGenre}</span>
                             </span>
                         </div>
-                        <span>Última review:</span>
-                        <div className="flex flex-col items-center p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark">
+                        <span className="text-white">Última review:</span>
+                        <div className="flex flex-col items-center p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark overflow-y-auto">
                             <div className="flex just">
                                 <div className={`flex gap-4`}>
                                     <div className="flex flex-col">
                                         <div className="flex items-center">
-                                            {userInfo?.id && <p className="font-semibold cursor-pointer text-center">{userInfo.id}</p>}
+                                            {userInfo?.id && <p className="font-semibold text-center text-white">{userInfo.id}</p>}
                                         </div>
                                         {userInfo.rating && (
                                             <div className="text-[#005ef6] text-xl tracking-[2px] flex justify-center mt-4">
@@ -83,7 +82,7 @@ const UserData = ({userId, actualUser}) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className={`italic mt-4 text-[18px] text-white font-normal`}>{userInfo.review}</div>
+                            <div className={`italic mt-4 text-[18px] text-white font-normal truncate w-80`}>{userInfo.review}</div>
                             <div className={`flex gap-1 text-white text-[12px] mt-4 flex-col`}>
                                 <span>{userInfo.reviewed_at}</span>
                             </div>

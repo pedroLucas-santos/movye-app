@@ -57,7 +57,7 @@ const GroupList = ({ userId }) => {
                                 priority
                             />
                         </div>
-                        <span className="mt-2 font-medium text-lg text-center">{group.name}</span>
+                        <span className="mt-2 font-medium text-lg text-center text-white">{group.name}</span>
                         {/* TODO: Fazer a funcão de editar o grupo */}
                     </li>
                 </ul>

@@ -12,7 +12,7 @@ const UserInfo = ({user}) => {
                 quality={100}
                 className="rounded-full"
             />
-            <h1 className="text-3xl font-bold mt-4">{user.displayName}</h1>
+            <h1 className="text-3xl font-bold mt-4 text-white">{user.displayName}</h1>
             <span className="text-gray-500 mt-2">{user.bio}</span>
             <p className="text-gray-500 mt-2">
                 Criado em:{" "}

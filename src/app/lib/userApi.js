@@ -1,4 +1,4 @@
-import { collection, collectionGroup, doc, getCountFromServer, getDoc, getDocs, query, setDoc, where } from "firebase/firestore"
+import { collection, collectionGroup, doc, getCountFromServer, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore"
 import { db } from "@/app/lib/firebase-config" // Replace with your Firebase setup
 
 export const options = {
@@ -115,18 +115,28 @@ export const saveProfileEdit = async (userId, favoriteMovie, backdropPath, bio) 
         }
 
         // Atualizar os campos no Firestore
-        await setDoc(
-            userDocRef,
-            {
-                bio: bio || "",
-                favoriteMovie: {
-                    title: favoriteMovie.title,
-                    id: favoriteMovie.id,
-                    backdropPath: backdropPath, // Salva o backdropPath dentro de favoriteMovie
+        if (favoriteMovie) {
+            await setDoc(
+                userDocRef,
+                {
+                    bio: bio || "",
+                    favoriteMovie: {
+                        title: favoriteMovie.title,
+                        id: favoriteMovie.id,
+                        backdropPath: backdropPath, // Salva o backdropPath dentro de favoriteMovie
+                    },
                 },
-            },
-            { merge: true } // Garante que outros campos no documento não sejam sobrescritos
-        )
+                { merge: true } // Garante que outros campos no documento não sejam sobrescritos
+            )
+        }else{
+            await updateDoc(
+                userDocRef, 
+                {
+                    bio: bio || "",
+                },
+                { merge: true }
+            )
+        }
 
         console.log("Favorite movie and backdrop saved successfully!")
     } catch (err) {

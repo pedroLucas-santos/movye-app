@@ -94,7 +94,7 @@ const ModalAddMovie = () => {
             >
                 Adicionar Filme
             </button>
-            <Modal className="dark" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal className="dark text-white" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     <ModalHeader className="text-2xl">Adicionar filme</ModalHeader>
                     <ModalBody>

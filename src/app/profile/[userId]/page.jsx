@@ -58,13 +58,13 @@ export default async function ProfilePage({ params }) {
                         <GroupListProfile groupList={groupList} userId={userId} />
                     </div>
 
-                    <div className="grid grid-cols-3 mt-24 p-4 rounded-xl justify-items-center h-32 content-center mb-12">
+                    <div className="grid grid-cols-1 md:grid-cols-3 mt-24 p-4 rounded-xl justify-items-center h-32 content-center mb-12 gap-6 md:gap-0">
                         <div className="flex items-center flex-col h-full">
-                            <h2 className="text-2xl">Reviews:</h2>
-                            <span className="text-2xl">{reviewCount}</span>
+                            <h2 className="text-2xl text-white">Reviews:</h2>
+                            <span className="text-2xl text-white">{reviewCount}</span>
                         </div>
                         <div className="flex items-center flex-col h-full">
-                            <h2 className="text-2xl">Média de avaliação:</h2>
+                            <h2 className="text-2xl text-white">Média de avaliação:</h2>
                             <span className="flex">
                                 {Array.from({ length: 5 }, (_, index) => (
                                     <RenderStars key={index} index={index + 1} movieRating={avgReview} />
@@ -72,24 +72,23 @@ export default async function ProfilePage({ params }) {
                             </span>
                         </div>
                         <div className="flex items-center flex-col h-full">
-                            <h2 className="text-2xl">Filme favorito:</h2>
-                            <span className="text-2xl text-center text-wrap w-96">{user.favoriteMovie?.title}</span>
+                            <h2 className="text-2xl text-white">Filme favorito:</h2>
+                            <span className="text-2xl text-center text-wrap w-96 text-white">{user.favoriteMovie?.title}</span>
                         </div>
                     </div>
-                    <div className="flex flex-col justify-center items-center w-full">
+                    <div className="flex flex-col justify-center items-center w-full mt-14 md:mt-0">
                         <h2 className="text-3xl text-white text-center">Últimas reviews:</h2>
-                        <div className="w-[1300px] flex justify-end">
-                            <Link href={`/reviews/${userId}`} className="text-lg text-white text-center flex items-center">
-                                Ver todas as reviews <FiArrowRight />
-                            </Link>
-                        </div>
                     </div>
                 </div>
 
                 {/* Div preta para testar a transição */}
-
-                <div className="w-full h-full bg-black">
+                <div className="flex flex-col bg-black p-40 pt-0 pb-0">
                     <Suspense>
+                        <div className="flex justify-end z-20">
+                            <Link href={`/reviews/${userId}`} className="text-lg text-white text-center flex items-center">
+                                Ver todas as reviews <FiArrowRight />
+                            </Link>
+                        </div>
                         <ReviewsCard userId={userId} limit={3} />
                     </Suspense>
                 </div>

@@ -5,8 +5,8 @@ import OtherFriendsButton from "./OtherFriendsButton"
 
 const FriendList = ({ friendList, userId }) => {
     return (
-        <div className="absolute top-0 right-64 flex flex-col justify-center items-center w-64 p-4 rounded-xl">
-            <h2 className="text-2xl mb-2">Amigos</h2>
+        <div className="absolute top-0 right-64 hidden md:flex flex-col justify-center items-center w-64 p-4 rounded-xl">
+            <h2 className="text-2xl mb-2 text-white">Amigos</h2>
             {friendList.length > 0 ? (
                 <div>
                     <ul className="list-disc list-inside">
