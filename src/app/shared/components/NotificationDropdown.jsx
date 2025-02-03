@@ -9,7 +9,7 @@ import { toast } from "react-toastify"
 const NotificationDropdown = ({ notifications }) => {
     return (
         <>
-            <Dropdown className="dark mt-2" closeOnSelect={false} shouldBlockScroll={false}>
+            <Dropdown className="dark mt-2 text-white" closeOnSelect={false} shouldBlockScroll={false}>
                 <DropdownTrigger>
                     <svg
                         id="notifications"

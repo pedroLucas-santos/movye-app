@@ -24,7 +24,7 @@ const OtherGroupsButton = ({ length, userId }) => {
             <button onClick={onOpen} className="hover:underline">
                 +{length - 4} outros grupos
             </button>
-            <Modal className="dark" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal className="dark text-white" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1 justify-center items-center text-2xl">Grupos</ModalHeader>
                     <ModalBody>

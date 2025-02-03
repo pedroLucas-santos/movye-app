@@ -47,7 +47,7 @@ const MoviesWatched = () => {
 
     return (
         <div className=" p-4 pb-12 gap-8 flex flex-col items-center flex-wrap justify-center">
-            <span className="text-5xl mt-8">Filmes assistidos</span>
+            <span className="text-5xl mt-8 text-white">Filmes assistidos</span>
             <div className="gap-8 flex items-center flex-wrap justify-center">
                 {currentMovies.map((movie) => {
                     return (
@@ -61,7 +61,7 @@ const MoviesWatched = () => {
                                 className="bg-slate h-[70%] w-full object-cover select-none"
                             />
                             <div className="bg-secondary-dark flex-grow w-full flex justify-between items-center gap-6 pl-12 pr-12">
-                                <span className="text-sm md:text-lg truncate">{movie.title}</span>
+                                <span className="text-sm md:text-lg truncate text-white">{movie.title}</span>
                                 <div className="text-center flex flex-col gap-2 items-end">
                                     <span className="text-sm text-white bg-gray-950/20 rounded-lg p-1">{movie.genre}</span>
                                     <div className="flex">
@@ -81,7 +81,7 @@ const MoviesWatched = () => {
                     <button onClick={prevPage} disabled={currentPage === 1} className="bg-secondary-dark p-2 text-white rounded-md">
                         {"<"}
                     </button>
-                    <span>
+                    <span className="text-white">
                         {currentPage} / {totalPages}
                     </span>
                     <button onClick={nextPage} disabled={currentPage === totalPages} className="bg-secondary-dark p-2 text-white rounded-md">

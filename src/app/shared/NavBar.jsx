@@ -131,7 +131,7 @@ const NavBar = ({ userFirestore }) => {
                     </svg>
                 </button>
                 <div id="logo">
-                    <span onClick={dashboardPage} className="font-bold text-3xl select-none hover:cursor-pointer">
+                    <span onClick={dashboardPage} className="font-bold text-3xl select-none hover:cursor-pointer text-white">
                         Movye
                     </span>
                 </div>

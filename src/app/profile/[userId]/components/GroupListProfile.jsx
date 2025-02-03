@@ -6,7 +6,7 @@ import OtherGroupsButton from "./OtherGroupsButton"
 const GroupListProfile = ({ groupList, userId }) => {
     return (
         <div className="absolute top-0 left-64 flex flex-col justify-center items-center w-64 p-4 rounded-xl">
-            <h2 className="text-2xl mb-2">Grupos</h2>
+            <h2 className="text-2xl mb-2 text-white">Grupos</h2>
             {groupList.length > 0 ? (
                 <>
                     <div>

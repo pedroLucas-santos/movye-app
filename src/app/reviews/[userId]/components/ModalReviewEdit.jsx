@@ -92,7 +92,7 @@ const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
     return (
         <>
             {isModalReviewEdit && (
-                <Modal className="dark" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={closeModal}>
+                <Modal className="dark text-white" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={closeModal}>
                     <ModalContent>
                         <ModalHeader className="flex flex-col gap-1 justify-center text-2xl">Editar Review</ModalHeader>
                         <ModalBody>

@@ -15,6 +15,8 @@ const Friends = () => {
         return <LoadingSpinner />
     }
 
+    //TODO: arrumar as cores dos textos/fundos
+
     if (!user) {
         return <MustBeLogged />
     }

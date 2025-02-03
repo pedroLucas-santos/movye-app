@@ -45,7 +45,7 @@ const ProfileDropdown = ({ user }) => {
     }
     return (
         <>
-            <Dropdown className="dark mt-2 overflow-hidden" shouldBlockScroll={false}>
+            <Dropdown className="dark mt-2 overflow-hidden text-white" shouldBlockScroll={false}>
                 <DropdownTrigger>
                     {user?.photoURL ? <Image
                         src={user?.photoURL ? user?.photoURL : null}

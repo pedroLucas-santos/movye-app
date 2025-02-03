@@ -7,8 +7,8 @@ export default async function Groups({ params }) {
     const { userId } = await params
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen">
-            <h1 className="text-2xl font-bold mb-8">Selecione seu Grupo</h1>
+        <div className="flex flex-col items-center justify-center min-h-screen bg-primary-dark">
+            <h1 className="text-2xl font-bold mb-8 text-white">Selecione seu Grupo</h1>
             <div className="grid grid-cols-3 gap-8 justify-items-center">
                 <GroupList userId={userId} />
 

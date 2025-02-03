@@ -83,19 +83,17 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
     }
 
     const editProfile = async () => {
-        if (selectedMovie && selectedBackdrop !== null) {
-            try {
-                // Salva o filme favorito e o backdrop no Firestore
-                await saveProfileEdit(user.uid, selectedMovie, backdrops[selectedBackdrop].file_path, bio)
-                // Exibir Toast ou sucesso
-                toast.success("Filme favorito salvo com sucesso!")
+        try {
+            // Salva o filme favorito e o backdrop no Firestore
+            await saveProfileEdit(user.uid, selectedMovie, backdrops[selectedBackdrop]?.file_path, bio)
+            // Exibir Toast ou sucesso
+            toast.success("Filme favorito salvo com sucesso!")
 
-                return true
-            } catch (error) {
-                console.error("Erro ao salvar filme favorito:", error)
-                // Exibir Toast ou erro
-                toast.error("Erro ao salvar filme favorito.")
-            }
+            return true
+        } catch (error) {
+            console.error("Erro ao salvar filme favorito:", error)
+            // Exibir Toast ou erro
+            toast.error("Erro ao salvar filme favorito.")
         }
     }
 
@@ -121,7 +119,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
             <button onClick={onOpen} className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md">
                 Editar Perfil
             </button>
-            <Modal className="dark" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal className="dark text-white" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     <ModalHeader className="text-2xl">Editar Perfil</ModalHeader>
                     <ModalBody>
@@ -191,7 +189,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                     </div>
 
                                     {backdrops.length > 0 && (
-                                        <div className="mt-6 p-4 bg-primary-dark rounded-lg h-[300px] overflow-auto">
+                                        <div className="mt-6 p-4 bg-primary-dark rounded-lg h-[500px] overflow-auto">
                                             <h3 className="text-white text-lg mb-4">Escolha uma imagem para o fundo do seu perfil:</h3>
                                             <div className="grid grid-cols-2 gap-4">
                                                 {backdrops.map((backdrop, index) => (

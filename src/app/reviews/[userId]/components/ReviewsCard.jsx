@@ -79,10 +79,14 @@ const ReviewsCard = ({ userId, limit }) => {
 
     //criar modal para editar review quando clicar no OK
 
-    const reviewsToDisplay = limit > 0 ? reviewsData.slice(0, limit) : reviewsData;
+    const reviewsToDisplay = limit > 0 ? reviewsData.slice(0, limit) : reviewsData
 
     return (
-        <div className="w-full h-full overflow-y-auto flex flex-col items-center justify-start bg-transparent rounded-lg shadow-2xl">
+        <div
+            className={`w-full h-full flex flex-col items-center justify-start ${
+                limit > 0 ? "bg-transparent overflow-y-hidden" : "bg-stone-950 overflow-y-auto"
+            } rounded-lg shadow-2xl`}
+        >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 mb-10">
                 {reviewsToDisplay.map((review) => (
                     <div
@@ -136,7 +140,7 @@ const ReviewsCard = ({ userId, limit }) => {
                         <div className="p-4 flex flex-col gap-2 justify-center">
                             <h3 className="text-lg font-bold truncate select-text">{review.id}</h3>
                             <span className="text-sm text-gray-400">{review.genre}</span>
-                            <p className="text-sm">{review.review}</p>
+                            <p className="text-sm break-words">{review.review}</p>
                             <div className="flex justify-between items-center mt-4">
                                 <span className="px-2 py-1 rounded-lg flex">
                                     {Array.from({ length: 5 }, (_, index) => (
