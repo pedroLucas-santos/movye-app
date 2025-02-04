@@ -5,7 +5,7 @@ import React, { useState } from "react"
 import { FaChevronDown, FaChevronUp } from "react-icons/fa"
 import MoviesActions from "./MoviesActions"
 
-const GroupMoviesWatched = ({ watchedMovies, groupId }) => {
+const GroupMoviesWatched = ({ watchedMovies, groupId, groupCreatorId }) => {
     const [isExpanded, setIsExpanded] = useState(false)
 
     // Função para alternar a visibilidade da lista
@@ -39,7 +39,7 @@ const GroupMoviesWatched = ({ watchedMovies, groupId }) => {
                                         <RenderStars key={index} index={index + 1} movieRating={movie.averageRating} />
                                     ))}
                                 </div>
-                                <MoviesActions groupId={groupId} movieId={movie.doc_id} movieTitle={movie.title}/>
+                                <MoviesActions groupId={groupId} movieId={movie.doc_id} movieTitle={movie.title} groupCreatorId={groupCreatorId}/>
                             </div>
                         </div>
                     </li>

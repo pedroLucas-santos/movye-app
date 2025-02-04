@@ -78,8 +78,6 @@ const ReviewsCard = ({ userId, limit }) => {
         }
     }, [isSelectingReview])
 
-    //criar modal para editar review quando clicar no OK
-
     const reviewsToDisplay = limit > 0 ? reviewsData.slice(0, limit) : reviewsData
 
     return (
