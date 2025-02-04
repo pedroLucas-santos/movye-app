@@ -5,17 +5,12 @@ import { getGroupData, sendGroupRequest } from "@/app/lib/groupApi"
 import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from "@heroui/modal"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 
 const ModalInviteUsers = ({ groupCreatorId, groupId }) => {
     const { user } = useAuth()
-    const searchParams = useSearchParams()
-    const isInviting = searchParams.get("invite") || null
-    const [isModalClosing, setIsModalClosing] = useState(null)
     const [notMembers, setNotMembers] = useState([])
-    const router = useRouter()
     const [group, setGroup] = useState(null)
     const [isValidMember, setIsValidMember] = useState(null)
 
@@ -24,7 +19,7 @@ const ModalInviteUsers = ({ groupCreatorId, groupId }) => {
     useEffect(() => {
         const fetchNotMembers = async () => {
             try {
-                const listF = await getFriendList(groupCreatorId)
+                const listF = await getFriendList(user.uid)
                 const listG = await getGroupData(groupId)
                 setGroup(listG)
                 const memberIds = listG.members.map((member) => member.id)

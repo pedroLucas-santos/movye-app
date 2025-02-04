@@ -1,5 +1,5 @@
 import { db, storage } from "../lib/firebase-config"
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { ref, uploadBytes, getDownloadURL, getStorage, deleteObject } from "firebase/storage"
 
 import {
     getDocs,
@@ -150,11 +150,8 @@ export const getGroupData = async (groupId) => {
                 }
             }
 
-            
-
             return { ...data, id: groupId, createdAt: formattedDate, members: membersData }
         } else {
-            
             return null
         }
     } catch (error) {
@@ -166,7 +163,6 @@ export const getGroupData = async (groupId) => {
 export const sendGroupRequest = async (sender, receiverId, group) => {
     try {
         if (sender.uid === receiverId) {
-            
             throw new Error("Você não pode convidar você mesmo para o grupo!")
         }
 
@@ -183,7 +179,6 @@ export const sendGroupRequest = async (sender, receiverId, group) => {
         const existingRequestSnapshot = await getDocs(existingRequestQuery)
 
         if (!existingRequestSnapshot.empty) {
-            
             throw new Error("Um convite para o grupo já foi enviado para o usuário!")
         }
 
@@ -202,8 +197,6 @@ export const sendGroupRequest = async (sender, receiverId, group) => {
             message: `te convidou para o grupo ${group.name}`,
             additionalData: { groupRequestId: requestDoc.id, groupId: group.id },
         })
-
-        
     } catch (err) {
         console.error("Error sending group request:", err)
         throw err
@@ -231,8 +224,6 @@ export const acceptGroupRequest = async (senderId, receiverId, groupId) => {
             await updateDoc(doc(db, `groups/${groupId}`), {
                 members: arrayUnion(receiverId),
             })
-
-            
         }
     } catch (error) {
         console.error("Error accepting group request:", error)
@@ -256,9 +247,7 @@ export const refuseGroupRequest = async (senderId, receiverId, groupId) => {
         if (!groupRequestSnapshot.empty) {
             const requestDoc = groupRequestSnapshot.docs[0]
             await updateDoc(requestDoc.ref, { status: "recusado" })
-            
         } else {
-            
         }
     } catch (error) {
         console.error("Error refusing group request:", error)
@@ -270,8 +259,6 @@ export const removeMemberFromGroup = async (groupId, memberId) => {
         await updateDoc(doc(db, `groups/${groupId}`), {
             members: arrayRemove(memberId),
         })
-
-        
     } catch (err) {
         throw new Error("Error removing member from group", err)
     }
@@ -283,13 +270,25 @@ export const deleteGroup = async (groupCreatorId, groupId) => {
         const groupDoc = await getDoc(groupRef)
 
         if (!groupDoc.exists()) {
-            
             throw new Error("Grupo não existe!")
         }
 
         if (groupCreatorId !== groupDoc.data().creatorId) {
-            
             throw new Error("Você não é o criador do grupo!")
+        }
+
+        const imagePath = groupDoc.data().image
+
+        if (imagePath) {
+            const storage = getStorage()
+            const imageRef = ref(storage, imagePath)
+
+            try {
+                await deleteObject(imageRef)
+            } catch (storageError) {
+                console.error("Erro ao deletar imagem do Storage:", storageError)
+                throw storageError // Optional: Handle the error differently if needed
+            }
         }
 
         await deleteDoc(groupRef)
@@ -304,7 +303,6 @@ export const deleteMovieFromGroup = async (groupId, movieId) => {
         if (!groupId || !movieId) {
             throw new Error("Missing groupId or movieId")
         }
-        
 
         // Reference the movie document inside the watchedMovies subcollection
         const movieRef = doc(db, "groups", groupId, "watchedMovies", movieId)
@@ -322,7 +320,6 @@ export const deleteMovieFromGroup = async (groupId, movieId) => {
                 lastWatchedMovie: deleteField(),
             })
         }
-        
     } catch (e) {
         console.error("Error deleting movie from group:", e)
         throw e // Re-throw error for better error handling
