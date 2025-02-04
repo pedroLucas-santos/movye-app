@@ -42,7 +42,7 @@ export const NotificationProvider = ({ children }) => {
         return () => unsubscribe()
     }, [user, loading])
 
-    console.log(notifications)
+    
 
     return <NotificationContext.Provider value={{ notifications, loadingNoti }}>{children}</NotificationContext.Provider>
 }

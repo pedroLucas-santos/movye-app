@@ -49,7 +49,7 @@ const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
         if (rating && selectedReview && newReview !== "") {
             try {
                 const updatedReview = await fetchUpdateReview(user.uid, selectedReview, newReview, rating)
-                console.log(updatedReview)
+                
                 toast.success("Review editada com sucesso!")
 
                 triggerUpdate()
@@ -77,7 +77,7 @@ const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
         const fetchReviewToEdit = async () => {
             try {
                 const response = await fetchEditReview(user.uid, selectedReview)
-                console.log(response)
+                
                 setReviewEdit(response)
                 setNewReview(response.review)
             } catch (e) {

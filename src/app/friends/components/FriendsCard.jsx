@@ -38,7 +38,7 @@ const FriendsCard = () => {
                     const response = await searchFriendCode(inputCode)
                     setFriendData(response)
                 } catch (e) {
-                    console.log(e)
+                    
                 }
             }
             friendCode()
@@ -63,7 +63,7 @@ const FriendsCard = () => {
             setFriendData(null)
         } catch (e) {
             toast.error(e.message || "Erro ao enviar a solicitação de amizade.")
-            console.log(e)
+            
         }
     }
 
@@ -74,7 +74,7 @@ const FriendsCard = () => {
             toast.success("Amigo excluído com sucesso!")
         } catch (e) {
             toast.error("Erro ao excluir amigo.")
-            console.log(e)
+            
         }
     }
 
@@ -126,7 +126,7 @@ const FriendsCard = () => {
                     />
                     {inputCode !== "" && friendData && (
                         <div className="relative w-full bg-secondary-dark flex justify-start items-start p-2 rounded-lg">
-                            {console.log(friendData)}
+                            {}
                             <div className="flex justify-center items-center gap-4 flex-col md:flex-row">
                                 <Image src={friendData.photoURL} className="select-none" alt="User's profile picture" width={100} height={100} quality={100} />
                                 <div className="flex flex-col">

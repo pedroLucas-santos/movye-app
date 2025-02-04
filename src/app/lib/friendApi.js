@@ -50,12 +50,12 @@ export const searchFriendCode = async (friendCode) => {
         const friendSnapshot = await getDocs(friendQuery)
 
         if (friendSnapshot.empty) {
-            console.log("No matching friend found.")
+            
             return null
         }
 
         const friendData = { id: friendSnapshot.docs[0].id, ...friendSnapshot.docs[0].data() }
-        console.log(friendData)
+        
         return friendData
     } catch (e) {
         console.error("Error searching friend code:", e.message)
@@ -66,7 +66,7 @@ export const searchFriendCode = async (friendCode) => {
 export const sendFriendRequest = async (sender, receiverId) => {
     try {
         if (sender.uid === receiverId) {
-            console.log("Você não pode enviar uma solicitação de amizade para si mesmo.")
+            
             throw new Error("Você não pode enviar uma solicitação de amizade para si mesmo.")
         }
 
@@ -77,7 +77,7 @@ export const sendFriendRequest = async (sender, receiverId) => {
         const receiverFriendsSnapshot = await getDocs(receiverFriendsRef)
 
         if (senderFriendsSnapshot.docs.some((doc) => doc.id === receiverId) || receiverFriendsSnapshot.docs.some((doc) => doc.id === sender.uid)) {
-            console.log("Você já é amigo dessa pessoa.")
+            
             throw new Error("Você já é amigo dessa pessoa.")
         }
 
@@ -93,7 +93,7 @@ export const sendFriendRequest = async (sender, receiverId) => {
         const existingRequestSnapshot = await getDocs(existingRequestQuery)
 
         if (!existingRequestSnapshot.empty) {
-            console.log("Friend request already exists.")
+            
             throw new Error("Pedido de amizade já enviado!")
         }
 
@@ -112,7 +112,7 @@ export const sendFriendRequest = async (sender, receiverId) => {
             additionalData: { friendRequestId: requestDoc.id },
         })
 
-        console.log("Friend request sent:", requestDoc.id)
+        
     } catch (error) {
         throw error
     }
@@ -146,7 +146,7 @@ export const acceptFriendRequest = async (senderId, receiverId) => {
                 addedAt: Timestamp.now(),
             })
 
-            console.log("Friend request accepted and friend data saved")
+            
         }
     } catch (error) {
         console.error("Error accepting friend request:", error)
@@ -169,9 +169,9 @@ export const refuseFriendRequest = async (senderId, receiverId) => {
         if (!friendRequestSnapshot.empty) {
             const requestDoc = friendRequestSnapshot.docs[0];
             await updateDoc(requestDoc.ref, { status: "recusado" });
-            console.log("Friend request refused");
+            
         } else {
-            console.log("No pending friend request found");
+            
         }
     } catch (error) {
         console.error("Error refusing friend request:", error);
@@ -196,7 +196,7 @@ export const deleteFriend = async (user, friendId) => {
         receiverFriendsSnapshot.forEach(async (docSnap) => {
             await deleteDoc(doc(db, "users", friendId, "friends", docSnap.id))
         })
-        console.log("Friendship successfully deleted.")
+        
     } catch (error) {
         console.error("Error deleting friend:", error)
     }

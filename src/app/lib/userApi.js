@@ -138,7 +138,7 @@ export const saveProfileEdit = async (userId, favoriteMovie, backdropPath, bio) 
             )
         }
 
-        console.log("Favorite movie and backdrop saved successfully!")
+        
     } catch (err) {
         console.error("Error saving favorite movie:", err)
         throw err
