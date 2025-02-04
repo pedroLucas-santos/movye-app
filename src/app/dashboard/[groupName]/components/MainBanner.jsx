@@ -88,10 +88,10 @@ const MainBanner = () => {
             <div id="dark-filter" className="absolute inset-0 bg-black opacity-60"></div>
             <div className="relative z-10 flex flex-col items-center">
                 <NavBar />
-                <div className="w-full h-[500px] mt-8 flex justify-evenly items-center">
+                <div className="w-full h-[500px] mt-8 flex justify-evenly items-center p-4 md:p-0">
                     <div className="flex justify-center flex-col gap-2">
-                        <span className="text-4xl font-bold antialiased text-white">Último filme assistido:</span>
-                        <span className="text-2xl antialiased w-3/4 text-center ml-4 text-white">{lastWatchedMovie.title}</span>
+                        <span className="text-3xl md:text-4xl font-bold antialiased text-white">Último filme assistido:</span>
+                        <span className="text-xl md:text-2xl antialiased w-3/4 text-center ml-4 text-white">{lastWatchedMovie.title}</span>
 
                         {currentReview && (
                             <div className="hidden flex-col p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark mt-2 md:flex">
@@ -131,7 +131,7 @@ const MainBanner = () => {
                             </div>
                         )}
                     </div>
-                    <div className="w-[300px] h-[450px]">
+                    <div className="w-[300px] h-[350px] md:h-[450px]">
                         {lastWatchedMovie.posterUrl && (
                             <img src={lastWatchedMovie.posterUrl} alt="" className="w-full h-full select-none shadow-xl" />
                         )}

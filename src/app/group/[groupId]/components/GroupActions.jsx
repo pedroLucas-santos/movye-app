@@ -29,13 +29,11 @@ const GroupActions = ({ groupCreatorId, groupId, groupName, groupMembers }) => {
     const groupDelete = async () => {
         try {
             await deleteGroup(user.uid, groupId)
-            toast.success(`Você excluiu o grupo ${groupName}`, {
-                onClose: () => {
-                    router.push(`/groups/${user?.uid}`)
-                    setSelectedGroup(null)
-                    localStorage.removeItem("selectedGroup")
-                },
-            })
+            toast.success(`Você excluiu o grupo ${groupName}`)
+
+            router.push(`/groups/${user?.uid}`)
+            setSelectedGroup(null)
+            localStorage.removeItem("selectedGroup")
         } catch (err) {
             toast.error(err.toString())
         }
