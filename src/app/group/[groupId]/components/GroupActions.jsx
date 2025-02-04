@@ -1,6 +1,7 @@
 "use client"
 import { useAuth } from "@/app/context/auth-context"
 import { useGroup } from "@/app/context/groupProvider"
+import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 import { deleteGroup, removeMemberFromGroup } from "@/app/lib/groupApi"
 import { Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader } from "@heroui/drawer"
 import { useDisclosure } from "@heroui/modal"
@@ -14,14 +15,21 @@ const GroupActions = ({ groupCreatorId, groupId, groupName, groupMembers }) => {
     const { user } = useAuth()
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
     const router = useRouter()
-    const { setSelectedGroup } = useGroup()
+    const { selectedGroup, setSelectedGroup } = useGroup()
+    const { triggerUpdate } = useMovieUpdate()
 
     const leaveGroup = async () => {
         try {
             await removeMemberFromGroup(groupId, user?.uid)
-            toast.success(`Você saiu do grupo ${groupName}`, {
-                onClose: () => router.refresh(),
-            })
+            toast.success(`Você saiu do grupo ${groupName}`)
+
+            if (selectedGroup.id === groupId) {
+                router.push(`/groups/${user?.uid}`)
+                setSelectedGroup(null)
+                localStorage.removeItem("selectedGroup")
+            } else {
+                router.push(`/group/${groupId}`)
+            }
         } catch (err) {
             toast.error(err.toString())
         }
@@ -31,9 +39,14 @@ const GroupActions = ({ groupCreatorId, groupId, groupName, groupMembers }) => {
             await deleteGroup(user.uid, groupId)
             toast.success(`Você excluiu o grupo ${groupName}`)
 
-            router.push(`/groups/${user?.uid}`)
-            setSelectedGroup(null)
-            localStorage.removeItem("selectedGroup")
+            if (selectedGroup.id === groupId) {
+                router.push(`/groups/${user?.uid}`)
+                setSelectedGroup(null)
+                localStorage.removeItem("selectedGroup")
+            } else {
+                const sanitizedGroupName = selectedGroup.name.replace(/\s/g, "-") // Substituir espaços por "_"
+                router.push(`/dashboard/${sanitizedGroupName}`)
+            }
         } catch (err) {
             toast.error(err.toString())
         }

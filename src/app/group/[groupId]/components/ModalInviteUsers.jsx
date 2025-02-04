@@ -1,5 +1,6 @@
 "use client"
 import { useAuth } from "@/app/context/auth-context"
+import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 import { getFriendList } from "@/app/lib/friendApi"
 import { getGroupData, sendGroupRequest } from "@/app/lib/groupApi"
 import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from "@heroui/modal"
@@ -15,6 +16,7 @@ const ModalInviteUsers = ({ groupCreatorId, groupId }) => {
     const [isValidMember, setIsValidMember] = useState(null)
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
+    const { updateSignal } = useMovieUpdate()
 
     useEffect(() => {
         const fetchNotMembers = async () => {
@@ -32,18 +34,18 @@ const ModalInviteUsers = ({ groupCreatorId, groupId }) => {
             }
         }
         fetchNotMembers()
-    }, [])
+    }, [[],updateSignal])
 
     useEffect(() => {
         const verifyMember = () => {
-            try{
+            try {
                 const memberList = group?.members.map((member) => member.id)
-                if(memberList?.includes(user.uid)){
+                if (memberList?.includes(user.uid)) {
                     setIsValidMember(true)
-                }else {
+                } else {
                     setIsValidMember(false)
                 }
-            }catch(e){
+            } catch (e) {
                 console.error(e.toString())
             }
         }
@@ -59,7 +61,7 @@ const ModalInviteUsers = ({ groupCreatorId, groupId }) => {
             toast.error(e.toString())
         }
     }
-    
+
     return (
         <>
             {isValidMember && (
