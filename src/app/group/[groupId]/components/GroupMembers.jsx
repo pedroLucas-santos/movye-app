@@ -13,7 +13,7 @@ export default function GroupMembers({ members, groupCreatorId, groupId }) {
     const membersToShow = isExpanded ? members.length : 3
 
     return (
-        <section className="group-members mb-8">
+        <section className="group-members mb-8 w-full">
             <h2 className="text-xl font-semibold text-gray-200 mb-4">Membros</h2>
 
             <ul className="space-y-2">
