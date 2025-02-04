@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import { toast } from "react-toastify"
 import { createNewGroup } from "@/app/lib/groupApi"
 import Image from "next/image"
+import { CircularProgress } from "@heroui/progress"
 
 export default function CreateGroup({ userId }) {
     const [groupName, setGroupName] = useState("")
@@ -40,6 +41,7 @@ export default function CreateGroup({ userId }) {
             setLoading(true)
             await createNewGroup(groupName, groupImage, userId)
             toast.success("Grupo criado com sucesso!")
+            setLoading(false)
 
             setTimeout(() => {
                 router.push(`/groups/${userId}`)
@@ -83,13 +85,15 @@ export default function CreateGroup({ userId }) {
                     className="w-full px-4 py-2 border bg-secondary-dark rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-white text-white"
                 />
 
-                <button
-                    onClick={createGroup}
-                    disabled={loading}
-                    className="px-6 py-2 bg-secondary-dark text-white rounded-md hover:bg-zinc-800 transition"
-                >
-                    Criar Grupo
-                </button>
+                <div className="flex">
+                    <button
+                        onClick={createGroup}
+                        disabled={loading}
+                        className="px-6 py-2 bg-secondary-dark text-white rounded-md hover:bg-zinc-800 transition"
+                    >
+                        {loading ? <CircularProgress size={'sm'} color={'default'} className="mr-2" /> : "Criar Grupo"}
+                    </button>
+                </div>
             </div>
         </>
     )

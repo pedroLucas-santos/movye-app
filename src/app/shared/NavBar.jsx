@@ -136,7 +136,7 @@ const NavBar = ({ userFirestore }) => {
                     </span>
                 </div>
 
-                <div>
+                <div className="hidden md:block">
                     <ul className="hidden md:flex items-center justify-center">
                         <li>
                             {/* <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
@@ -158,7 +158,7 @@ const NavBar = ({ userFirestore }) => {
 
                 <div className="flex justify-center items-center gap-4">
                     {pathname.match(/\/dashboard(\/.*)?/) && (
-                        <div className="flex gap-4">
+                        <div className="gap-4 hidden md:flex">
                             <ModalReviewMovie/>
 
                             <ModalAddMovie/>

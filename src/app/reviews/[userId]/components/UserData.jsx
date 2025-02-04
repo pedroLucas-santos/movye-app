@@ -82,7 +82,7 @@ const UserData = ({userId, actualUser}) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className={`italic mt-4 text-[18px] text-white font-normal truncate w-80`}>{userInfo.review}</div>
+                            <div className={`italic mt-4 text-[18px] text-white font-normal truncate w-80 text-center`}>{userInfo.review}</div>
                             <div className={`flex gap-1 text-white text-[12px] mt-4 flex-col`}>
                                 <span>{userInfo.reviewed_at}</span>
                             </div>
