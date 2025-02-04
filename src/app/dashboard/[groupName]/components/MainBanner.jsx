@@ -34,7 +34,7 @@ const MainBanner = () => {
     useEffect(() => {
         const fetchLastMovieReview = async () => {
             try {
-                console.log(lastWatchedMovie)
+                
                 const reviews = await fetchUserLastMovieReview(selectedGroup.id,lastWatchedMovie.id)
                 setAllReviews(reviews) //
                 if (reviews && reviews.length > 0) {

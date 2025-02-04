@@ -44,7 +44,6 @@ const GroupList = ({ userId }) => {
         <>
             {groupsList?.map((group) => (
                 <ul key={group.id} className="flex flex-col items-center justify-center cursor-pointer">
-                    {console.log(group)}
                     <li className="hover:scale-105 transition flex flex-col justify-center items-center" onClick={() => handleSelectedGroup(group)}>
                         <div className="relative">
                             <Image

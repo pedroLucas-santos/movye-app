@@ -23,7 +23,7 @@ const ReviewsCard = ({ userId, limit }) => {
     }
 
     const handleReviewSelection = () => {
-        console.log(currentSelection)
+        
         if (currentSelection) {
             setSelectedReview(currentSelection)
             setIsSelectingReview(!isSelectingReview)

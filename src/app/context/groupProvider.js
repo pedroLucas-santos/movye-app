@@ -24,7 +24,7 @@ export const GroupProvider = ({ children }) => {
     }, [selectedGroup])
 
 
-    console.log(selectedGroup)
+    
 
     return <GroupContext.Provider value={{ selectedGroup, setSelectedGroup }}>{children}</GroupContext.Provider>
 }

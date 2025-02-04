@@ -88,12 +88,12 @@ export const fetchSearchedMovieName = async (movie, groupId) => {
 
 export const fetchAddMovie = async (movieId, groupId) => {
     try {
-        console.log("Fetching add movie")
+        
 
         // Fetch movie details from TheMovieDB API
         const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?language=en-US`, options)
         const movie = await response.json()
-        console.log(movie)
+        
 
         // References for Firestore
         const groupRef = doc(db, "groups", groupId) // Group document reference
@@ -147,7 +147,7 @@ export const fetchMovieLastWatched = async (groupId) => {
 
         // Check if the group has a lastWatchedMovie field
         if (!groupData.lastWatchedMovie) {
-            console.log("No last watched movie found for this group. Creating a new default...")
+            
 
             // Default data for a new last watched movie
             const defaultLastWatchedMovie = {
@@ -163,13 +163,13 @@ export const fetchMovieLastWatched = async (groupId) => {
             // Update the group's lastWatchedMovie field
             await setDoc(groupDocRef, { ...groupData, lastWatchedMovie: defaultLastWatchedMovie })
 
-            console.log("Default last watched movie created successfully.")
+            
             return defaultLastWatchedMovie
         }
 
         // Return the lastWatchedMovie field from the group document
         const lastWatchedMovie = groupData.lastWatchedMovie
-        console.log(lastWatchedMovie)
+        
 
         return {
             ...lastWatchedMovie,
@@ -212,20 +212,20 @@ export const fetchMoviesWatched = async (groupId) => {
             }
         })
 
-        console.log("Watched movies:", movies)
+        
 
         // Fetch reviews related to the group
         const reviewsQuery = query(collectionGroup(db, "reviews"), where("group", "==", groupId))
         const reviewsSnapshot = await getDocs(reviewsQuery)
         const reviews = reviewsSnapshot.docs.map((doc) => doc.data())
 
-        console.log("Reviews found:", reviews)
+        
 
         // Combine movies with their reviews
         const moviesWithRatings = movies.map((movie) => {
             const movieReviews = reviews.filter((review) => review.id_movie === movie.id)
 
-            console.log(`Reviews for movie ${movie.id}:`, movieReviews)
+            
 
             // Calculate average rating
             const totalReviews = movieReviews.length
@@ -237,7 +237,7 @@ export const fetchMoviesWatched = async (groupId) => {
             }
         })
 
-        console.log("Movies with calculated ratings:", moviesWithRatings)
+        
 
         return moviesWithRatings
     } catch (e) {
@@ -257,13 +257,13 @@ export const fetchMovieReview = async (movieId, newRating, movieSelected, newRev
 
                 await updateDoc(docRef, { rating: newRating })
 
-                console.log(`Filme ${movieId} atualizado com nova avaliação: ${newRating}`)
+                
             })
         } else {
-            console.log("Nenhum documento encontrado com o ID:", movieId)
+            
         }
         const movieDoc = snapshot.docs[0].data()
-        console.log(movieDoc)
+        
 
         //create movie review
         const movieDocRef = doc(db, "users", uid, "reviews", movieSelected.title.toString())
@@ -287,7 +287,7 @@ export const fetchMovieReview = async (movieId, newRating, movieSelected, newRev
 
 export const fetchUserLastMovieReview = async (groupId, lastMovieId) => {
     try {
-        console.log(groupId, lastMovieId)
+        
 
         const groupDocRef = doc(db, "groups", groupId)
         const groupDoc = await getDoc(groupDocRef)
@@ -385,7 +385,7 @@ export const fetchUserLastMovieReview = async (groupId, lastMovieId) => {
 
 export const fetchUserReviews = async (userId) => {
     try {
-        console.log(userId)
+        
         // Cria uma referência para a coleção "reviews" no Firestore
         const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId))
         const snapshot = await getDocs(reviewsQuery)
@@ -564,7 +564,7 @@ export const fetchEditReview = async (userId, reviewId) => {
             const review = snapshot.docs[0].data()
             return review
         } else {
-            console.log("No review found")
+            
             return null
         }
     } catch (e) {

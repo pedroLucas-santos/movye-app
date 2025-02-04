@@ -188,7 +188,7 @@ const NavBar = ({ userFirestore }) => {
                                 </span>
                             )}
                         </div>
-                        {console.log(notifications)}
+                        {}
                     </div>
                 </div>
             </nav>

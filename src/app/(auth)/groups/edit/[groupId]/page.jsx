@@ -4,7 +4,7 @@ const page = async () => {
   return (
     <div className='flex'>
         <h1>About Movye</h1>
-        <p>This is the about page.</p>
+        <p>This is the edit page.</p>
     </div>
   )
 }

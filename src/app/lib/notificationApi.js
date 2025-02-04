@@ -58,9 +58,9 @@ export const createNotification = async (notificationData) => {
             default:
                 throw new Error(`Notification type "${type}" is not supported.`)
         }
-        console.log(`Notification of type "${type}" created successfully.`)
+        
     } catch (err) {
-        console.log("Error creating notification:", err)
+        
         throw err
     }
 }

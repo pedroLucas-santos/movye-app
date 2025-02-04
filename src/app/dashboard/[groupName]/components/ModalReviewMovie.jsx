@@ -60,9 +60,9 @@ const ModalReviewMovie = () => {
 
             if (movie) {
                 setSelectedMovie(movie)
-                console.log(selectedMovie)
+                
             } else {
-                console.log("Filme não encontrado para o ID:", selectedMovieId)
+                
             }
         }
     }, [selectedMovieId, watchedMovies])
@@ -127,7 +127,7 @@ const ModalReviewMovie = () => {
                                 <option value="" disabled>
                                     Selecione um filme
                                 </option>
-                                {console.log(watchedMovies)}
+                                {}
                                 {watchedMovies.map((movie) => {
                                     return (
                                         <option key={movie.id} value={movie.id}>

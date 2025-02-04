@@ -150,11 +150,11 @@ export const getGroupData = async (groupId) => {
                 }
             }
 
-            console.log(membersData)
+            
 
             return { ...data, id: groupId, createdAt: formattedDate, members: membersData }
         } else {
-            console.log("No such document!")
+            
             return null
         }
     } catch (error) {
@@ -166,7 +166,7 @@ export const getGroupData = async (groupId) => {
 export const sendGroupRequest = async (sender, receiverId, group) => {
     try {
         if (sender.uid === receiverId) {
-            console.log("Você não pode convidar você mesmo para o grupo!")
+            
             throw new Error("Você não pode convidar você mesmo para o grupo!")
         }
 
@@ -183,7 +183,7 @@ export const sendGroupRequest = async (sender, receiverId, group) => {
         const existingRequestSnapshot = await getDocs(existingRequestQuery)
 
         if (!existingRequestSnapshot.empty) {
-            console.log("Group request already exists.")
+            
             throw new Error("Um convite para o grupo já foi enviado para o usuário!")
         }
 
@@ -203,7 +203,7 @@ export const sendGroupRequest = async (sender, receiverId, group) => {
             additionalData: { groupRequestId: requestDoc.id, groupId: group.id },
         })
 
-        console.log("Group request sent:", requestDoc.id)
+        
     } catch (err) {
         console.error("Error sending group request:", err)
         throw err
@@ -232,7 +232,7 @@ export const acceptGroupRequest = async (senderId, receiverId, groupId) => {
                 members: arrayUnion(receiverId),
             })
 
-            console.log("Group request done")
+            
         }
     } catch (error) {
         console.error("Error accepting group request:", error)
@@ -256,9 +256,9 @@ export const refuseGroupRequest = async (senderId, receiverId, groupId) => {
         if (!groupRequestSnapshot.empty) {
             const requestDoc = groupRequestSnapshot.docs[0]
             await updateDoc(requestDoc.ref, { status: "recusado" })
-            console.log("Group request refused")
+            
         } else {
-            console.log("No pending group request found")
+            
         }
     } catch (error) {
         console.error("Error refusing group request:", error)
@@ -271,7 +271,7 @@ export const removeMemberFromGroup = async (groupId, memberId) => {
             members: arrayRemove(memberId),
         })
 
-        console.log("Member removed from group")
+        
     } catch (err) {
         throw new Error("Error removing member from group", err)
     }
@@ -283,12 +283,12 @@ export const deleteGroup = async (groupCreatorId, groupId) => {
         const groupDoc = await getDoc(groupRef)
 
         if (!groupDoc.exists()) {
-            console.log("Grupo não existe!")
+            
             throw new Error("Grupo não existe!")
         }
 
         if (groupCreatorId !== groupDoc.data().creatorId) {
-            console.log("You are not the group creator!")
+            
             throw new Error("Você não é o criador do grupo!")
         }
 
@@ -304,7 +304,7 @@ export const deleteMovieFromGroup = async (groupId, movieId) => {
         if (!groupId || !movieId) {
             throw new Error("Missing groupId or movieId")
         }
-        console.log(groupId + " " + movieId)
+        
 
         // Reference the movie document inside the watchedMovies subcollection
         const movieRef = doc(db, "groups", groupId, "watchedMovies", movieId)
@@ -321,10 +321,8 @@ export const deleteMovieFromGroup = async (groupId, movieId) => {
             await updateDoc(groupRef, {
                 lastWatchedMovie: deleteField(),
             })
-            console.log(`lastWatchedMovie field deleted from group (${groupId})`)
         }
-
-        console.log(`Successfully deleted movie (${movieId}) from group (${groupId})`)
+        
     } catch (e) {
         console.error("Error deleting movie from group:", e)
         throw e // Re-throw error for better error handling
