@@ -26,7 +26,10 @@ const nextConfig = {
     },
     compiler: {
         removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
-    }
+    },
+    experimental: {
+        reactCompiler: true,
+    },
 };
 
 export default nextConfig;
