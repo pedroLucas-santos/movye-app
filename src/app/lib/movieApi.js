@@ -352,6 +352,7 @@ export const fetchUserLastMovieReview = async (groupId, lastMovieId) => {
                 return reviews.map((review) => ({
                     ...review,
                     user: {
+                        id: userDoc.id,
                         displayName: userData.displayName || "",
                         photoURL: userData.photoURL || null,
                     },
