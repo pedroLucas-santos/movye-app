@@ -47,8 +47,8 @@ const MoviesWatched = () => {
 
     return (
         <div className=" p-4 pb-12 gap-8 flex flex-col items-center flex-wrap justify-center">
-            <span className="text-5xl mt-8 text-white">Filmes assistidos</span>
-            <div className="gap-8 flex items-center flex-wrap justify-center">
+            <span className="text-5xl mt-8 text-white text-center">Filmes assistidos</span>
+            <div className="gap-8 flex items-center flex-wrap justify-center w-full">
                 {currentMovies.map((movie) => {
                     return (
                         <div

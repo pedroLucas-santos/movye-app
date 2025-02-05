@@ -69,7 +69,7 @@ const UserData = ({userId, actualUser}) => {
                             <div className="flex just">
                                 <div className={`flex gap-4`}>
                                     <div className="flex flex-col">
-                                        <div className="flex items-center">
+                                        <div className="flex items-center justify-center">
                                             {userInfo?.id && <p className="font-semibold text-center text-white">{userInfo.id}</p>}
                                         </div>
                                         {userInfo.rating && (
