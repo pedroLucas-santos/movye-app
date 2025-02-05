@@ -14,11 +14,13 @@ export const GroupReviews = ({ reviews }) => {
         setReviewsToShow(isExpanded ? 3 : reviews.length) // Mostrar mais ou menos
     }
 
+    const sortedReviews = [...reviews].sort((a, b) => new Date(b.reviewed_at) - new Date(a.reviewed_at))
+
     return (
         <section className="group-reviews mb-8">
             <h2 className="text-xl font-semibold text-gray-200 mb-4">Reviews</h2>
             <ul className="space-y-4">
-                {reviews.slice(0, reviewsToShow).map((review, index) => (
+                {sortedReviews.slice(0, reviewsToShow).map((review, index) => (
                     <li key={index} className="bg-secondary-dark  p-4 rounded-md flex items-center gap-2">
                         <Link href={`/profile/${review.user_id}`} className="w-32">
                             <img src={review.photoURL} alt="" className="rounded-full w-12 h-12" />
