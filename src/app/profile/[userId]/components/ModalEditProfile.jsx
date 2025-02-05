@@ -116,7 +116,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
     }
     return (
         <>
-            <button onClick={onOpen} className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md">
+            <button onClick={onOpen} className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md hidden md:inline-block">
                 Editar Perfil
             </button>
             <Modal className="dark text-white" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>

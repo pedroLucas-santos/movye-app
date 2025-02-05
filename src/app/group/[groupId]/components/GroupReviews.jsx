@@ -38,7 +38,16 @@ export const GroupReviews = ({ reviews }) => {
                                     <RenderStars key={index} index={index + 1} movieRating={review.rating} />
                                 ))}
                             </div>
-                            <span className="text-gray-500 text-xs">{review.reviewed_at}</span>
+                            <span className="text-gray-500 text-xs">
+                                {new Intl.DateTimeFormat("pt-BR", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit",
+                                }).format(new Date(review.reviewed_at))}
+                            </span>
                         </div>
                     </li>
                 ))}

@@ -53,7 +53,7 @@ export default async function ProfilePage({ params }) {
                 {/* Conteúdo */}
                 <div className="relative flex flex-col justify-center items-center w-full">
                     <div>
-                        <UserInfo user={user} reviewCount={reviewCount} />
+                        <UserInfo user={user} reviewCount={reviewCount} userId={userId} friendList={friendList}/>
                         <FriendList friendList={friendList} userId={userId} />
                         <GroupListProfile groupList={groupList} userId={userId} />
                     </div>
