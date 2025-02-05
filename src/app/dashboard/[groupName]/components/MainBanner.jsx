@@ -6,6 +6,7 @@ import NavBar from "@/app/shared/NavBar"
 import RenderStars from "@/app/shared/RenderStars"
 import { useGroup } from "@/app/context/groupProvider"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 const MainBanner = () => {
     const [lastWatchedMovie, setLastWatchedMovie] = useState({})
@@ -17,6 +18,7 @@ const MainBanner = () => {
     const { updateSignal } = useMovieUpdate()
     const allReviewsRef = useRef(allReviews)
     const { selectedGroup } = useGroup()
+    const router = useRouter()
 
     useEffect(() => {
         const fetchLastMovie = async () => {
@@ -103,16 +105,17 @@ const MainBanner = () => {
                                                 src={currentReview.user.photoURL}
                                                 className="rounded-full h-10 w-10 cursor-pointer"
                                                 alt="Avatar"
+                                                onClick={() => router.push(`/profile/${currentReview.user?.id}`)}
                                             />
                                         )}
                                         <div className="flex flex-col">
                                             <div className="flex gap-3 items-center -mt-1">
                                                 {currentReview.user?.displayName && (
-                                                    <p className="font-semibold cursor-pointer text-white">{currentReview.user.displayName}</p>
+                                                    <p onClick={() => router.push(`/profile/${currentReview.user?.id}`)} className="font-semibold cursor-pointer text-white">{currentReview.user.displayName}</p>
                                                 )}
                                             </div>
                                             {currentReview.rating && (
-                                                <div className="text-[#005ef6] text-xl tracking-[2px] flex">
+                                                <div className="text-xl tracking-[2px] flex">
                                                     {Array.from({ length: 5 }, (_, index) => (
                                                         <RenderStars key={index} index={index + 1} movieRating={currentReview.rating} />
                                                     ))}
