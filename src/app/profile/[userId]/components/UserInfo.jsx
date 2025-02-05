@@ -1,7 +1,8 @@
 import Image from "next/image"
 import React from "react"
+import AddFriendButton from "./AddFriendButton"
 
-const UserInfo = ({user}) => {
+const UserInfo = ({ user, userId, friendList }) => {
     return (
         <div id="userInfo" className="flex flex-col items-center justify-center p-4 rounded-xl">
             <Image
@@ -24,6 +25,8 @@ const UserInfo = ({user}) => {
                       })
                     : "No bio available"}
             </p>
+
+            <AddFriendButton userId={userId} friendList={friendList.map(({ addedAt, ...rest }) => rest)}/>
         </div>
     )
 }

@@ -649,84 +649,54 @@ export const fetchGroupNameById = async (groupId) => {
 
 export const fetchGroupReviews = async (groupId) => {
     try {
-        const usersRef = collection(db, "users") // Coleção principal de usuários
-        const userDocs = await getDocs(usersRef) // Obtém todos os documentos de usuários
+        const usersRef = collection(db, "users");
+        const userDocs = await getDocs(usersRef);
 
-        const allReviews = []
+        const allReviews = [];
 
-        // Primeiro, obtém os filmes assistidos do grupo
-        const groupWatchedMoviesRef = collection(db, "groups", groupId, "watchedMovies")
-        const watchedMoviesSnapshot = await getDocs(groupWatchedMoviesRef)
-        const watchedMoviesIds = watchedMoviesSnapshot.docs.map((doc) => doc.data().id) // Extrai os ids dos filmes assistidos
+        // Obtém os filmes assistidos do grupo
+        const groupWatchedMoviesRef = collection(db, "groups", groupId, "watchedMovies");
+        const watchedMoviesSnapshot = await getDocs(groupWatchedMoviesRef);
+        const watchedMoviesIds = watchedMoviesSnapshot.docs.map((doc) => doc.data().id);
 
-        // Itera sobre cada documento de usuário
         for (const userDoc of userDocs.docs) {
-            const userData = userDoc.data() // Dados do usuário
-            const reviewsRef = collection(userDoc.ref, "reviews") // Subcoleção "reviews" de cada usuário
-            const reviewsQuery = query(reviewsRef, where("group", "==", groupId), orderBy("reviewed_at", "desc")) // Filtra por groupId
-            const reviewsSnapshot = await getDocs(reviewsQuery)
+            const userData = userDoc.data();
+            const reviewsRef = collection(userDoc.ref, "reviews");
+            const reviewsQuery = query(reviewsRef, where("group", "==", groupId));
+            const reviewsSnapshot = await getDocs(reviewsQuery);
 
-            // Adiciona as reviews encontradas ao array allReviews
             reviewsSnapshot.forEach((reviewDoc) => {
-                const reviewData = reviewDoc.data() // Dados da review
-                const idMovie = reviewData.id_movie
+                const reviewData = reviewDoc.data();
+                const idMovie = reviewData.id_movie;
 
-                // Verifica se a review corresponde a um filme assistido no grupo
                 if (watchedMoviesIds.includes(idMovie)) {
-                    let reviewedAt = reviewData.reviewed_at
-                    let editedAt = reviewData.edited_at
+                    let reviewedAt = reviewData.reviewed_at;
+                    let editedAt = reviewData.edited_at;
 
-                    // Verifica se o reviewed_at é um Timestamp do Firestore e converte para Date
                     if (reviewedAt instanceof Timestamp) {
-                        reviewedAt = reviewedAt.toDate() // Converte o Timestamp para um objeto Date
+                        reviewedAt = reviewedAt.toDate();
                     }
-
-                    // Verifica se o edited_at é um Timestamp do Firestore e converte para Date
                     if (editedAt instanceof Timestamp) {
-                        editedAt = editedAt.toDate() // Converte o Timestamp para um objeto Date
-                    }
-
-                    // Formata a data da review
-                    let formattedReviewedDate = ""
-                    if (reviewedAt) {
-                        formattedReviewedDate = reviewedAt.toLocaleDateString("pt-BR", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            second: "2-digit",
-                        })
-                    }
-
-                    // Formata a data de edição
-                    let formattedEditedDate = ""
-                    if (editedAt) {
-                        formattedEditedDate = editedAt.toLocaleDateString("pt-BR", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            second: "2-digit",
-                        })
+                        editedAt = editedAt.toDate();
                     }
 
                     allReviews.push({
-                        id: reviewDoc.id, // ID do documento de review
-                        ...reviewData, // Dados da review
+                        id: reviewDoc.id,
+                        ...reviewData,
                         displayName: userData.displayName || "Usuário desconhecido",
-                        photoURL: userData.photoURL, // Foto do usuário
-                        reviewed_at: formattedReviewedDate, // Data formatada da review
-                        edited_at: formattedEditedDate, // Data formatada da edição
-                    })
+                        photoURL: userData.photoURL,
+                        reviewed_at: reviewedAt, // Agora mantemos como Date!
+                        edited_at: editedAt, // Agora mantemos como Date!
+                    });
                 }
-            })
+            });
         }
 
-        return allReviews // Retorna todas as reviews encontradas
+        // ✅ Agora a ordenação vai funcionar corretamente
+        return allReviews.sort((a, b) => b.reviewed_at - a.reviewed_at);
     } catch (error) {
-        console.error("Error fetching group reviews:", error.message)
-        throw error // Repassa o erro para quem chamou a função
+        console.error("Error fetching group reviews:", error.message);
+        throw error;
     }
-}
+};
+

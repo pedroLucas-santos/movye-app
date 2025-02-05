@@ -169,7 +169,7 @@ const NavBar = ({ userFirestore }) => {
                         {pathname === `/reviews/${user?.uid}` && (
                             <button
                                 onClick={() => setIsSelectingReview(!isSelectingReview)}
-                                className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md"
+                                className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md hidden md:inline-block"
                             >
                                 Editar Review
                             </button>
