@@ -313,11 +313,17 @@ export const deleteMovieFromGroup = async (groupId, movieId) => {
         const watchedMoviesRef = collection(db, "groups", groupId, "watchedMovies")
         const watchedMoviesSnapshot = await getDocs(watchedMoviesRef)
 
+        const groupRef = doc(db, "groups", groupId)
+
         // If there are no more movies, delete the lastWatchedMovie field
         if (watchedMoviesSnapshot.empty) {
-            const groupRef = doc(db, "groups", groupId)
             await updateDoc(groupRef, {
                 lastWatchedMovie: deleteField(),
+            })
+        } else {
+            const latestMovie = watchedMoviesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })).sort((a, b) => b.watched_at - a.watched_at)[0]
+            await updateDoc(groupRef, {
+                lastWatchedMovie: latestMovie
             })
         }
     } catch (e) {
