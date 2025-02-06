@@ -138,7 +138,6 @@ export default function LoginPage() {
                     width={1920}
                     height={1080}
                     quality={100}
-                    priority
                 />
                 <span className="font-medium">Login com Google</span>
             </button>

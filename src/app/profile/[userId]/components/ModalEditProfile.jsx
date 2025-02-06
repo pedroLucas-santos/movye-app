@@ -1,6 +1,6 @@
 "use client"
 import { useAuth } from "@/app/context/auth-context"
-import { getMovieBackdrop, saveProfileEdit, searchFavoriteMovie } from "@/app/lib/userApi"
+import { getMovieBackdrop, getUserById, saveProfileEdit, searchFavoriteMovie } from "@/app/lib/userApi"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
@@ -65,9 +65,15 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
     }, [searchMovie])
 
     useEffect(() => {
-        if (userFirestore) {
-            setBio(userFirestore.bio)
+       const bioUser = async () => {
+        try {
+            const response = await getUserById(user.uid)
+            setBio(response.bio)
+        } catch (error) {
+            console.error("Error getting user bio:", error)
         }
+       }
+       bioUser()
     }, [])
 
     const favoriteMovieBackdrop = async (movieId) => {
