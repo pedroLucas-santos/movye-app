@@ -191,7 +191,6 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                             <span className="text-sm text-gray-500 bg-gray-950/20 rounded-lg p-1 mt-1">
                                                 {genreMap[selectedMovie.genre_ids[0]]}
                                             </span>
-                                            <button className="mt-4 text-sm text-gray-300 px-2 py-1 text-center hover:bg-zinc-100/10 transition rounded-xl border-1 border-red-500">Cancelar</button>
                                         </div>
                                     </div>
 
