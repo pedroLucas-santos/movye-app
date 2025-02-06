@@ -135,7 +135,6 @@ const ModalAddMovie = () => {
                                                         width={1280}
                                                         height={1720}
                                                         quality={100}
-                                                        priority
                                                         src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
                                                         alt={movie.title || "Movie Image"}
                                                         className="bg-slate h-[70%] w-full object-cover"

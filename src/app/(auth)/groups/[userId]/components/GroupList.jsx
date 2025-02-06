@@ -53,7 +53,6 @@ const GroupList = ({ userId }) => {
                                 width={1920}
                                 height={1080}
                                 quality={100}
-                                priority
                             />
                         </div>
                         <span className="mt-2 font-medium text-lg text-center text-white">{group.name}</span>

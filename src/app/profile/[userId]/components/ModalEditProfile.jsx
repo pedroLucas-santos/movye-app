@@ -1,6 +1,6 @@
 "use client"
 import { useAuth } from "@/app/context/auth-context"
-import { getMovieBackdrop, saveProfileEdit, searchFavoriteMovie } from "@/app/lib/userApi"
+import { getMovieBackdrop, getUserById, saveProfileEdit, searchFavoriteMovie } from "@/app/lib/userApi"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
@@ -65,9 +65,15 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
     }, [searchMovie])
 
     useEffect(() => {
-        if (userFirestore) {
-            setBio(userFirestore.bio)
+       const bioUser = async () => {
+        try {
+            const response = await getUserById(user.uid)
+            setBio(response.bio)
+        } catch (error) {
+            console.error("Error getting user bio:", error)
         }
+       }
+       bioUser()
     }, [])
 
     const favoriteMovieBackdrop = async (movieId) => {
@@ -185,6 +191,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                             <span className="text-sm text-gray-500 bg-gray-950/20 rounded-lg p-1 mt-1">
                                                 {genreMap[selectedMovie.genre_ids[0]]}
                                             </span>
+                                            <button className="mt-4 text-sm text-gray-300 px-2 py-1 text-center hover:bg-zinc-100/10 transition rounded-xl border-1 border-red-500">Cancelar</button>
                                         </div>
                                     </div>
 

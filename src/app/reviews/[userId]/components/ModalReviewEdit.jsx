@@ -48,7 +48,7 @@ const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
         }
         if (rating && selectedReview && newReview !== "") {
             try {
-                const updatedReview = await fetchUpdateReview(user.uid, selectedReview, newReview, rating)
+               await fetchUpdateReview(user.uid, selectedReview, newReview, rating)
                 
                 toast.success("Review editada com sucesso!")
 
@@ -105,7 +105,6 @@ const ModalReviewEdit = ({ toggleModalReviewEdit, isModalReviewEdit }) => {
                                         width={1920}
                                         height={1080}
                                         quality={100}
-                                        priority
                                     />
                                     <div className="bg-secondary-dark flex-grow w-full h-14 flex justify-between items-center gap-6 pl-12 pr-12">
                                         <span className="text-sm md:text-lg truncate">{reviewEdit?.title}</span>
