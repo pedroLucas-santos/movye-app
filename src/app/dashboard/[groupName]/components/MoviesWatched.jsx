@@ -5,11 +5,14 @@ import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
 import RenderStars from "@/app/shared/RenderStars"
 import "@/app/Header.css"
 import { useGroup } from "@/app/context/groupProvider"
+import { useContentType } from "@/app/context/contentTypeProvider"
+import { fetchShowsWatched } from "@/app/lib/showApi"
 
 const MoviesWatched = () => {
     const [watchedMovies, setWatchedMovies] = useState([])
     const { updateSignal } = useMovieUpdate()
     const { selectedGroup } = useGroup()
+    const { contentType } = useContentType()
 
     const [currentPage, setCurrentPage] = useState(1)
     const moviesPerPage = 9
@@ -17,17 +20,32 @@ const MoviesWatched = () => {
     const totalPages = Math.ceil(watchedMovies.length / moviesPerPage)
 
     useEffect(() => {
-        const fetchWatchedMovies = async () => {
-            try {
-                const response = await fetchMoviesWatched(selectedGroup.id)
-                setWatchedMovies(response)
-            } catch (e) {
-                console.error(e)
+        if (contentType === "movie") {
+            const fetchWatchedMovies = async () => {
+                try {
+                    const response = await fetchMoviesWatched(selectedGroup.id)
+                    setWatchedMovies(response)
+                } catch (e) {
+                    console.error(e)
+                }
             }
+
+            fetchWatchedMovies()
         }
 
-        fetchWatchedMovies()
-    }, [updateSignal]);
+        if (contentType === "tv") {
+            const fetchWatchedMovies = async () => {
+                try {
+                    const response = await fetchShowsWatched(selectedGroup.id)
+                    setWatchedMovies(response)
+                } catch (e) {
+                    console.error(e)
+                }
+            }
+
+            fetchWatchedMovies()
+        }
+    }, [updateSignal, contentType])
 
     const nextPage = () => {
         if (currentPage < totalPages) {
@@ -47,7 +65,7 @@ const MoviesWatched = () => {
 
     return (
         <div className=" p-4 pb-12 gap-8 flex flex-col items-center flex-wrap justify-center">
-            <span className="text-5xl mt-8 text-white text-center">Filmes assistidos</span>
+            <span className="text-5xl mt-8 text-white text-center">{contentType === "movie" ? "Filmes assistidos" : "Séries assistidas"}</span>
             <div className="gap-8 flex items-center flex-wrap justify-center w-full">
                 {currentMovies.map((movie) => {
                     return (

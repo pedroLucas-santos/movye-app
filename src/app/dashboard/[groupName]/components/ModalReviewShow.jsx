@@ -9,13 +9,14 @@ import { useGroup } from "@/app/context/groupProvider"
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/modal"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import { fetchShowReview, fetchShowsWatched } from "@/app/lib/showApi"
 
-const ModalReviewMovie = ({contentType}) => {
+const ModalReviewShow = ({contentType}) => {
     const [hoveredRating, setHoveredRating] = useState(0)
     const [rating, setRating] = useState(0)
-    const [watchedMovies, setWatchedMovies] = useState([])
-    const [selectedMovie, setSelectedMovie] = useState({})
-    const [selectedMovieId, setSelectedMovieId] = useState(0)
+    const [watchedShows, setWatchedShows] = useState([])
+    const [selectedShow, setSelectedShow] = useState({})
+    const [selectedShowId, setSelectedShowId] = useState(0)
     const [review, setReview] = useState("")
     const { user } = useAuth()
     const { triggerUpdate, updateSignal } = useMovieUpdate()
@@ -36,41 +37,41 @@ const ModalReviewMovie = ({contentType}) => {
     }
 
     useEffect(() => {
-        const fetchMovieList = async () => {
+        const fetchShowList = async () => {
             try {
-                const watchedMoviesResponse = await fetchMoviesWatched(selectedGroup.id)
+                const watchedShowsResponse = await fetchShowsWatched(selectedGroup.id)
                 const userReviews = await fetchUserReviews(user.uid)
 
-                const reviewedMovieIds = userReviews.map((review) => review.id_movie)
+                const reviewedShowsIds = userReviews.map((review) => review.id_movie)
 
-                const moviesToReview = watchedMoviesResponse.filter((movie) => !reviewedMovieIds.includes(movie.id))
+                const showsToReview = watchedShowsResponse.filter((show) => !reviewedShowsIds.includes(show.id))
 
-                setWatchedMovies(moviesToReview)
+        setWatchedShows(showsToReview)
             } catch (error) {
-                console.error("Erro ao carregar lista de filmes:", error)
+                console.error("Erro ao carregar lista de séries:", error)
             }
         }
 
-        fetchMovieList()
+        fetchShowList()
     }, [updateSignal])
 
     useEffect(() => {
-        if (selectedMovieId) {
-            const movie = watchedMovies.find((movie) => movie.id === selectedMovieId)
+        if (selectedShowId) {
+            const show = watchedShows.find((show) => show.id === selectedShowId)
 
-            if (movie) {
-                setSelectedMovie(movie)
+            if (show) {
+                setSelectedShow(show)
                 
             } else {
                 
             }
         }
-    }, [selectedMovieId, watchedMovies])
+    }, [selectedShowId, watchedShows])
 
     const addReview = async () => {
-        if (rating && selectedMovieId && review !== "") {
+        if (rating && selectedShowId && review !== "") {
             try {
-                const response = await fetchMovieReview(selectedMovieId, rating, selectedMovie, review, user.uid, selectedGroup.id, contentType)
+                const response = await fetchShowReview(selectedShowId, rating, selectedShow, review, user.uid, selectedGroup.id, contentType)
                 toast.success("Review enviado com sucesso:", response)
 
                 triggerUpdate()
@@ -98,7 +99,7 @@ const ModalReviewMovie = ({contentType}) => {
     }
 
     const clear = () => {
-        setSelectedMovieId(null)
+        setSelectedShowId(null)
         setRating(null)
         setReview("")
     }
@@ -120,37 +121,37 @@ const ModalReviewMovie = ({contentType}) => {
                             <select
                                 id="movies"
                                 name="movies"
-                                value={selectedMovieId ? selectedMovieId : ""}
-                                onChange={(e) => setSelectedMovieId(+e.target.value)}
+                                value={selectedShowId ? selectedShowId : ""}
+                                onChange={(e) => setSelectedShowId(+e.target.value)}
                                 className="block w-full bg-primary-dark text-white border border-gray-300 rounded-md shadow-sm p-2.5 text-sm"
                             >
                                 <option value="" disabled>
-                                    Selecione um filme
+                                    Selecione uma série
                                 </option>
                                 {}
-                                {watchedMovies.map((movie) => {
+                                {watchedShows.map((show) => {
                                     return (
-                                        <option key={movie.id} value={movie.id}>
-                                            {movie.title}
+                                        <option key={show.id} value={show.id}>
+                                            {show.title}
                                         </option>
                                     )
                                 })}
                             </select>
                         </div>
-                        <div className={`gap-8 items-center flex-wrap justify-center mt-4 ${selectedMovieId ? "flex animate-fadeIn" : "hidden"}`}>
+                        <div className={`gap-8 items-center flex-wrap justify-center mt-4 ${selectedShowId ? "flex animate-fadeIn" : "hidden"}`}>
                             <div className=" border-dashed border-stone-950 w-[500px] h-[300px] flex flex-col items-center rounded-lg overflow-hidden shadow-md">
                                 <Image
                                     width={1280}
                                     height={720}
                                     quality={100}
-                                    src={selectedMovie ? `https://image.tmdb.org/t/p/original${selectedMovie.backdrop_path}` : null}
+                                    src={selectedShow ? `https://image.tmdb.org/t/p/original${selectedShow.backdrop_path}` : null}
                                     alt=""
                                     className="bg-slate h-[70%] w-full object-cover select-none"
                                 />
                                 <div className="bg-secondary-dark flex-grow w-full flex justify-between items-center gap-6 pl-12 pr-12">
-                                    <span className="text-sm md:text-lg truncate">{selectedMovie.title}</span>
+                                    <span className="text-sm md:text-lg truncate">{selectedShow.title}</span>
                                     <div className="text-center flex flex-col gap-2 items-end">
-                                        <span className="text-sm text-white bg-gray-950/20 rounded-lg p-1">{selectedMovie.genre}</span>
+                                        <span className="text-sm text-white bg-gray-950/20 rounded-lg p-1">{selectedShow.genre}</span>
                                     </div>
                                 </div>
                             </div>
@@ -165,7 +166,7 @@ const ModalReviewMovie = ({contentType}) => {
                                 rows="2"
                             ></textarea>
                             <div className="rating-container">
-                                <p>Avalie o filme:</p>
+                                <p>Avalie a série:</p>
                                 <div className="flex">
                                     {Array.from({ length: 5 }, (_, index) => (
                                         <StarsReview
@@ -195,4 +196,4 @@ const ModalReviewMovie = ({contentType}) => {
     )
 }
 
-export default ModalReviewMovie
+export default ModalReviewShow

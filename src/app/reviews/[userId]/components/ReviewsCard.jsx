@@ -9,6 +9,7 @@ import { useMovieUpdate } from "../../../context/movieUpdateProvider"
 import { toast } from "react-toastify"
 import { FiFilter, FiX } from "react-icons/fi"
 import StarsReview from "@/app/shared/StarsReview"
+import { useContentType } from "@/app/context/contentTypeProvider"
 
 const ReviewsCard = ({ userId, limit }) => {
     const [reviewsData, setReviewsData] = useState([])
@@ -16,6 +17,7 @@ const ReviewsCard = ({ userId, limit }) => {
     const { isSelectingReview, setSelectedReview, setIsSelectingReview } = useSelectionReview()
     const [currentSelection, setCurrentSelection] = useState(null)
     const { triggerUpdate, updateSignal } = useMovieUpdate()
+    const {contentType} = useContentType()
 
     const handleCheckboxChange = (reviewId) => {
         // Atualiza o estado com o ID do card selecionado ou desmarca
@@ -62,7 +64,7 @@ const ReviewsCard = ({ userId, limit }) => {
 
         const fetchReviewsData = async (id) => {
             try {
-                const response = await fetchReviewsCard(id)
+                const response = await fetchReviewsCard(id, contentType)
                 setReviewsData(response)
             } catch (error) {
                 console.error(error)
@@ -70,7 +72,7 @@ const ReviewsCard = ({ userId, limit }) => {
         }
 
         fetchReviewsData(userIdToUse)
-    }, [user?.uid, updateSignal])
+    }, [user?.uid, updateSignal, contentType])
 
     useEffect(() => {
         if (!isSelectingReview) {
