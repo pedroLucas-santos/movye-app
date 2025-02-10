@@ -286,3 +286,28 @@ export const fetchShowReview = async (showId, newRating, showSelected, newReview
         throw new Error("Error fetching movie review: " + e.message)
     }
 }
+
+export const searchFavoriteShow = async (show) => {
+    try {
+        const res = await fetch(`https://api.themoviedb.org/3/search/tv?query=${show}`, options)
+        const data = await res.json()
+
+        const filteredShows = data.results.filter((s) => s.poster_path)
+
+        return filteredShows
+    } catch (err) {
+        console.error("Error fetching favorite show:", err)
+        throw err
+    }
+}
+
+export const getShowBackdrop = async (showId) => {
+    try {
+        const response = await fetch(`https://api.themoviedb.org/3/tv/${showId}/images`, options)
+        const data = await response.json()
+        return data.backdrops
+    } catch (error) {
+        console.error("Error fetching show images:", error.message)
+        throw error
+    }
+}

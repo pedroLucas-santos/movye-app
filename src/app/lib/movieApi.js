@@ -536,8 +536,13 @@ export const fetchReviewsCard = async (userId, contentType) => {
                     })
                 }
 
-                const poster_url = await fetchMoviePoster(data.id_movie)
-                const poster_url2 = await fetchShowPoster(data.id_movie)
+                let poster_url
+
+                if(contentType === 'movie') {
+                    poster_url = await fetchMoviePoster(data.id_movie)
+                } else{
+                    poster_url = await fetchShowPoster(data.id_movie)
+                }
                 
                 return {
                     id: doc.id,
@@ -546,7 +551,7 @@ export const fetchReviewsCard = async (userId, contentType) => {
                     rating: data.rating || 0,
                     reviewed_at: formattedDate,
                     genre: data.genre || "",
-                    posterUrl: poster_url || poster_url2,
+                    posterUrl: poster_url || null,
                     group: data.group || "",
                     groupName: data.groupName || "",
                     content: data.content || "",

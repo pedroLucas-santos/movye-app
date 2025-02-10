@@ -11,15 +11,14 @@ import { FiArrowRight } from "react-icons/fi"
 import Link from "next/link"
 import { getGroupsList } from "@/app/lib/groupApi"
 import GroupListProfile from "./components/GroupListProfile"
+import ProfileBackdrop from "./components/ProfileBackdrop"
+import ProfileContent from "./components/ProfileContent"
 
 export default async function ProfilePage({ params }) {
     const { userId } = await params
 
     // Fetch user data
     const user = await getUserById(userId)
-    
-    const reviewCount = await getUserReviews(userId)
-    const avgReview = await getUserAvgReviews(userId)
 
     // Fetch friend list
     const friendList = await getFriendList(userId)
@@ -29,18 +28,12 @@ export default async function ProfilePage({ params }) {
         return <div className="text-center text-red-500">User not found</div>
     }
 
-    const backdropUrl = `https://image.tmdb.org/t/p/original${user.favoriteMovie?.backdropPath}`
-
     return (
         <>
             <div className="relative w-full h-screen bg-cover shadow-inner shadow-gray-900/80 overflow-x-hidden">
                 {/* Imagem com gradiente no final */}
                 <div className="absolute inset-0">
-                    <Suspense>
-                        {user.favoriteMovie?.backdropPath !== null && (
-                            <Image src={backdropUrl} alt="Backdrop Image" fill quality={100} className="object-top object-cover" />
-                        )}
-                    </Suspense>
+                    <ProfileBackdrop user={user} />
 
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black"></div>
                 </div>
@@ -53,29 +46,13 @@ export default async function ProfilePage({ params }) {
                 {/* Conteúdo */}
                 <div className="relative flex flex-col justify-center items-center w-full">
                     <div>
-                        <UserInfo user={user} reviewCount={reviewCount} userId={userId} friendList={friendList}/>
+                        <UserInfo user={user} userId={userId} friendList={friendList} />
                         <FriendList friendList={friendList} userId={userId} />
                         <GroupListProfile groupList={groupList} userId={userId} />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 mt-24 p-4 rounded-xl justify-items-center h-32 content-center mb-12 gap-6 md:gap-0">
-                        <div className="flex items-center flex-col h-full">
-                            <h2 className="text-2xl text-white">Reviews:</h2>
-                            <span className="text-2xl text-white">{reviewCount}</span>
-                        </div>
-                        <div className="flex items-center flex-col h-full">
-                            <h2 className="text-2xl text-white">Média de avaliação:</h2>
-                            <span className="flex">
-                                {Array.from({ length: 5 }, (_, index) => (
-                                    <RenderStars key={index} index={index + 1} movieRating={avgReview} />
-                                ))}
-                            </span>
-                        </div>
-                        <div className="flex items-center flex-col h-full">
-                            <h2 className="text-2xl text-white">Filme favorito:</h2>
-                            <span className="text-2xl text-center text-wrap w-96 text-white">{user.favoriteMovie?.title}</span>
-                        </div>
-                    </div>
+                    <ProfileContent userId={userId} user={user}/>
+
                     <div className="flex flex-col justify-center items-center w-full mt-14 md:mt-0">
                         <h2 className="text-3xl text-white text-center">Últimas reviews:</h2>
                     </div>
