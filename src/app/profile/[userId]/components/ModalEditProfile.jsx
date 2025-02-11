@@ -6,19 +6,25 @@ import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/modal"
+import { useContentType } from "@/app/context/contentTypeProvider"
+import { getShowBackdrop, searchFavoriteShow } from "@/app/lib/showApi"
 
 const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFirestore }) => {
     const { user } = useAuth()
     const [searchMovie, setSearchMovie] = useState("")
+    const [searchShow, setSearchShow] = useState("")
     const [bio, setBio] = useState("")
     const [movies, setMovies] = useState([])
+    const [shows, setShows] = useState([])
     const [selectedMovie, setSelectedMovie] = useState(null)
+    const [selectedShow, setSelectedShow] = useState(null)
     const [backdrops, setBackdrops] = useState([])
     const [currentBackdropIndex, setCurrentBackdropIndex] = useState(null)
     const [selectedBackdrop, setSelectedBackdrop] = useState(null)
     const [isModalClosing, setIsModalClosing] = useState(null)
     const router = useRouter()
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
+    const {contentType} = useContentType()
     const genreMap = {
         28: "Action",
         12: "Adventure",
@@ -51,18 +57,33 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
     }
 
     useEffect(() => {
-        if (searchMovie !== "") {
-            const movieName = async () => {
-                try {
-                    const response = await searchFavoriteMovie(searchMovie)
-                    setMovies(response)
-                } catch (e) {
-                    console.error(e)
+        if (searchMovie !== "" || searchShow !== "") {
+            if(contentType === 'movie'){
+                const movieName = async () => {
+                    try {
+                        const response = await searchFavoriteMovie(searchMovie)
+                        setMovies(response)
+                    } catch (e) {
+                        console.error(e)
+                    }
                 }
+                movieName()
             }
-            movieName()
+
+            if(contentType === 'tv') {
+                const showName = async () => {
+                    try {
+                        const response = await searchFavoriteShow(searchShow)
+                        setShows(response)
+                    } catch (e) {
+                        console.error(e)
+                    }
+                }
+                showName()
+            }
+            
         }
-    }, [searchMovie])
+    }, [searchMovie, searchShow])
 
     useEffect(() => {
        const bioUser = async () => {
@@ -88,18 +109,35 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
         }
     }
 
+    const favoriteShowBackdrop = async (showId) => {
+        try {
+            const response = await getShowBackdrop(showId)
+            const filteredBackdrops = (response || []).filter(
+                (backdrop) =>!backdrop.iso_639_1 || backdrop.iso_639_1 === "en" || backdrop.iso_639_1 === "pt"
+            )
+            setBackdrops(filteredBackdrops)
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
     const editProfile = async () => {
         try {
             // Salva o filme favorito e o backdrop no Firestore
-            await saveProfileEdit(user.uid, selectedMovie, backdrops[selectedBackdrop]?.file_path, bio)
+            await saveProfileEdit(user.uid, selectedMovie, selectedShow,backdrops[selectedBackdrop]?.file_path, bio, contentType)
             // Exibir Toast ou sucesso
-            toast.success("Filme favorito salvo com sucesso!")
 
+            if(contentType==='movie'){
+                toast.success("Filme favorito salvo com sucesso!")
+            }else {
+                toast.success("Série favorita salva com sucesso!")
+            }
+           
             return true
         } catch (error) {
-            console.error("Erro ao salvar filme favorito:", error)
+            console.error("Erro ao salvar favorito:", error)
             // Exibir Toast ou erro
-            toast.error("Erro ao salvar filme favorito.")
+            toast.error("Erro ao salvar favorito.")
         }
     }
 
@@ -142,11 +180,11 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                         <div className="mt-8">
                             <input
                                 type="text"
-                                placeholder="Pesquise seu filme favorito..."
+                                placeholder={contentType === 'movie' ? "Pesquise seu filme favorito..." : 'Pesquise sua série favorita...'}
                                 className="w-full px-4 py-2 rounded-lg bg-primary-dark text-white focus:outline-none"
-                                value={searchMovie}
+                                value={contentType === 'movie' ? searchMovie : searchShow}
                                 onChange={(e) => {
-                                    setSearchMovie(e.target.value)
+                                  contentType === 'movie' ? setSearchMovie(e.target.value) : setSearchShow(e.target.value)
                                 }}
                             />
                             {movies.length > 0 && searchMovie !== "" && (
@@ -175,6 +213,32 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                     ))}
                                 </ul>
                             )}
+                            {shows.length > 0 && searchShow !== "" && (
+                                <ul className="bg-primary-dark rounded-lg mt-2 max-h-64 overflow-y-auto shadow-lg">
+                                    {shows.map((show) => (
+                                        <li
+                                            key={show.id}
+                                            className="flex items-center px-4 py-2 hover:bg-gray-700 cursor-pointer"
+                                            onClick={() => {
+                                                setSelectedShow(show) // Define o filme selecionado
+                                                setShows([]) // Limpa a lista após a seleção
+                                                setSearchShow("") // Reseta o input
+                                                favoriteShowBackdrop(show.id)
+                                            }}
+                                        >
+                                            <Image
+                                                width={1280}
+                                                height={720}
+                                                quality={100}
+                                                src={`https://image.tmdb.org/t/p/w92${show.poster_path}`}
+                                                alt={show.name}
+                                                className="w-12 h-18 object-cover mr-4 select-none"
+                                            />
+                                            <span className="text-white truncate">{show.name}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                             {selectedMovie && (
                                 <>
                                     <div className="flex justify-around items-center mt-2 p-4 bg-primary-dark rounded-lg">
@@ -190,6 +254,54 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                             <span className="text-white text-xl font-bold text-center">{selectedMovie.title}</span>
                                             <span className="text-sm text-gray-500 bg-gray-950/20 rounded-lg p-1 mt-1">
                                                 {genreMap[selectedMovie.genre_ids[0]]}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {backdrops.length > 0 && (
+                                        <div className="mt-6 p-4 bg-primary-dark rounded-lg h-[500px] overflow-auto">
+                                            <h3 className="text-white text-lg mb-4">Escolha uma imagem para o fundo do seu perfil:</h3>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                {backdrops.map((backdrop, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className={`relative cursor-pointer rounded-lg ${
+                                                            selectedBackdrop === index ? "border-4 border-green-500" : ""
+                                                        }`}
+                                                        onClick={() => setCurrentBackdropIndex(index)}
+                                                    >
+                                                        <img
+                                                            src={`https://image.tmdb.org/t/p/w300${backdrop.file_path}`}
+                                                            alt={`Backdrop ${index + 1}`}
+                                                            className="w-full h-auto rounded-lg select-none"
+                                                        />
+                                                        {selectedBackdrop === index && (
+                                                            <span className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                                                                ✓
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                            {selectedShow && (
+                                <>
+                                    <div className="flex justify-around items-center mt-2 p-4 bg-primary-dark rounded-lg">
+                                        <Image
+                                            width={1280}
+                                            height={720}
+                                            quality={100}
+                                            src={`https://image.tmdb.org/t/p/w185${selectedShow.poster_path}`}
+                                            alt={selectedShow.name}
+                                            className="w-28 h-40 object-cover mr-4 select-none"
+                                        />
+                                        <div className="flex justify-center items-center flex-col">
+                                            <span className="text-white text-xl font-bold text-center">{selectedShow.name}</span>
+                                            <span className="text-sm text-gray-500 bg-gray-950/20 rounded-lg p-1 mt-1">
+                                                {genreMap[selectedShow.genre_ids[0]]}
                                             </span>
                                         </div>
                                     </div>

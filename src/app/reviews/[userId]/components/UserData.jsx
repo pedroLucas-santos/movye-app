@@ -5,11 +5,13 @@ import { useAuth } from "../../../context/auth-context"
 import Image from "next/image"
 import RenderStars from "@/app/shared/RenderStars"
 import { useMovieUpdate } from "../../../context/movieUpdateProvider"
+import { useContentType } from "@/app/context/contentTypeProvider"
 
 const UserData = ({userId, actualUser}) => {
     const { user, loading } = useAuth()
     const [userInfo, setUserInfo] = useState({})
     const { triggerUpdate, updateSignal } = useMovieUpdate()
+    const {contentType} = useContentType()
 
     useEffect(() => {
         if (!user?.uid) return // Verifica se o user está disponível
@@ -24,7 +26,7 @@ const UserData = ({userId, actualUser}) => {
 
         const fetchLastMovieReview = async () => {
             try {
-                const response = await fetchLastReviewUser(userIdToUse) // Chama a função para pegar a última review
+                const response = await fetchLastReviewUser(userIdToUse, contentType) // Chama a função para pegar a última review
                 setUserInfo(response) // Atualiza o estado com a resposta
             } catch (e) {
                 console.error(e)
@@ -32,7 +34,7 @@ const UserData = ({userId, actualUser}) => {
         }
 
         fetchLastMovieReview() // Chama a função
-    }, [user?.uid, updateSignal]) // A dependência é o `user?.uid`, para que a função seja chamada toda vez que o user mudar
+    }, [user?.uid, updateSignal, contentType]) // A dependência é o `user?.uid`, para que a função seja chamada toda vez que o user mudar
     return (
         <div id="userInfo" className="flex flex-col w-96 justify-center items-center gap-4 p-28">
             <Image

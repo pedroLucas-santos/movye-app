@@ -14,6 +14,7 @@ import {
     limit,
     deleteDoc,
 } from "firebase/firestore"
+import { fetchShowPoster } from "./showApi"
 
 export const options = {
     method: "GET",
@@ -245,7 +246,7 @@ export const fetchMoviesWatched = async (groupId) => {
     }
 }
 
-export const fetchMovieReview = async (movieId, newRating, movieSelected, newReview, uid, groupId) => {
+export const fetchMovieReview = async (movieId, newRating, movieSelected, newReview, uid, groupId, contentType) => {
     try {
         //update watched movies review
         const movieQuery = query(collection(db, "groups", groupId, "watchedMovies"), where("id", "==", movieId))
@@ -279,6 +280,7 @@ export const fetchMovieReview = async (movieId, newRating, movieSelected, newRev
             backdrop_path: movieSelected.backdrop_path,
             group: groupId,
             groupName: await fetchGroupNameById(groupId),
+            content: contentType
         })
     } catch (e) {
         throw new Error("Error fetching movie review: " + e.message)
@@ -404,9 +406,9 @@ export const fetchUserReviews = async (userId) => {
     }
 }
 
-export const fetchLastReviewUser = async (userId) => {
+export const fetchLastReviewUser = async (userId, contentType) => {
     try {
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), orderBy("reviewed_at", "desc"))
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where('content', '==', contentType),orderBy("reviewed_at", "desc"))
 
         const snapshot = await getDocs(reviewsQuery)
 
@@ -423,6 +425,7 @@ export const fetchLastReviewUser = async (userId) => {
                 totalReviews: 0,
                 averageRating: 0, // Contagem total de reviews
                 group: "",
+                content:''
             }
         }
 
@@ -505,9 +508,9 @@ export const fetchLastReviewUser = async (userId) => {
     }
 }
 
-export const fetchReviewsCard = async (userId) => {
+export const fetchReviewsCard = async (userId, contentType) => {
     try {
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), orderBy("reviewed_at", "desc"))
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where('content', '==', contentType),orderBy("reviewed_at", "desc"))
 
         const snapshot = await getDocs(reviewsQuery)
 
@@ -534,8 +537,14 @@ export const fetchReviewsCard = async (userId) => {
                     })
                 }
 
-                const poster_url = await fetchMoviePoster(data.id_movie)
+                let poster_url
 
+                if(contentType === 'movie') {
+                    poster_url = await fetchMoviePoster(data.id_movie)
+                } else{
+                    poster_url = await fetchShowPoster(data.id_movie)
+                }
+                
                 return {
                     id: doc.id,
                     id_movie: data.id_movie || "",
@@ -546,6 +555,7 @@ export const fetchReviewsCard = async (userId) => {
                     posterUrl: poster_url || null,
                     group: data.group || "",
                     groupName: data.groupName || "",
+                    content: data.content || "",
                 }
             })
         )

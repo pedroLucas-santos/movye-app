@@ -23,9 +23,9 @@ export const getUserById = async (userId) => {
     }
 }
 
-export const getUserReviews = async (userId) => {
+export const getUserReviews = async (userId, contentType) => {
     try {
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId))
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where('content', '==', contentType))
 
         // Usa o getCountFromServer para obter a contagem de documentos
         const snapshot = await getCountFromServer(reviewsQuery)
@@ -37,10 +37,10 @@ export const getUserReviews = async (userId) => {
     }
 }
 
-export const getUserAvgReviews = async (userId) => {
+export const getUserAvgReviews = async (userId, contentType) => {
     try {
         // Cria uma referência à coleção 'reviews' e aplica filtro pelo userId
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId))
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where('content', '==', contentType))
 
         // Obtém todos os documentos que correspondem ao filtro
         const querySnapshot = await getDocs(reviewsQuery)
@@ -96,7 +96,7 @@ export const getMovieBackdrop = async (movieId) => {
     }
 }
 
-export const saveProfileEdit = async (userId, favoriteMovie, backdropPath, bio) => {
+export const saveProfileEdit = async (userId, favoriteMovie, favoriteShow, backdropPath, bio, contentType) => {
     try {
         // Referência ao documento do usuário no Firestore
         const userDocRef = doc(db, "users", userId)
@@ -111,34 +111,65 @@ export const saveProfileEdit = async (userId, favoriteMovie, backdropPath, bio) 
                     id: "",
                     backdropPath: "",
                 },
+                favoriteShow: {
+                    name: "",
+                    id: "",
+                    backdropPath: "",
+                },
             })
         }
 
-        // Atualizar os campos no Firestore
-        if (favoriteMovie) {
-            await setDoc(
-                userDocRef,
-                {
-                    bio: bio || "",
-                    favoriteMovie: {
-                        title: favoriteMovie.title,
-                        id: favoriteMovie.id,
-                        backdropPath: backdropPath, // Salva o backdropPath dentro de favoriteMovie
+        if (contentType === "movie") {
+            // Atualizar os campos no Firestore
+            if (favoriteMovie) {
+                await setDoc(
+                    userDocRef,
+                    {
+                        bio: bio || "",
+                        favoriteMovie: {
+                            title: favoriteMovie.title,
+                            id: favoriteMovie.id,
+                            backdropPath: backdropPath, // Salva o backdropPath dentro de favoriteMovie
+                        },
                     },
-                },
-                { merge: true } // Garante que outros campos no documento não sejam sobrescritos
-            )
-        }else{
-            await updateDoc(
-                userDocRef, 
-                {
-                    bio: bio || "",
-                },
-                { merge: true }
-            )
+                    { merge: true } // Garante que outros campos no documento não sejam sobrescritos
+                )
+            } else {
+                await updateDoc(
+                    userDocRef,
+                    {
+                        bio: bio || "",
+                    },
+                    { merge: true }
+                )
+            }
         }
 
-        
+        if (contentType === "tv") {
+            // Atualizar os campos no Firestore
+            if (favoriteShow) {
+                await setDoc(
+                    userDocRef,
+                    {
+                        bio: bio || "",
+                        favoriteShow: {
+                            name: favoriteShow.name,
+                            id: favoriteShow.id,
+                            backdropPath: backdropPath, // Salva o backdropPath dentro de favoriteMovie
+                        },
+                    },
+                    { merge: true } // Garante que outros campos no documento não sejam sobrescritos
+                )
+            } else {
+                await updateDoc(
+                    userDocRef,
+                    {
+                        bio: bio || "",
+                    },
+                    { merge: true }
+                )
+            }
+        }
     } catch (err) {
         console.error("Error saving favorite movie:", err)
         throw err

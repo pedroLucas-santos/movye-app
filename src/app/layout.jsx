@@ -1,4 +1,5 @@
 import { AuthProvider } from "./context/auth-context"
+import { ContentTypeProvider } from "./context/contentTypeProvider"
 import { GroupProvider } from "./context/groupProvider"
 import { MovieUpdateProvider } from "./context/movieUpdateProvider"
 import { NotificationProvider } from "./context/notificationProvider"
@@ -24,25 +25,27 @@ export default function RootLayout({ children }) {
                 <SelectionProvider>
                     <NotificationProvider>
                         <GroupProvider>
-                            <html lang="pt">
-                                <body className={`${comfortaa.className} antialiased bg-primary-dark`}>
-                                    {children}{" "}
-                                    <ToastContainer
-                                        position="top-left"
-                                        hideProgressBar={true}
-                                        pauseOnHover
-                                        newestOnTop={true}
-                                        toastStyle={{
-                                            backgroundColor: "#141414",
-                                            color: "#ffffff",
-                                            borderRadius: "8px",
-                                            padding: "12px",
-                                            fontSize: "14px",
-                                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.4)",
-                                        }}
-                                    />
-                                </body>
-                            </html>
+                            <ContentTypeProvider>
+                                <html lang="pt">
+                                    <body className={`${comfortaa.className} antialiased bg-primary-dark dark`}>
+                                        {children}{" "}
+                                        <ToastContainer
+                                            position="top-left"
+                                            hideProgressBar={true}
+                                            pauseOnHover
+                                            newestOnTop={true}
+                                            toastStyle={{
+                                                backgroundColor: "#141414",
+                                                color: "#ffffff",
+                                                borderRadius: "8px",
+                                                padding: "12px",
+                                                fontSize: "14px",
+                                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.4)",
+                                            }}
+                                        />
+                                    </body>
+                                </html>
+                            </ContentTypeProvider>
                         </GroupProvider>
                     </NotificationProvider>
                 </SelectionProvider>

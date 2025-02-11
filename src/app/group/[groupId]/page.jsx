@@ -10,12 +10,15 @@ import Link from "next/link"
 import GroupMembers from "./components/GroupMembers"
 import ModalInviteUsers from "./components/ModalInviteUsers"
 import GroupActions from "./components/GroupActions"
+import { fetchShowsGroupReviews, fetchShowsWatched } from "@/app/lib/showApi"
 
 const page = async ({ params }) => {
     const { groupId } = await params
     const group = await getGroupData(groupId)
     const watchedMovies = await fetchMoviesWatched(groupId)
+    const watchedShows = await fetchShowsWatched(groupId)
     const reviews = await fetchGroupReviews(groupId)
+    const showReviews = await fetchShowsGroupReviews(groupId)
 
     return (
         <>
@@ -36,8 +39,8 @@ const page = async ({ params }) => {
                                     <ModalInviteUsers groupCreatorId={group.creatorId} groupId={groupId}/>
                                 </header>
                                 <GroupMembers members={group.members} groupCreatorId={group.creatorId} groupId={groupId}/>
-                                <GroupMoviesWatched watchedMovies={watchedMovies} groupId={groupId} groupCreatorId={group.creatorId}/>
-                                <GroupReviews reviews={reviews} />
+                                <GroupMoviesWatched watchedMovies={watchedMovies} watchedShows={watchedShows} groupId={groupId} groupCreatorId={group.creatorId}/>
+                                <GroupReviews reviews={reviews} showReviews={showReviews}/>
                                 <div className="w-full flex items-center justify-center">
                                     <GroupActions groupCreatorId={group.creatorId} groupId={groupId} groupName={group.name} groupMembers={group.members}/>
                                 </div>

@@ -15,6 +15,9 @@ import Link from "next/link"
 import { useGroup } from "../context/groupProvider"
 import { useDisclosure } from "@heroui/modal"
 import ProfileDropdown from "./components/ProfileDropdown"
+import SelectContentType from "./components/SelectContentType"
+import ModalReviewShow from "../dashboard/[groupName]/components/ModalReviewShow"
+import { useContentType } from "../context/contentTypeProvider"
 
 const NavBar = ({ userFirestore }) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -32,6 +35,7 @@ const NavBar = ({ userFirestore }) => {
     const pathname = usePathname()
     const { isSelectingReview, setIsSelectingReview, selectedReview } = useSelectionReview()
     const { selectedGroup, setSelectedGroup } = useGroup()
+    const {contentType} = useContentType()
 
     const toggleProfileDropdown = () => {
         setProfileDropdown(!isProfileDropdown)
@@ -143,10 +147,8 @@ const NavBar = ({ userFirestore }) => {
                                 Explorar
                             </Link> */}
                         </li>
-                        <li>
-                            {/* <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
-                                Sugestões
-                            </Link> */}
+                        <li className="flex w-40">
+                            <SelectContentType/>
                         </li>
                         <li>
                            {/*  <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
@@ -159,7 +161,7 @@ const NavBar = ({ userFirestore }) => {
                 <div className="flex justify-center items-center gap-4">
                     {pathname.match(/\/dashboard(\/.*)?/) && (
                         <div className="gap-4 hidden md:flex">
-                            <ModalReviewMovie/>
+                            {contentType === 'movie' ? <ModalReviewMovie contentType={contentType}/> : <ModalReviewShow contentType={contentType}/>}
 
                             <ModalAddMovie/>
                         </div>

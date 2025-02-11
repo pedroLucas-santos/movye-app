@@ -62,6 +62,11 @@ export default function LoginPage() {
                         id: null,
                         title: null,
                     },
+                    favoriteShow: {
+                        backdropPath: null,
+                        id: null,
+                        title: null,
+                    },
                 })
             } else {
                 //nao foi testado
