@@ -59,7 +59,7 @@ const GroupMoviesWatched = ({ watchedMovies, groupId, groupCreatorId, watchedSho
 
             {/* Botão para expandir ou recolher a lista com ícones de seta */}
             <div className="flex justify-center mt-4">
-                {watchedMovies.length > 3 && (
+                {contentToShow.length > 3 && (
                     <button onClick={toggleExpand} className="text-gray-200 hover:text-gray-400 transition-colors">
                         {isExpanded ? (
                             <FaChevronUp className="text-2xl" /> // Ícone de seta para cima
