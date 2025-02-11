@@ -57,6 +57,11 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
     }
 
     useEffect(() => {
+        setSelectedMovie(null)
+        setSelectedShow(null)
+    }, [contentType])
+
+    useEffect(() => {
         if (searchMovie !== "" || searchShow !== "") {
             if(contentType === 'movie'){
                 const movieName = async () => {
