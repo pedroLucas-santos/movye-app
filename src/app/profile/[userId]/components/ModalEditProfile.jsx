@@ -59,6 +59,13 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
     useEffect(() => {
         setSelectedMovie(null)
         setSelectedShow(null)
+        setSearchMovie("")
+        setSearchShow("")
+        setMovies([])
+        setShows([])
+        setCurrentBackdropIndex(null)
+        setBackdrops([])
+        setSelectedBackdrop(null)
     }, [contentType])
 
     useEffect(() => {
