@@ -61,10 +61,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
         setSelectedShow(null)
         setSearchMovie("")
         setSearchShow("")
-        setMovies([])
-        setShows([])
         setCurrentBackdropIndex(null)
-        setBackdrops([])
         setSelectedBackdrop(null)
     }, [contentType])
 
