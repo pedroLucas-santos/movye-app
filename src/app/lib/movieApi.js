@@ -406,9 +406,9 @@ export const fetchUserReviews = async (userId) => {
     }
 }
 
-export const fetchLastReviewUser = async (userId) => {
+export const fetchLastReviewUser = async (userId, contentType) => {
     try {
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), orderBy("reviewed_at", "desc"))
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where('content', '==', contentType),orderBy("reviewed_at", "desc"))
 
         const snapshot = await getDocs(reviewsQuery)
 
@@ -425,6 +425,7 @@ export const fetchLastReviewUser = async (userId) => {
                 totalReviews: 0,
                 averageRating: 0, // Contagem total de reviews
                 group: "",
+                content:''
             }
         }
 

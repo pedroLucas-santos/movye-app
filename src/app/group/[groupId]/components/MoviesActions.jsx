@@ -8,18 +8,28 @@ import { deleteMovieFromGroup } from "@/app/lib/groupApi"
 import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/app/context/auth-context"
+import { useContentType } from "@/app/context/contentTypeProvider"
+import { deleteShowFromGroup } from "@/app/lib/showApi"
 
 const MoviesActions = ({ groupId, movieId, movieTitle, groupCreatorId }) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
     const router = useRouter()
     const { user } = useAuth()
+    const {contentType} = useContentType()
+
     const deleteMovie = async () => {
         try {
-            await deleteMovieFromGroup(groupId, movieId)
-            toast.success("Filme excluído com sucesso!")
+            if(contentType === 'movie'){
+                await deleteMovieFromGroup(groupId, movieId)
+                toast.success("Filme excluído com sucesso!")
+            } else {
+                await deleteShowFromGroup(groupId, movieId)
+                toast.success("Série excluída com sucesso!")
+            }
+            
             router.refresh()
         } catch (err) {
-            console.error("Failed to delete movie:", err)
+            console.error("Failed to delete movie/show:", err)
         }
     }
     return (
@@ -40,7 +50,7 @@ const MoviesActions = ({ groupId, movieId, movieTitle, groupCreatorId }) => {
                         </DropdownTrigger>
                         <DropdownMenu onAction={onOpen}>
                             <DropdownItem key="remove" className="text-danger transition-colors" color="danger">
-                                Excluir filme
+                               {contentType === 'movie' ? 'Excluir filme' : 'Excluir série'}
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
@@ -56,9 +66,9 @@ const MoviesActions = ({ groupId, movieId, movieTitle, groupCreatorId }) => {
                         <DrawerContent>
                             {(onClose) => (
                                 <>
-                                    <DrawerHeader className="flex flex-col gap-1 items-center">Excluir grupo</DrawerHeader>
+                                    <DrawerHeader className="flex flex-col gap-1 items-center">{contentType === 'movie' ? 'Excluir filme' : 'Excluir série'}</DrawerHeader>
                                     <DrawerBody className="justify-center items-center">
-                                        <p>Tem certeza que deseja excluir o filme {movieTitle} ?</p>
+                                        <p>{contentType === 'movie' ? `Tem certeza que deseja excluir o filme ${movieTitle} ?` : `Tem certeza que deseja excluir a série ${movieTitle} ?`}</p>
                                     </DrawerBody>
                                     <DrawerFooter className="justify-center">
                                         <Tooltip content="Essa ação é irreversível!" color="danger" closeDelay={100}>

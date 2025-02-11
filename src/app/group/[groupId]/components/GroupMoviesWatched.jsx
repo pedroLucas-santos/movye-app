@@ -1,24 +1,35 @@
 "use client"
 
 import RenderStars from "@/app/shared/RenderStars"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { FaChevronDown, FaChevronUp } from "react-icons/fa"
 import MoviesActions from "./MoviesActions"
+import { useContentType } from "@/app/context/contentTypeProvider"
 
-const GroupMoviesWatched = ({ watchedMovies, groupId, groupCreatorId }) => {
+const GroupMoviesWatched = ({ watchedMovies, groupId, groupCreatorId, watchedShows }) => {
     const [isExpanded, setIsExpanded] = useState(false)
+    const [contentToShow, setContentToShow] = useState([])
+    const {contentType} = useContentType()
 
     // Função para alternar a visibilidade da lista
     const toggleExpand = () => setIsExpanded(!isExpanded)
 
     // Número de filmes a mostrar por vez
-    const moviesToShow = isExpanded ? watchedMovies.length : 3 // Exibe até 6 filmes por vez
+    const moviesToShow = isExpanded ? contentToShow.length : 3 // Exibe até 6 filmes por vez
+
+    useEffect(() => {
+        if(contentType === 'movie'){
+            setContentToShow(watchedMovies)
+        }else {
+            setContentToShow(watchedShows)
+        }
+    })
 
     return (
         <section className="watched-movies mb-8">
-            <h2 className="text-xl font-semibold text-gray-200 mb-4">Filmes Assistidos</h2>
+            <h2 className="text-xl font-semibold text-gray-200 mb-4">{contentType === 'movie' ? 'Filmes Assistidos' : 'Séries Assistidas'}</h2>
             <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {watchedMovies.slice(0, moviesToShow).map((movie) => (
+                {contentToShow.slice(0, moviesToShow).map((movie) => (
                     <li key={movie.id} className="bg-secondary-dark p-4 rounded-lg shadow-md hover:shadow-lg transition-all w-full">
                         <div>
                             {/* Imagem do filme */}

@@ -13,6 +13,7 @@ import {
     collectionGroup,
     limit,
     deleteDoc,
+    deleteField,
 } from "firebase/firestore"
 import { fetchGroupNameById } from "./movieApi"
 
@@ -119,10 +120,10 @@ export const fetchShowLastWatched = async (groupId) => {
             }
 
             // Update the group's lastWatchedMovie field
-            await setDoc(groupDocRef, { ...groupData, lastWatchedMovie: defaultLastWatchedShow })
+            await setDoc(groupDocRef, { ...groupData, lastWatchedShow: defaultLastWatchedShow })
 
             
-            return defaultLastWatchedMovie
+            return defaultLastWatchedShow
         }
 
         // Return the lastWatchedMovie field from the group document
@@ -309,5 +310,90 @@ export const getShowBackdrop = async (showId) => {
     } catch (error) {
         console.error("Error fetching show images:", error.message)
         throw error
+    }
+}
+
+export const fetchShowsGroupReviews = async (groupId) => {
+    try {
+        const usersRef = collection(db, "users");
+        const userDocs = await getDocs(usersRef);
+
+        const allReviews = [];
+
+        const groupWatchedShowsRef = collection(db, "groups", groupId, "watchedShows");
+        const watchedShowsSnapshot = await getDocs(groupWatchedShowsRef);
+        const watchedShowsIds = watchedShowsSnapshot.docs.map((doc) => doc.data().id);
+
+        for (const userDoc of userDocs.docs) {
+            const userData = userDoc.data();
+            const reviewsRef = collection(userDoc.ref, "reviews");
+            const reviewsQuery = query(reviewsRef, where("group", "==", groupId));
+            const reviewsSnapshot = await getDocs(reviewsQuery);
+
+            reviewsSnapshot.forEach((reviewDoc) => {
+                const reviewData = reviewDoc.data();
+                const idMovie = reviewData.id_movie;
+
+                if (watchedShowsIds.includes(idMovie)) {
+                    let reviewedAt = reviewData.reviewed_at;
+                    let editedAt = reviewData.edited_at;
+
+                    if (reviewedAt instanceof Timestamp) {
+                        reviewedAt = reviewedAt.toDate();
+                    }
+                    if (editedAt instanceof Timestamp) {
+                        editedAt = editedAt.toDate();
+                    }
+
+                    allReviews.push({
+                        id: reviewDoc.id,
+                        ...reviewData,
+                        displayName: userData.displayName || "Usuário desconhecido",
+                        photoURL: userData.photoURL,
+                        reviewed_at: reviewedAt, 
+                        edited_at: editedAt, 
+                    });
+                }
+            });
+        }
+
+        return allReviews.sort((a, b) => b.reviewed_at - a.reviewed_at);
+    } catch (error) {
+        console.error("Error fetching group reviews:", error.message);
+        throw error;
+    }
+};
+
+export const deleteShowFromGroup = async (groupId, showId) => {
+    try {
+        if (!groupId || !showId) {
+            throw new Error("Missing groupId or showId")
+        }
+
+        // Reference the movie document inside the watchedMovies subcollection
+        const showRef = doc(db, "groups", groupId, "watchedShows", showId)
+
+        // Delete the document
+        await deleteDoc(showRef)
+
+        const watchedShowsRef = collection(db, "groups", groupId, "watchedShows")
+        const watchedShowsSnapshot = await getDocs(watchedShowsRef)
+
+        const groupRef = doc(db, "groups", groupId)
+
+        // If there are no more movies, delete the lastWatchedMovie field
+        if (watchedShowsSnapshot.empty) {
+            await updateDoc(groupRef, {
+                lastWatchedShow: deleteField(),
+            })
+        } else {
+            const latestShow = watchedShowsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })).sort((a, b) => b.watched_at - a.watched_at)[0]
+            await updateDoc(groupRef, {
+                lastWatchedMovie: latestShow
+            })
+        }
+    } catch (e) {
+        console.error("Error deleting show from group:", e)
+        throw e // Re-throw error for better error handling
     }
 }
