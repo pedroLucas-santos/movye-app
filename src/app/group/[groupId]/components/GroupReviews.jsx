@@ -66,7 +66,7 @@ export const GroupReviews = ({ reviews, showReviews }) => {
             {/* Botão para expandir ou recolher a lista */}
 
             <div className="flex justify-center mt-4">
-                {reviews.length > 3 && (
+                {reviewsByType.length > 3 && (
                     <button onClick={toggleExpand} className="text-gray-200 hover:text-gray-400 transition-colors">
                         {isExpanded ? (
                             <FaChevronUp className="text-2xl" /> // Ícone de seta para cima
