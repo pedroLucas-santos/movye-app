@@ -153,7 +153,7 @@ const ModalAddMovie = () => {
         <>
             <button
                 onClick={onOpen}
-                className="bg-transparent text-white border-2 transition duration-150 hover:border-white/10 hover:bg-secondary-dark p-2 rounded-md"
+                className="bg-transparent text-white md:border-2 text-lg md:text-base transition duration-150 hover:border-white/10 hover:bg-secondary-dark md:p-2 rounded-md"
             >
                 {contentType === "movie" ? "Adicionar Filme" : "Adicionar Série"}
             </button>

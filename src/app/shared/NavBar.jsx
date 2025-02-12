@@ -18,6 +18,7 @@ import ProfileDropdown from "./components/ProfileDropdown"
 import SelectContentType from "./components/SelectContentType"
 import ModalReviewShow from "../dashboard/[groupName]/components/ModalReviewShow"
 import { useContentType } from "../context/contentTypeProvider"
+import MobileMenu from "./components/MobileMenu"
 
 const NavBar = ({ userFirestore }) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -129,11 +130,7 @@ const NavBar = ({ userFirestore }) => {
             )}
 
             <nav className="grid grid-cols-3 justify-items-center items-center h-32 w-full relative">
-                <button id="menu-toggle" className="text-white md:hidden focus:outline-none">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
+                <MobileMenu/>
                 <div id="logo">
                     <span onClick={dashboardPage} className="font-bold text-3xl select-none hover:cursor-pointer text-white">
                         Movye

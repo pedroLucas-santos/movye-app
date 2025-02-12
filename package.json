@@ -11,6 +11,7 @@
   "dependencies": {
     "@heroui/drawer": "^2.2.8",
     "@heroui/dropdown": "^2.3.10",
+    "@heroui/listbox": "^2.3.10",
     "@heroui/modal": "^2.2.8",
     "@heroui/progress": "^2.2.7",
     "@heroui/select": "^2.4.10",
