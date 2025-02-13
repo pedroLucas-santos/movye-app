@@ -108,7 +108,7 @@ const ModalReviewShow = ({contentType}) => {
         <>
            <button
                 onClick={onOpen}
-                className="bg-transparent text-white border-2 transition duration-150 border-secondary-dark hover:bg-secondary-dark p-2 py-2 rounded-md"
+                className="bg-transparent text-white md:border-2 text-lg md:text-base transition duration-150 border-secondary-dark hover:bg-secondary-dark md:p-2 md:py-2 rounded-md"
             >
                 Adicionar Review
             </button>

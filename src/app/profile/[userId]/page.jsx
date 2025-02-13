@@ -30,7 +30,7 @@ export default async function ProfilePage({ params }) {
 
     return (
         <>
-            <div className="relative w-full h-screen bg-cover shadow-inner shadow-gray-900/80 overflow-x-hidden">
+            <div className="relative w-full h-screen bg-cover shadow-inner bg-black shadow-gray-900/80 overflow-x-hidden">
                 {/* Imagem com gradiente no final */}
                 <div className="absolute inset-0">
                     <ProfileBackdrop user={user} />
@@ -59,9 +59,9 @@ export default async function ProfilePage({ params }) {
                 </div>
 
                 {/* Div preta para testar a transição */}
-                <div className="flex flex-col bg-black p-40 pt-0 pb-0">
+                <div className="flex flex-col bg-black md:p-40 md:pt-0 md:pb-0 pt-8">
                     <Suspense>
-                        <div className="flex justify-end z-20">
+                        <div className="flex justify-center md:justify-end z-20">
                             <Link href={`/reviews/${userId}`} className="text-lg text-white text-center flex items-center">
                                 Ver todas as reviews <FiArrowRight />
                             </Link>

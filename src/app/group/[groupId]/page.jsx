@@ -25,7 +25,7 @@ const page = async ({ params }) => {
             <NavBar />
             <Suspense>
                 <div className="flex flex-col w-full bg-primary-dark">
-                    <div className="group-page max-w-4xl mx-auto p-6 bg-primary-dark rounded-lg overflow-hidden">
+                    <div className="group-page md:max-w-4xl md:mx-auto p-6 bg-primary-dark rounded-lg overflow-hidden">
                         {group ? (
                             <>
                                 <header className="group-header text-center mb-8 flex flex-col justify-center items-center">

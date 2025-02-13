@@ -18,6 +18,7 @@ import ProfileDropdown from "./components/ProfileDropdown"
 import SelectContentType from "./components/SelectContentType"
 import ModalReviewShow from "../dashboard/[groupName]/components/ModalReviewShow"
 import { useContentType } from "../context/contentTypeProvider"
+import MobileMenu from "./components/MobileMenu"
 
 const NavBar = ({ userFirestore }) => {
     const [isProfileDropdown, setProfileDropdown] = useState(false)
@@ -35,7 +36,7 @@ const NavBar = ({ userFirestore }) => {
     const pathname = usePathname()
     const { isSelectingReview, setIsSelectingReview, selectedReview } = useSelectionReview()
     const { selectedGroup, setSelectedGroup } = useGroup()
-    const {contentType} = useContentType()
+    const { contentType } = useContentType()
 
     const toggleProfileDropdown = () => {
         setProfileDropdown(!isProfileDropdown)
@@ -120,20 +121,8 @@ const NavBar = ({ userFirestore }) => {
                 />
             )}
 
-            {isModalEditProfile && (
-                <ModalEditProfile
-                    toggleModalEditProfile={toggleModalEditProfile}
-                    isModalEditProfile={isModalEditProfile}
-                    userFirestore={userFirestore}
-                />
-            )}
-
             <nav className="grid grid-cols-3 justify-items-center items-center h-32 w-full relative">
-                <button id="menu-toggle" className="text-white md:hidden focus:outline-none">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
+                <MobileMenu />
                 <div id="logo">
                     <span onClick={dashboardPage} className="font-bold text-3xl select-none hover:cursor-pointer text-white">
                         Movye
@@ -148,10 +137,10 @@ const NavBar = ({ userFirestore }) => {
                             </Link> */}
                         </li>
                         <li className="flex w-40">
-                            <SelectContentType/>
+                            <SelectContentType />
                         </li>
                         <li>
-                           {/*  <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
+                            {/*  <Link href="" className="p-2 rounded-xl hover:bg-secondary-dark transition ease-out">
                                 Estatisticas
                             </Link> */}
                         </li>
@@ -161,9 +150,9 @@ const NavBar = ({ userFirestore }) => {
                 <div className="flex justify-center items-center gap-4">
                     {pathname.match(/\/dashboard(\/.*)?/) && (
                         <div className="gap-4 hidden md:flex">
-                            {contentType === 'movie' ? <ModalReviewMovie contentType={contentType}/> : <ModalReviewShow contentType={contentType}/>}
+                            {contentType === "movie" ? <ModalReviewMovie contentType={contentType} /> : <ModalReviewShow contentType={contentType} />}
 
-                            <ModalAddMovie/>
+                            <ModalAddMovie />
                         </div>
                     )}
 
@@ -177,13 +166,15 @@ const NavBar = ({ userFirestore }) => {
                             </button>
                         )}
                         {pathname === `/profile/${user?.uid}` ? (
-                            <ModalEditProfile/>
+                            <div className="hidden md:flex">
+                                <ModalEditProfile />
+                            </div>
                         ) : null}
                         <div className="relative">
                             <ProfileDropdown user={user} />
                         </div>
                         <div className="relative text-white focus:outline-none">
-                            <NotificationDropdown notifications={notifications}/>
+                            <NotificationDropdown notifications={notifications} />
                             {notifications.length > 0 && (
                                 <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-4 flex items-center justify-center rounded-full">
                                     {notifications > 9 ? "+9" : notifications.length}

@@ -26,7 +26,7 @@ const SelectContentType = () => {
             onChange={handleSelectionChange}
         >
             {types.map((type) => (
-                <SelectItem key={type.key}>{type.label}</SelectItem>
+                <SelectItem className="text-white" key={type.key}>{type.label}</SelectItem>
             ))}
         </Select>
     )

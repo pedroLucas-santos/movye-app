@@ -96,7 +96,7 @@ const ShowBanner = () => {
                 <div className="w-full h-[500px] mt-8 flex justify-evenly items-center p-4 md:p-0">
                     <div className="flex justify-center flex-col gap-2">
                         <span className="text-3xl md:text-4xl font-bold antialiased text-white">{contentType === 'movie' ? 'Último filme assistido:' : 'Última série assitida:'}</span>
-                        <span className="text-xl md:text-2xl antialiased w-3/4 text-center ml-4 text-white">{lastWatchedShow.title}</span>
+                        <span className="text-lg md:text-2xl antialiased w-3/4 text-center ml-4 text-white">{lastWatchedShow.title}</span>
 
                         {currentReview && (
                             <div className="hidden flex-col p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark mt-2 md:flex">
@@ -137,7 +137,7 @@ const ShowBanner = () => {
                             </div>
                         )}
                     </div>
-                    <div className="w-[300px] h-[300px] md:h-[450px]">
+                    <div className="w-[400px] h-[300px] md:h-[450px] md:w-[300px]">
                         {lastWatchedShow.posterUrl && (
                             <img src={lastWatchedShow.posterUrl} alt="" className="w-full h-full select-none shadow-xl" />
                         )}

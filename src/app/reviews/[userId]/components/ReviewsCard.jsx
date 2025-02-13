@@ -84,6 +84,10 @@ const ReviewsCard = ({ userId, limit }) => {
 
     return (
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-12 ${limit > 0 ? '' : 'overflow-y-auto'}`}>
+            <div className="md:hidden flex items-center flex-col">
+                <h2 className="text-2xl text-white">Reviews:</h2>
+                <span className="text-2xl text-white">{reviewsToDisplay.length}</span>
+            </div>
             {reviewsToDisplay.map((review) => (
                 <div key={review.id_movie} className="bg-gray-900/50 antialiased overflow-y-auto scrollbar-hide backdrop-blur-sm rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:bg-gray-900/70 h-[900px] flex flex-col border border-gray-800">
                     <div className="relative min-h-[600px]">
