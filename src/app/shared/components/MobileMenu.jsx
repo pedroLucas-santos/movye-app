@@ -30,17 +30,17 @@ const MobileMenu = () => {
                 <DrawerContent>
                     {(onClose) => (
                         <>
-                            <DrawerHeader className="flex flex-col gap-1 text-2xl">Movye</DrawerHeader>
+                            <DrawerHeader className="flex flex-col gap-1 text-2xl text-white">Movye</DrawerHeader>
                             <DrawerBody>
                                 <SelectContentType />
                                 {pathname.startsWith("/dashboard") && (
                                     <>
                                         <div className="flex items-center justify-center gap-2 border-2 border-secondary-dark rounded-xl p-2">
-                                            <FiFilm />
+                                            <FiFilm color="white"/>
                                             <ModalAddMovie />
                                         </div>
                                         <div className="flex items-center justify-center gap-2 border-2 border-secondary-dark rounded-xl p-2">
-                                            <FiStar />
+                                            <FiStar color="white"/>
                                             {contentType === "movie" ? (
                                                 <ModalReviewMovie contentType={contentType} />
                                             ) : (
@@ -53,7 +53,7 @@ const MobileMenu = () => {
                                 {pathname === `/profile/${user?.uid}` && (
                                     <>
                                         <div className="flex items-center justify-center gap-2 border-2 border-secondary-dark rounded-xl p-2">
-                                            <FiUser />
+                                            <FiUser color="white"/>
                                             <ModalEditProfile />
                                         </div>
                                     </>

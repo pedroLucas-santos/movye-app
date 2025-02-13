@@ -12,6 +12,7 @@ export default function CreateGroup({ userId }) {
     const [file, setFile] = useState(null)
     const router = useRouter()
     const [loading, setLoading] = useState(false)
+    const [disabled, setDisabled] = useState(false)
 
     const handleImageUpload = (e) => {
         const selectedFile = e.target.files[0]
@@ -38,6 +39,7 @@ export default function CreateGroup({ userId }) {
         }
 
         try {
+            setDisabled(true)
             setLoading(true)
             await createNewGroup(groupName, groupImage, userId)
             toast.success("Grupo criado com sucesso!")
@@ -47,6 +49,7 @@ export default function CreateGroup({ userId }) {
                 router.push(`/groups/${userId}`)
             }, 1000)
         } catch (error) {
+            setDisabled(false)
             setLoading(false)
             toast.error(error.toString())
             console.error("Erro no createGroup:", error.message)
@@ -88,7 +91,7 @@ export default function CreateGroup({ userId }) {
                 <div className="flex">
                     <button
                         onClick={createGroup}
-                        disabled={loading}
+                        disabled={disabled}
                         className="px-6 py-2 bg-secondary-dark text-white rounded-md hover:bg-zinc-800 transition"
                     >
                         {loading ? <CircularProgress size={'sm'} color={'default'} className="mr-2" /> : "Criar Grupo"}

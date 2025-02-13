@@ -86,7 +86,7 @@ const MovieBanner = () => {
 
     return (
         <div
-            className={`relative w-full h-[720px] bg-cover shadow-inner shadow-gray-900/80`}
+            className={`relative w-full h-[720px] bg-cover shadow-inner bg-center md:bg-top shadow-gray-900/80`}
             style={{ backgroundImage: lastWatchedMovie.backdropUrl ? `url(${lastWatchedMovie.backdropUrl})` : "" }}
         >
             <div id="dark-filter" className="absolute inset-0 bg-black opacity-60"></div>
@@ -136,7 +136,7 @@ const MovieBanner = () => {
                             </div>
                         )}
                     </div>
-                    <div className="w-[400px] h-[300px] md:h-[450px] md:w-[300px]">
+                    <div className="w-[400px] h-[270px] md:h-[450px] md:w-[300px]">
                         {lastWatchedMovie.posterUrl && (
                             <img src={lastWatchedMovie.posterUrl} alt="" className="w-full h-full select-none shadow-xl" />
                         )}

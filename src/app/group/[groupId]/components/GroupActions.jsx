@@ -82,9 +82,9 @@ const GroupActions = ({ groupCreatorId, groupId, groupName, groupMembers }) => {
                     <DrawerContent>
                         {(onClose) => (
                             <>
-                                <DrawerHeader className="flex flex-col gap-1 items-center">Excluir grupo</DrawerHeader>
+                                <DrawerHeader className="flex flex-col gap-1 items-center text-white">Excluir grupo</DrawerHeader>
                                 <DrawerBody className="justify-center items-center">
-                                    <p>Tem certeza que deseja excluir o grupo {groupName} ?</p>
+                                    <p className="text-white">Tem certeza que deseja excluir o grupo {groupName} ?</p>
                                 </DrawerBody>
                                 <DrawerFooter className="justify-center">
                                     <Tooltip content="Essa ação é irreversível!" color="danger" closeDelay={100}>
@@ -133,9 +133,9 @@ const GroupActions = ({ groupCreatorId, groupId, groupName, groupMembers }) => {
                     <DrawerContent>
                         {(onClose) => (
                             <>
-                                <DrawerHeader className="flex flex-col gap-1 items-center">Sair do grupo</DrawerHeader>
+                                <DrawerHeader className="flex flex-col gap-1 items-center text-white">Sair do grupo</DrawerHeader>
                                 <DrawerBody className="items-center">
-                                    <p>Tem certeza que deseja sair do grupo {groupName} ?</p>
+                                    <p className="text-white">Tem certeza que deseja sair do grupo {groupName} ?</p>
                                 </DrawerBody>
                                 <DrawerFooter className="justify-center">
                                     <button
