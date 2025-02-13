@@ -30,7 +30,7 @@ export const GroupReviews = ({ reviews, showReviews }) => {
             <ul className="space-y-4">
                 {reviewsByType.slice(0, reviewsToShow).map((review, index) => (
                     <li key={index} className="bg-secondary-dark  p-4 rounded-md flex items-center gap-2">
-                        <Link href={`/profile/${review.user_id}`} className="w-32">
+                        <Link href={`/profile/${review.user_id}`} className="hidden md:inline-block w-32">
                             <img src={review.photoURL} alt="" className="rounded-full w-12 h-12" />
                         </Link>
                         <div className="flex flex-col justify-center">
@@ -40,7 +40,7 @@ export const GroupReviews = ({ reviews, showReviews }) => {
                                 </Link>
                                 <span className="text-gray-100 ml-2">{review.review}</span>
                             </div>
-                            <span className="text-gray-500 text-xs w-96">{review.id}</span>
+                            <span className="text-gray-500 text-xs md:w-96">{review.id}</span>
                         </div>
                         <div className="flex flex-col justify-center items-end w-full gap-2">
                             <div className="flex">
@@ -48,7 +48,7 @@ export const GroupReviews = ({ reviews, showReviews }) => {
                                     <RenderStars key={index} index={index + 1} movieRating={review.rating} />
                                 ))}
                             </div>
-                            <span className="text-gray-500 text-xs">
+                            <span className="text-gray-500 text-xs text-center md:text-left">
                                 {new Intl.DateTimeFormat("pt-BR", {
                                     year: "numeric",
                                     month: "long",

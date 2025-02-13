@@ -169,10 +169,10 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
     }
     return (
         <>
-            <button onClick={onOpen} className="bg-zinc-100 text-black border-2 transition duration-150 hover:bg-zinc-500 p-2 rounded-md hidden md:inline-block">
+            <button onClick={onOpen} className="md:bg-zinc-100 text-white md:text-black md:border-2 transition duration-150 hover:bg-zinc-500 md:p-2 rounded-md md:inline-block">
                 Editar Perfil
             </button>
-            <Modal className="dark text-white" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal size="xl" className="dark text-white" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     <ModalHeader className="text-2xl">Editar Perfil</ModalHeader>
                     <ModalBody>

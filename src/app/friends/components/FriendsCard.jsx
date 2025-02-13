@@ -111,7 +111,7 @@ const FriendsCard = () => {
                 {/* Coluna Esquerda */}
                 <div className="m-12 flex justify-start items-start flex-col gap-2">
                     <span className="text-xl text-white">Código de amizade</span>
-                    <div className="p-4 w-72 h-14 bg-white/20 flex justify-between items-center gap-4 rounded-lg overflow-hidden">
+                    <div className="p-4 md:w-72 h-14 bg-white/20 flex justify-between items-center gap-4 rounded-lg overflow-hidden">
                         <span className="text-xl overflow-hidden text-ellipsis whitespace-nowrap text-white">{userFriendCode}</span>
                         <button onClick={copyToClipboard} className="bg-primary-dark text-white p-2 rounded-lg hover:bg-primary-dark/50 transition flex items-center gap-2 justify-center">
                             {<FiClipboard/>}Copiar
