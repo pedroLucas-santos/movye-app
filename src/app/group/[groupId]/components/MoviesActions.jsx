@@ -40,7 +40,7 @@ const MoviesActions = ({ groupId, movieId, movieTitle, groupCreatorId }) => {
                         <DropdownTrigger>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                className="w-6 h-6 cursor-pointer"
+                                className="w-6 h-6 cursor-pointer text-white"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -66,9 +66,9 @@ const MoviesActions = ({ groupId, movieId, movieTitle, groupCreatorId }) => {
                         <DrawerContent>
                             {(onClose) => (
                                 <>
-                                    <DrawerHeader className="flex flex-col gap-1 items-center">{contentType === 'movie' ? 'Excluir filme' : 'Excluir série'}</DrawerHeader>
+                                    <DrawerHeader className="flex flex-col gap-1 items-center text-white">{contentType === 'movie' ? 'Excluir filme' : 'Excluir série'}</DrawerHeader>
                                     <DrawerBody className="justify-center items-center">
-                                        <p>{contentType === 'movie' ? `Tem certeza que deseja excluir o filme ${movieTitle} ?` : `Tem certeza que deseja excluir a série ${movieTitle} ?`}</p>
+                                        <p className="text-white">{contentType === 'movie' ? `Tem certeza que deseja excluir o filme ${movieTitle} ?` : `Tem certeza que deseja excluir a série ${movieTitle} ?`}</p>
                                     </DrawerBody>
                                     <DrawerFooter className="justify-center">
                                         <Tooltip content="Essa ação é irreversível!" color="danger" closeDelay={100}>
