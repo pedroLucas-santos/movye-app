@@ -25,9 +25,8 @@ export const getUserById = async (userId) => {
 
 export const getUserReviews = async (userId, contentType) => {
     try {
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where('content', '==', contentType))
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where("content", "==", contentType))
 
-        // Usa o getCountFromServer para obter a contagem de documentos
         const snapshot = await getCountFromServer(reviewsQuery)
 
         return snapshot.data().count
@@ -39,32 +38,26 @@ export const getUserReviews = async (userId, contentType) => {
 
 export const getUserAvgReviews = async (userId, contentType) => {
     try {
-        // Cria uma referência à coleção 'reviews' e aplica filtro pelo userId
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where('content', '==', contentType))
+        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where("content", "==", contentType))
 
-        // Obtém todos os documentos que correspondem ao filtro
         const querySnapshot = await getDocs(reviewsQuery)
 
         let totalReviews = 0
         let reviewCount = 0
 
-        // Itera sobre os documentos e soma os valores das avaliações
         querySnapshot.forEach((doc) => {
             const data = doc.data()
             if (data.rating) {
-                // Garante que o campo rating existe
                 totalReviews += data.rating
                 reviewCount += 1
             }
         })
 
-        // Calcula a média das avaliações
         const average = reviewCount > 0 ? totalReviews / reviewCount : 0
 
-        // Arredonda para cima sem casas decimais
         const roundedAvg = Math.ceil(average)
 
-        return roundedAvg // Retorna a média arredondada para cima
+        return roundedAvg
     } catch (err) {
         console.error("Error fetching user average reviews:", err)
         throw err
@@ -98,12 +91,10 @@ export const getMovieBackdrop = async (movieId) => {
 
 export const saveProfileEdit = async (userId, favoriteMovie, favoriteShow, backdropPath, bio, contentType) => {
     try {
-        // Referência ao documento do usuário no Firestore
         const userDocRef = doc(db, "users", userId)
         const docSnapshot = await getDoc(userDocRef)
 
         if (!docSnapshot.exists()) {
-            // Se o documento não existir, inicializa com os campos desejados
             await setDoc(userDocRef, {
                 bio: "",
                 favoriteMovie: {
@@ -120,7 +111,6 @@ export const saveProfileEdit = async (userId, favoriteMovie, favoriteShow, backd
         }
 
         if (contentType === "movie") {
-            // Atualizar os campos no Firestore
             if (favoriteMovie) {
                 await setDoc(
                     userDocRef,
@@ -129,10 +119,10 @@ export const saveProfileEdit = async (userId, favoriteMovie, favoriteShow, backd
                         favoriteMovie: {
                             title: favoriteMovie.title,
                             id: favoriteMovie.id,
-                            backdropPath: backdropPath, // Salva o backdropPath dentro de favoriteMovie
+                            backdropPath: backdropPath,
                         },
                     },
-                    { merge: true } // Garante que outros campos no documento não sejam sobrescritos
+                    { merge: true }
                 )
             } else {
                 await updateDoc(
@@ -146,7 +136,6 @@ export const saveProfileEdit = async (userId, favoriteMovie, favoriteShow, backd
         }
 
         if (contentType === "tv") {
-            // Atualizar os campos no Firestore
             if (favoriteShow) {
                 await setDoc(
                     userDocRef,
@@ -155,10 +144,10 @@ export const saveProfileEdit = async (userId, favoriteMovie, favoriteShow, backd
                         favoriteShow: {
                             name: favoriteShow.name,
                             id: favoriteShow.id,
-                            backdropPath: backdropPath, // Salva o backdropPath dentro de favoriteMovie
+                            backdropPath: backdropPath,
                         },
                     },
-                    { merge: true } // Garante que outros campos no documento não sejam sobrescritos
+                    { merge: true }
                 )
             } else {
                 await updateDoc(

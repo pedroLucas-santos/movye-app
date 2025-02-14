@@ -48,7 +48,7 @@ export const createNewGroup = async (groupName, groupImage, userId) => {
         if (groupImage) {
             const storageRef = ref(storage, `groups/${groupName}-${Date.now()}`)
             const snapshot = await uploadBytes(storageRef, groupImage)
-            imageUrl = await getDownloadURL(snapshot.ref) // Obtém a URL da imagem
+            imageUrl = await getDownloadURL(snapshot.ref) 
         } else {
             throw new Error("Nenhuma imagem selecionada!")
         }
@@ -59,10 +59,10 @@ export const createNewGroup = async (groupName, groupImage, userId) => {
             createdBy: userName,
             creatorId: userId,
             createdAt: Timestamp.now(),
-            members: [userId], // Criador é automaticamente o primeiro membro
+            members: [userId], 
         }
 
-        // Adiciona o grupo à coleção "groups" no Firestore
+        
         await addDoc(collection(db, "groups"), groupData)
 
         return true
@@ -76,16 +76,16 @@ export const getGroupsList = async (userId) => {
     try {
         const groupsRef = collection(db, "groups")
 
-        // Cria a consulta para buscar grupos do usuário
+        
         const q = query(groupsRef, where("members", "array-contains", userId), orderBy("createdAt", "asc"))
 
-        // Executa a consulta
+        
         const querySnapshot = await getDocs(q)
 
-        // Mapeia os resultados para um array
+        
         const groups = querySnapshot.docs.map((doc) => ({
-            id: doc.id, // ID do documento
-            ...doc.data(), // Dados do documento
+            id: doc.id, 
+            ...doc.data(), 
         }))
 
         return groups
@@ -97,10 +97,10 @@ export const getGroupsList = async (userId) => {
 
 export const getGroupData = async (groupId) => {
     try {
-        // Referência ao documento do grupo
+        
         const groupRef = doc(db, "groups", groupId)
 
-        // Busca o documento do grupo
+        
         const querySnapshot = await getDoc(groupRef)
 
         if (querySnapshot.exists()) {
@@ -108,7 +108,7 @@ export const getGroupData = async (groupId) => {
 
             let formattedDate = ""
             if (data.createdAt) {
-                // Verifica e formata a data
+                
                 if (data.createdAt instanceof Timestamp) {
                     const date = data.createdAt.toDate()
                     formattedDate = date.toLocaleDateString("pt-BR", {
@@ -120,7 +120,7 @@ export const getGroupData = async (groupId) => {
                         second: "2-digit",
                     })
                 } else if (typeof data.createdAt === "number") {
-                    const date = new Date(data.createdAt * 1000) // Converter segundos para milissegundos
+                    const date = new Date(data.createdAt * 1000) 
                     formattedDate = date.toLocaleDateString("pt-BR", {
                         year: "numeric",
                         month: "long",
@@ -132,20 +132,20 @@ export const getGroupData = async (groupId) => {
                 }
             }
 
-            // Busca os dados dos membros
-            const membersIds = data.members || [] // Garante que o array exista
+            
+            const membersIds = data.members || [] 
             const usersCollectionRef = collection(db, "users")
 
-            // Aqui buscamos todos os documentos de 'users' e filtramos aqueles cujo ID está em 'membersIds'
+            
             const membersData = []
             for (const memberId of membersIds) {
-                const userDocRef = doc(usersCollectionRef, memberId) // Referência ao documento do usuário
-                const userDoc = await getDoc(userDocRef) // Busca o documento do usuário
+                const userDocRef = doc(usersCollectionRef, memberId) 
+                const userDoc = await getDoc(userDocRef) 
 
                 if (userDoc.exists()) {
                     membersData.push({
-                        id: userDoc.id, // ID do documento
-                        ...userDoc.data(), // Dados do documento
+                        id: userDoc.id, 
+                        ...userDoc.data(), 
                     })
                 }
             }
@@ -173,7 +173,7 @@ export const sendGroupRequest = async (sender, receiverId, group) => {
             where("senderId", "==", sender.uid),
             where("receiverId", "==", receiverId),
             where("groupId", "==", group.id),
-            where("status", "==", "pendente") // Verifica apenas solicitações pendentes
+            where("status", "==", "pendente") 
         )
 
         const existingRequestSnapshot = await getDocs(existingRequestQuery)
@@ -205,7 +205,7 @@ export const sendGroupRequest = async (sender, receiverId, group) => {
 
 export const acceptGroupRequest = async (senderId, receiverId, groupId) => {
     try {
-        // Atualize o status da solicitação para "aceito"
+        
         const requestRef = collection(db, "groupRequest")
         const groupRequestSnapshot = await getDocs(
             query(
@@ -287,7 +287,7 @@ export const deleteGroup = async (groupCreatorId, groupId) => {
                 await deleteObject(imageRef)
             } catch (storageError) {
                 console.error("Erro ao deletar imagem do Storage:", storageError)
-                throw storageError // Optional: Handle the error differently if needed
+                throw storageError 
             }
         }
 
@@ -304,10 +304,10 @@ export const deleteMovieFromGroup = async (groupId, movieId) => {
             throw new Error("Missing groupId or movieId")
         }
 
-        // Reference the movie document inside the watchedMovies subcollection
+        
         const movieRef = doc(db, "groups", groupId, "watchedMovies", movieId)
 
-        // Delete the document
+        
         await deleteDoc(movieRef)
 
         const watchedMoviesRef = collection(db, "groups", groupId, "watchedMovies")
@@ -315,7 +315,7 @@ export const deleteMovieFromGroup = async (groupId, movieId) => {
 
         const groupRef = doc(db, "groups", groupId)
 
-        // If there are no more movies, delete the lastWatchedMovie field
+        
         if (watchedMoviesSnapshot.empty) {
             await updateDoc(groupRef, {
                 lastWatchedMovie: deleteField(),
@@ -328,6 +328,6 @@ export const deleteMovieFromGroup = async (groupId, movieId) => {
         }
     } catch (e) {
         console.error("Error deleting movie from group:", e)
-        throw e // Re-throw error for better error handling
+        throw e 
     }
 }

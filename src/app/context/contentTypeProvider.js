@@ -14,7 +14,6 @@ export const ContentTypeProvider = ({ children }) => {
         }
     }, [])
 
-    // Salvar no localStorage sempre que contentType mudar
     useEffect(() => {
         if (contentType) {
             localStorage.setItem("contentType", JSON.stringify(contentType))

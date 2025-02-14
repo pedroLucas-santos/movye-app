@@ -16,7 +16,6 @@ export const GroupProvider = ({ children }) => {
         }
     }, [])
 
-    // Salvar no localStorage sempre que selectedGroup mudar
     useEffect(() => {
         if (selectedGroup) {
             localStorage.setItem("selectedGroup", JSON.stringify(selectedGroup))
