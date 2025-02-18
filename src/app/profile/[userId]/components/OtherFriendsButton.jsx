@@ -21,8 +21,12 @@ const OtherFriendsButton = ({ length, userId }) => {
     }, [])
     return (
         <>
-            <button onClick={onOpen} className="hover:underline">
+            <button onClick={onOpen} className={`hover:underline hidden md:${length ? 'inline-block' : ''}`}>
                 +{length - 4} outros amigos
+            </button>
+            
+            <button onClick={onOpen} className="inline-block xl:hidden text-white text-xl border-2 p-2 rounded-xl">
+                Amigos
             </button>
             <Modal className="dark text-white" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
@@ -35,7 +39,6 @@ const OtherFriendsButton = ({ length, userId }) => {
                                         <div className="flex-shrink-0 w-16 h-16 mb-3">
                                             <Link href={`/group/${friend.id}`}>
                                                 <Image
-                                                    new
                                                     src={friend.photoURL === null ? null : friend.photoURL}
                                                     alt={`${friend.displayName}'s profile picture`}
                                                     className="rounded-full w-full h-full"
