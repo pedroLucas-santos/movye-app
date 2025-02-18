@@ -48,12 +48,14 @@ const NotiFriendRequest = ({ notification, toasty }) => {
             <div className="flex gap-4 mt-2">
                 <button
                     onClick={showToastAndAccept}
+                    onTouchEnd={showToastAndAccept}
                     className="bg-transparent border-2 border-green-500 text-white rounded-full p-1 flex items-center gap-2 hover:bg-green-800 transition"
                 >
                     <FiCheck className="w-5 h-5 text-green-500" />
                 </button>
                 <button
                     onClick={showToastAndRefuse}
+                    onTouchEnd={showToastAndRefuse}
                     className="bg-transparent border-2 border-red-500 text-white rounded-full p-1 flex items-center gap-2 hover:bg-red-800 transition"
                 >
                     <FiX className="w-5 h-5 text-red-500" />

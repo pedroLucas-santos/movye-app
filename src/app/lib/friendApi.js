@@ -50,12 +50,11 @@ export const searchFriendCode = async (friendCode) => {
         const friendSnapshot = await getDocs(friendQuery)
 
         if (friendSnapshot.empty) {
-            
             return null
         }
 
         const friendData = { id: friendSnapshot.docs[0].id, ...friendSnapshot.docs[0].data() }
-        
+
         return friendData
     } catch (e) {
         console.error("Error searching friend code:", e.message)
@@ -66,7 +65,6 @@ export const searchFriendCode = async (friendCode) => {
 export const sendFriendRequest = async (sender, receiverId) => {
     try {
         if (sender.uid === receiverId) {
-            
             throw new Error("Você não pode enviar uma solicitação de amizade para si mesmo.")
         }
 
@@ -77,7 +75,6 @@ export const sendFriendRequest = async (sender, receiverId) => {
         const receiverFriendsSnapshot = await getDocs(receiverFriendsRef)
 
         if (senderFriendsSnapshot.docs.some((doc) => doc.id === receiverId) || receiverFriendsSnapshot.docs.some((doc) => doc.id === sender.uid)) {
-            
             throw new Error("Você já é amigo dessa pessoa.")
         }
 
@@ -93,7 +90,6 @@ export const sendFriendRequest = async (sender, receiverId) => {
         const existingRequestSnapshot = await getDocs(existingRequestQuery)
 
         if (!existingRequestSnapshot.empty) {
-            
             throw new Error("Pedido de amizade já enviado!")
         }
 
@@ -111,8 +107,6 @@ export const sendFriendRequest = async (sender, receiverId) => {
             message: "enviou uma solicitação de amizade!",
             additionalData: { friendRequestId: requestDoc.id },
         })
-
-        
     } catch (error) {
         throw error
     }
@@ -145,8 +139,6 @@ export const acceptFriendRequest = async (senderId, receiverId) => {
                 friendCode: senderData.friendCode,
                 addedAt: Timestamp.now(),
             })
-
-            
         }
     } catch (error) {
         console.error("Error accepting friend request:", error)
@@ -155,28 +147,21 @@ export const acceptFriendRequest = async (senderId, receiverId) => {
 
 export const refuseFriendRequest = async (senderId, receiverId) => {
     try {
-        const requestRef = collection(db, "friendRequest");
+        const requestRef = collection(db, "friendRequest")
 
         const friendRequestSnapshot = await getDocs(
-            query(
-                requestRef,
-                where("senderId", "==", senderId),
-                where("receiverId", "==", receiverId),
-                where("status", "==", "pendente")
-            )
-        );
+            query(requestRef, where("senderId", "==", senderId), where("receiverId", "==", receiverId), where("status", "==", "pendente"))
+        )
 
         if (!friendRequestSnapshot.empty) {
-            const requestDoc = friendRequestSnapshot.docs[0];
-            await updateDoc(requestDoc.ref, { status: "recusado" });
-            
+            const requestDoc = friendRequestSnapshot.docs[0]
+            await updateDoc(requestDoc.ref, { status: "recusado" })
         } else {
-            
         }
     } catch (error) {
-        console.error("Error refusing friend request:", error);
+        console.error("Error refusing friend request:", error)
     }
-};
+}
 
 export const deleteFriend = async (user, friendId) => {
     try {
@@ -196,7 +181,6 @@ export const deleteFriend = async (user, friendId) => {
         receiverFriendsSnapshot.forEach(async (docSnap) => {
             await deleteDoc(doc(db, "users", friendId, "friends", docSnap.id))
         })
-        
     } catch (error) {
         console.error("Error deleting friend:", error)
     }
