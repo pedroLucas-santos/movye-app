@@ -153,7 +153,7 @@ export const fetchShowBackdrop = async (showId) => {
 
         if (data.backdrops && data.backdrops.length > 0) {
             const filteredBackdrops = data.backdrops.filter(
-                (backdrop) => backdrop.width === 3840 && backdrop.height === 2160 && backdrop.iso_639_1 == null
+                (backdrop) => backdrop.width >= 1920 && backdrop.height >= 1080 && backdrop.iso_639_1 == null
             )
 
             if (filteredBackdrops.length > 0) {
@@ -352,7 +352,7 @@ export const deleteShowFromGroup = async (groupId, showId) => {
         } else {
             const latestShow = watchedShowsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })).sort((a, b) => b.watched_at - a.watched_at)[0]
             await updateDoc(groupRef, {
-                lastWatchedMovie: latestShow,
+                lastWatchedShow: latestShow,
             })
         }
     } catch (e) {

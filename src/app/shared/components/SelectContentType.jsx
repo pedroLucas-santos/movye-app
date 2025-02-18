@@ -23,6 +23,7 @@ const SelectContentType = () => {
             placeholder="Selecione um tipo"
             selectedKeys={[contentType]}
             variant="bordered"
+            disallowEmptySelection
             onChange={handleSelectionChange}
         >
             {types.map((type) => (

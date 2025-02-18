@@ -50,7 +50,7 @@ export const fetchMovieBackdrop = async (movieId) => {
 
         if (data.backdrops && data.backdrops.length > 0) {
             const filteredBackdrops = data.backdrops.filter(
-                (backdrop) => backdrop.width === 3840 && backdrop.height === 2160 && backdrop.iso_639_1 == null
+                (backdrop) => backdrop.width >= 1920 && backdrop.height >= 1080 && backdrop.iso_639_1 == null
             )
 
             if (filteredBackdrops.length > 0) {
