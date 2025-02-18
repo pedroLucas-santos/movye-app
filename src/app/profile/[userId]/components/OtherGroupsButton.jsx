@@ -21,8 +21,12 @@ const OtherGroupsButton = ({ length, userId }) => {
     }, [])
     return (
         <>
-            <button onClick={onOpen} className="hover:underline">
+           <button onClick={onOpen} className={`hover:underline hidden md:${length ? 'inline-block' : ''}`}>
                 +{length - 4} outros grupos
+            </button>
+            
+            <button onClick={onOpen} className="inline-block xl:hidden text-white text-xl border-2 p-2 rounded-xl">
+                Grupos
             </button>
             <Modal className="dark text-white" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>

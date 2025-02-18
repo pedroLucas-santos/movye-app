@@ -13,6 +13,8 @@ import { getGroupsList } from "@/app/lib/groupApi"
 import GroupListProfile from "./components/GroupListProfile"
 import ProfileBackdrop from "./components/ProfileBackdrop"
 import ProfileContent from "./components/ProfileContent"
+import OtherFriendsButton from "./components/OtherFriendsButton"
+import OtherGroupsButton from "./components/OtherGroupsButton"
 
 export default async function ProfilePage({ params }) {
     const { userId } = await params
@@ -49,6 +51,11 @@ export default async function ProfilePage({ params }) {
                         <UserInfo user={user} userId={userId} friendList={friendList} />
                         <FriendList friendList={friendList} userId={userId} />
                         <GroupListProfile groupList={groupList} userId={userId} />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <OtherGroupsButton userId={userId}/>
+                        <OtherFriendsButton userId={userId}/>
                     </div>
 
                     <ProfileContent userId={userId} user={user}/>

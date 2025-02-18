@@ -74,7 +74,7 @@ const ModalInviteUsers = ({ groupCreatorId, groupId }) => {
                     </button>
                     <Modal className="dark" placement="top" scrollBehavior="inside" backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
                         <ModalContent>
-                            <ModalHeader className="flex flex-col gap-1 justify-center items-center text-2xl">Convidar Amigos</ModalHeader>
+                            <ModalHeader className="flex flex-col gap-1 justify-center items-center text-2xl text-white">Convidar Amigos</ModalHeader>
                             <ModalBody>
                                 <div className="flex justify-center items-center">
                                     <ul className="pl-4 mt-4">
@@ -94,7 +94,7 @@ const ModalInviteUsers = ({ groupCreatorId, groupId }) => {
                                                 </div>
                                                 <div className="w-60 flex items-center justify-between gap-4">
                                                     <Link href={`/profile/${nMember.id}`}>
-                                                        <span className="truncate">{nMember.displayName}</span>
+                                                        <span className="truncate text-white">{nMember.displayName}</span>
                                                     </Link>
                                                     <button
                                                         onClick={() => {
