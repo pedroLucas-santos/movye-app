@@ -20,7 +20,7 @@ const ProfileContent = ({ userId, user }) => {
             }
         }
         fetcher()
-    }, [])
+    }, [[], contentType])
     
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 mt-24 p-4 rounded-xl justify-items-center h-32 content-center mb-12 gap-6 md:gap-0">
