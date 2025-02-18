@@ -1,6 +1,7 @@
 "use client"
 import { useContentType } from "@/app/context/contentTypeProvider"
 import RenderStars from "@/app/shared/RenderStars"
+import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { FaChevronDown, FaChevronUp } from "react-icons/fa" // Importe os ícones de seta
@@ -29,16 +30,18 @@ export const GroupReviews = ({ reviews, showReviews }) => {
             <h2 className="text-xl font-semibold text-gray-200 mb-4">Reviews</h2>
             <ul className="space-y-4">
                 {reviewsByType.slice(0, reviewsToShow).map((review, index) => (
-                    <li key={index} className="bg-secondary-dark  p-4 rounded-md flex items-center gap-2">
-                        <Link href={`/profile/${review.user_id}`} className="hidden md:inline-block w-32">
-                            <img src={review.photoURL} alt="" className="rounded-full w-12 h-12" />
-                        </Link>
+                    <li key={index} className="bg-secondary-dark p-4 rounded-md flex items-center gap-2 flex-col justify-center md:flex-row">
+                        <div className="flex justify-center items-center">
+                            <Link href={`/profile/${review.user_id}`} className="w-12">
+                                <Image width={12} height={12} src={review.photoURL} alt="" className="rounded-full w-12" />
+                            </Link>
+                        </div>
                         <div className="flex flex-col justify-center">
                             <div>
                                 <Link href={`/profile/${review.user_id}`}>
                                     <strong className="text-gray-400">{review.displayName}:</strong>
                                 </Link>
-                                <span className="text-gray-100 ml-2">{review.review}</span>
+                                <span className="text-gray-100 ml-2 w-32">{review.review}</span>
                             </div>
                             <span className="text-gray-500 text-xs md:w-96">{review.id}</span>
                         </div>
