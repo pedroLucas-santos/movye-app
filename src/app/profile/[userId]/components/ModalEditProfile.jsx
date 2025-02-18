@@ -66,6 +66,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
     }, [contentType])
 
     useEffect(() => {
+        setSelectedBackdrop(null)
         if (searchMovie !== "" || searchShow !== "") {
             if(contentType === 'movie'){
                 const movieName = async () => {
@@ -358,7 +359,7 @@ const ModalEditProfile = ({ toggleModalEditProfile, isModalEditProfile, userFire
                                     <Image
                                         src={`https://image.tmdb.org/t/p/original${backdrops[currentBackdropIndex].file_path}`}
                                         alt={`Backdrop ${currentBackdropIndex + 1}`}
-                                        className="max-w-7xl max-h-[80%] object-contain select-none"
+                                        className="lg:max-w-7xl max-h-[80%] object-contain select-none"
                                         width={1920}
                                         height={1080}
                                         quality={100}
