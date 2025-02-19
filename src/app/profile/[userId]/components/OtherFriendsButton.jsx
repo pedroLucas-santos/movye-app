@@ -37,7 +37,7 @@ const OtherFriendsButton = ({ length, userId }) => {
                                 {friendList.map((friend) => (
                                     <li key={friend.id} className="text-sm  flex items-center gap-4">
                                         <div className="flex-shrink-0 w-16 h-16 mb-3">
-                                            <Link href={`/group/${friend.id}`}>
+                                            <Link href={`/profile/${friend.id}`}>
                                                 <Image
                                                     src={friend.photoURL === null ? null : friend.photoURL}
                                                     alt={`${friend.displayName}'s profile picture`}
