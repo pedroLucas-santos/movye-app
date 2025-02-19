@@ -50,7 +50,7 @@ const GroupMoviesWatched = ({ watchedMovies, groupId, groupCreatorId, watchedSho
                                         <RenderStars key={index} index={index + 1} movieRating={movie.averageRating} />
                                     ))}
                                 </div>
-                                <MoviesActions groupId={groupId} movieId={movie.doc_id} movieTitle={movie.title} groupCreatorId={groupCreatorId}/>
+                                <MoviesActions groupId={groupId} movieId={movie.doc_id} movieTitle={movie.title} watchId={movie.id} groupCreatorId={groupCreatorId}/>
                             </div>
                         </div>
                     </li>

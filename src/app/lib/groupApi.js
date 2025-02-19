@@ -20,7 +20,7 @@ import {
     arrayRemove,
     deleteField,
 } from "firebase/firestore"
-import { createNotification } from "./notificationApi"
+import { createNotification, deleteNotification } from "./notificationApi"
 
 export const getUserNameById = async (userId) => {
     try {
@@ -298,7 +298,7 @@ export const deleteGroup = async (groupCreatorId, groupId) => {
     }
 }
 
-export const deleteMovieFromGroup = async (groupId, movieId) => {
+export const deleteMovieFromGroup = async (groupId, movieId, watchId) => {
     try {
         if (!groupId || !movieId) {
             throw new Error("Missing groupId or movieId")
@@ -306,6 +306,12 @@ export const deleteMovieFromGroup = async (groupId, movieId) => {
 
         
         const movieRef = doc(db, "groups", groupId, "watchedMovies", movieId)
+
+        const movieSnap = await getDoc(movieRef);
+
+        if (movieSnap.exists() && movieSnap.data().watcherId) {
+            await deleteNotification(movieSnap.data().watcherId, watchId);
+        }
 
         
         await deleteDoc(movieRef)
@@ -326,6 +332,8 @@ export const deleteMovieFromGroup = async (groupId, movieId) => {
                 lastWatchedMovie: latestMovie
             })
         }
+
+        
     } catch (e) {
         console.error("Error deleting movie from group:", e)
         throw e 

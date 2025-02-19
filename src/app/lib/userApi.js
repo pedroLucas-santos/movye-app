@@ -164,3 +164,29 @@ export const saveProfileEdit = async (userId, favoriteMovie, favoriteShow, backd
         throw err
     }
 }
+
+export const getUserSettings = async (userId) => {
+    try {
+        const userDocRef = doc(db, "users", userId)
+        const docSnapshot = await getDoc(userDocRef)
+
+        if (!docSnapshot.exists()) {
+            throw new Error(`User document (${userId}) does not exist`)
+        }
+
+        return docSnapshot.data()?.settings || {}
+    } catch (err) {
+        console.error("Error fetching user settings:", err)
+        throw err
+    }
+}
+
+export const saveUserSettings = async (userId, settings) => {
+    try {
+        const userDocRef = doc(db, "users", userId)
+        await updateDoc(userDocRef, { settings })
+    } catch (err) {
+        console.error("Error saving user settings:", err)
+        throw err
+    }
+}

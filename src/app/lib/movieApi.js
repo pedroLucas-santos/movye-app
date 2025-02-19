@@ -15,6 +15,7 @@ import {
     deleteDoc,
 } from "firebase/firestore"
 import { fetchShowPoster } from "./showApi"
+import { createNotification, deleteNotification } from "./notificationApi"
 
 export const options = {
     method: "GET",
@@ -83,7 +84,7 @@ export const fetchSearchedMovieName = async (movie, groupId) => {
     }
 }
 
-export const fetchAddMovie = async (movieId, groupId) => {
+export const fetchAddMovie = async (sender, movieId, groupId) => {
     try {
         const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?language=en-US`, options)
         const movie = await response.json()
@@ -103,6 +104,7 @@ export const fetchAddMovie = async (movieId, groupId) => {
                     release_date: movie.release_date,
                     title: movie.original_title,
                     watched_at: Timestamp.now(),
+                    watcherId: sender.uid
                 },
             })
 
@@ -115,7 +117,35 @@ export const fetchAddMovie = async (movieId, groupId) => {
                 release_date: movie.release_date,
                 title: movie.original_title,
                 watched_at: Timestamp.now(),
+                watcherId: sender.uid
             })
+
+            const groupSnap = await getDoc(groupRef)
+            if (groupSnap.exists()) {
+                const group = groupSnap.data()
+                const members = group.members || []
+
+                for (const memberId of members) {
+                    if (memberId !== sender.uid) {
+                        await createNotification(
+                            {
+                                sender: sender,
+                                receiverId: memberId,
+                                type: "group-watched",
+                                message: `adicionou o filme **${movie.original_title}** ao grupo **${group.name}**`,
+                                additionalData: {
+                                    watchId: movie.id,
+                                    watchTitle: movie.original_title,
+                                    watchBackdropUrl: movie.backdrop_path,
+                                    groupId: groupId,
+                                    groupName: group.name,
+                                },
+                            },
+                            "movie"
+                        )
+                    }
+                }
+            }
         }
     } catch (e) {
         console.error("Error in fetchAddMovie:", e)
@@ -214,7 +244,7 @@ export const fetchMoviesWatched = async (groupId) => {
     }
 }
 
-export const fetchMovieReview = async (movieId, newRating, movieSelected, newReview, uid, groupId, contentType) => {
+export const fetchMovieReview = async (sender, movieId, newRating, movieSelected, newReview, uid, groupId, contentType) => {
     try {
         const movieQuery = query(collection(db, "groups", groupId, "watchedMovies"), where("id", "==", movieId))
         const snapshot = await getDocs(movieQuery)
@@ -244,6 +274,62 @@ export const fetchMovieReview = async (movieId, newRating, movieSelected, newRev
             groupName: await fetchGroupNameById(groupId),
             content: contentType,
         })
+
+        const groupRef = doc(db, "groups", groupId)
+        const userRef = doc(db, "users", sender.uid)
+
+        const groupSnap = await getDoc(groupRef)
+        const userSnap = await getDoc(userRef)
+
+        if (groupSnap.exists() && userSnap.exists()) {
+            const group = groupSnap.data()
+            const members = group.members || []
+
+            const friendsSnapshot = await getDocs(collection(userRef, "friends"))
+            const friends = friendsSnapshot.docs.map((doc) => doc.id)
+
+            for (const memberId of members) {
+                if (memberId !== sender.uid) {
+                    await createNotification(
+                        {
+                            sender: sender,
+                            receiverId: memberId,
+                            type: "review",
+                            message: `fez uma nova review para o filme **${movieSelected.title}**`,
+                            additionalData: {
+                                watchId: movieSelected.id,
+                                watchTitle: movieSelected.title,
+                                watchBackdropUrl: movieSelected.backdrop_path,
+                                groupId: groupId,
+                                groupName: group.name,
+                            },
+                        },
+                        "movie"
+                    )
+                }
+            }
+
+            for (const friendId of friends) {
+                if (friendId !== sender.uid) {
+                    await createNotification(
+                        {
+                            sender: sender,
+                            receiverId: friendId,
+                            type: "review",
+                            message: `fez uma nova review para o filme **${movieSelected.title}**`,
+                            additionalData: {
+                                watchId: movieSelected.id,
+                                watchTitle: movieSelected.title,
+                                watchBackdropUrl: movieSelected.backdrop_path,
+                                groupId: groupId,
+                                groupName: group.name,
+                            },
+                        },
+                        "movie"
+                    )
+                }
+            }
+        }
     } catch (e) {
         throw new Error("Error fetching movie review: " + e.message)
     }
@@ -580,10 +666,12 @@ export const fetchDeleteReview = async (userId, reviewId) => {
         if (!querySnapshot.empty) {
             const docToDelete = querySnapshot.docs[0]
             await deleteDoc(docToDelete.ref)
+            await deleteNotification(userId, reviewId)
             return true
         } else {
             throw new Error("Review não encontrada.")
         }
+
     } catch (error) {
         console.error("Erro ao deletar review:", error)
         throw error

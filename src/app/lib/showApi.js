@@ -16,6 +16,7 @@ import {
     deleteField,
 } from "firebase/firestore"
 import { fetchGroupNameById } from "./movieApi"
+import { createNotification, deleteNotification } from "./notificationApi"
 
 export const options = {
     method: "GET",
@@ -45,7 +46,7 @@ export const fetchSearchedShowName = async (show, groupId) => {
     }
 }
 
-export const fetchAddShow = async (showId, groupId) => {
+export const fetchAddShow = async (sender, showId, groupId) => {
     try {
         const response = await fetch(`https://api.themoviedb.org/3/tv/${showId}?language=en-US`, options)
         const show = await response.json()
@@ -67,6 +68,7 @@ export const fetchAddShow = async (showId, groupId) => {
                         release_date: show.first_air_date,
                         title: show.name,
                         watched_at: Timestamp.now(),
+                        watcherId: sender.uid
                     },
                 },
                 { merge: true }
@@ -81,7 +83,35 @@ export const fetchAddShow = async (showId, groupId) => {
                 release_date: show.first_air_date,
                 title: show.name,
                 watched_at: Timestamp.now(),
+                watcherId: sender.uid
             })
+
+            const groupSnap = await getDoc(groupRef)
+            if (groupSnap.exists()) {
+                const group = groupSnap.data()
+                const members = group.members || []
+
+                for (const memberId of members) {
+                    if (memberId !== sender.uid) {
+                        await createNotification(
+                            {
+                                sender: sender,
+                                receiverId: memberId,
+                                type: "group-watched",
+                                message: `adicionou a série **${show.name}** ao grupo **${group.name}**`,
+                                additionalData: {
+                                    watchId: show.id,
+                                    watchTitle: show.name,
+                                    watchBackdropUrl: show.backdrop_path,
+                                    groupId: groupId,
+                                    groupName: group.name,
+                                },
+                            },
+                            "tv"
+                        )
+                    }
+                }
+            }
         }
     } catch (e) {
         console.error("Error in fetchAddShow:", e)
@@ -219,7 +249,7 @@ export const fetchShowsWatched = async (groupId) => {
     }
 }
 
-export const fetchShowReview = async (showId, newRating, showSelected, newReview, uid, groupId, contentType) => {
+export const fetchShowReview = async (sender, showId, newRating, showSelected, newReview, uid, groupId, contentType) => {
     try {
         const showQuery = query(collection(db, "groups", groupId, "watchedShows"), where("id", "==", showId))
         const snapshot = await getDocs(showQuery)
@@ -249,8 +279,64 @@ export const fetchShowReview = async (showId, newRating, showSelected, newReview
             groupName: await fetchGroupNameById(groupId),
             content: contentType,
         })
+
+        const groupRef = doc(db, "groups", groupId)
+        const userRef = doc(db, "users", sender.uid)
+
+        const groupSnap = await getDoc(groupRef)
+        const userSnap = await getDoc(userRef)
+
+        if (groupSnap.exists() && userSnap.exists()) {
+            const group = groupSnap.data()
+            const members = group.members || []
+
+            const friendsSnapshot = await getDocs(collection(userRef, "friends"))
+            const friends = friendsSnapshot.docs.map((doc) => doc.id)
+
+            for (const memberId of members) {
+                if (memberId !== sender.uid) {
+                    await createNotification(
+                        {
+                            sender: sender,
+                            receiverId: memberId,
+                            type: "review",
+                            message: `fez uma nova review para a série **${showSelected.title}**`,
+                            additionalData: {
+                                watchId: showSelected.id,
+                                watchTitle: showSelected.title,
+                                watchBackdropUrl: showSelected.backdrop_path,
+                                groupId: groupId,
+                                groupName: group.name,
+                            },
+                        },
+                        "tv"
+                    )
+                }
+            }
+
+            for (const friendId of friends) {
+                if (friendId !== sender.uid) {
+                    await createNotification(
+                        {
+                            sender: sender,
+                            receiverId: friendId,
+                            type: "review",
+                            message: `fez uma nova review para a série **${showSelected.title}**`,
+                            additionalData: {
+                                watchId: showSelected.id,
+                                watchTitle: showSelected.title,
+                                watchBackdropUrl: showSelected.backdrop_path,
+                                groupId: groupId,
+                                groupName: group.name,
+                            },
+                        },
+                        "tv"
+                    )
+                }
+            }
+        }
     } catch (e) {
-        throw new Error("Error fetching movie review: " + e.message)
+        throw new Error("Error fetching tv review: " + e.message)
     }
 }
 
@@ -330,13 +416,19 @@ export const fetchShowsGroupReviews = async (groupId) => {
     }
 }
 
-export const deleteShowFromGroup = async (groupId, showId) => {
+export const deleteShowFromGroup = async (groupId, showId, watchId) => {
     try {
         if (!groupId || !showId) {
             throw new Error("Missing groupId or showId")
         }
 
         const showRef = doc(db, "groups", groupId, "watchedShows", showId)
+
+        const showSnap = await getDoc(showRef);
+
+        if (showSnap.exists() && showSnap.data().watcherId) {
+            await deleteNotification(showSnap.data().watcherId, watchId);
+        }
 
         await deleteDoc(showRef)
 
@@ -355,6 +447,8 @@ export const deleteShowFromGroup = async (groupId, showId) => {
                 lastWatchedShow: latestShow,
             })
         }
+
+      
     } catch (e) {
         console.error("Error deleting show from group:", e)
         throw e

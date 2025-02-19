@@ -7,8 +7,8 @@ import { signOut } from "firebase/auth"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import React from "react"
-import { FiList, FiLogOut, FiStar, FiUser, FiUsers } from "react-icons/fi"
+import React, { useState } from "react"
+import { FiList, FiLogOut, FiSettings, FiStar, FiUser, FiUsers } from "react-icons/fi"
 
 const ProfileDropdown = ({ user }) => {
     const { onOpen } = useDisclosure()
@@ -43,9 +43,14 @@ const ProfileDropdown = ({ user }) => {
         localStorage.removeItem("selectedGroup") // Limpa o localStorage
         router.push(`/groups/${user?.uid}`)
     }
+
+    const settingsPage = () => {
+        router.push(`/settings/${user?.uid}`)
+    }
+
     return (
         <>
-            <Dropdown className="dark mt-2 overflow-hidden text-white" shouldBlockScroll={false}>
+            <Dropdown className="dark mt-2 overflow-hidden text-white" shouldBlockScroll={false} >
                 <DropdownTrigger>
                     {user?.photoURL ? <Image
                         src={user?.photoURL ? user?.photoURL : null}
@@ -72,6 +77,7 @@ const ProfileDropdown = ({ user }) => {
                     <DropdownItem startContent={<FiUsers size={20} />} onPress={friendsPage}>Amigos</DropdownItem>
                     <DropdownItem startContent={<FiStar size={20} />} onPress={reviewsPage}>Reviews</DropdownItem>
                     <DropdownItem startContent={<FiList size={20}/>} onPress={groupsPage}>Selecionar Grupo</DropdownItem>
+                    <DropdownItem startContent={<FiSettings size={20}/>} onPress={settingsPage}>Configurações</DropdownItem>
                     <DropdownItem startContent={<FiLogOut size={20}/>} onPress={logout}>Logout</DropdownItem>
                 </DropdownMenu>
             </Dropdown>

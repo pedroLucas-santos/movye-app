@@ -7,10 +7,12 @@ import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore"
 import { useEffect, useState } from "react"
 import { isFriendCodeUnique } from "@/app/lib/movieApi"
 import Image from "next/image"
+import { CircularProgress } from "@heroui/progress"
 
 export default function LoginPage() {
     const router = useRouter()
     const [rememberMe, setRememberMe] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     function generateFriendCode() {
         const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -40,6 +42,7 @@ export default function LoginPage() {
     // Função de login
     const signInWithGoogle = async () => {
         try {
+            setLoading(true)
             const result = await signInWithPopup(auth, googleProdiver)
             const { user } = result
             const { uid, displayName, email, photoURL } = user
@@ -67,6 +70,11 @@ export default function LoginPage() {
                         id: null,
                         title: null,
                     },
+                    settings: {
+                        notificationsReviews: true,
+                        notificationsMovies: true,
+                        notificationsShows: true
+                    }
                 })
             } else {
                 //nao foi testado
@@ -81,6 +89,16 @@ export default function LoginPage() {
                         displayName: displayName
                     })
                 }
+
+                if(!userDoc.data().settings){
+                    await setDoc(userDocRef, {
+                        settings: {
+                            notificationsReviews: true,
+                            notificationsMovies: true,
+                            notificationsShows: true
+                        }
+                    }, {merge: true})
+                }
             }
 
             const token = await user.getIdToken()
@@ -90,8 +108,9 @@ export default function LoginPage() {
                 sessionStorage.setItem("authToken", token)
             }
 
-            router.push(`/groups/${user.uid}`) //alterar para dashboard depois, ou nao nao sei
+            router.push(`/groups/${user.uid}`)//alterar para dashboard depois, ou nao nao sei                                       
         } catch (error) {
+            setLoading(false)
             console.error(error.message)
         }
     }
@@ -150,7 +169,8 @@ export default function LoginPage() {
                     height={1080}
                     quality={100}
                 />
-                <span className="font-medium">Login com Google</span>
+                <span className="font-medium">{loading ? <CircularProgress size={'sm'} color={'default'} className="mr-2" /> : "Login com Google"}</span>
+                
             </button>
         </div>
     )
