@@ -49,7 +49,7 @@ const OtherFriendsButton = ({ length, userId }) => {
                                             </Link>
                                         </div>
                                         <div>
-                                            <Link href={`/group/${friend.id}`}>
+                                            <Link href={`/profile/${friend.id}`}>
                                                 <span className="truncate">{friend.displayName}</span>
                                             </Link>
                                         </div>
