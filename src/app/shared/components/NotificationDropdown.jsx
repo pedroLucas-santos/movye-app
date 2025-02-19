@@ -5,11 +5,13 @@ import NotiFriendRequest from "./notificationTypes/NotiFriendRequest"
 import NotiGroupRequest from "./notificationTypes/NotiGroupRequest"
 import NotiMessage from "./notificationTypes/NotiMessage"
 import { toast } from "react-toastify"
+import NotiGroupWatched from "./notificationTypes/NotiGroupWatched"
+import NotiReview from "./notificationTypes/NotiReview"
 
 const NotificationDropdown = ({ notifications }) => {
     return (
         <>
-            <Dropdown className="dark mt-2 text-white" closeOnSelect={false} shouldBlockScroll={false}>
+            <Dropdown className="dark mt-2 text-white" closeOnSelect={false} shouldBlockScroll={false} aria-selected={false}>
                 <DropdownTrigger>
                     <svg
                         id="notifications"
@@ -28,22 +30,28 @@ const NotificationDropdown = ({ notifications }) => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19a2 2 0 100-4 2 2 0 000 4z"></path>
                     </svg>
                 </DropdownTrigger>
-                <DropdownMenu>
+                <DropdownMenu className="outline-none" style={{ maxHeight: '500px', overflowY: 'auto' }}>
                     {notifications.length > 0 ? (
-                        <DropdownItem variant="light">
-                            <div className="flex flex-col gap-4 h-full overflow-y-auto">
-                                {notifications.map((notification, index) => {
+                        notifications.map((notification, index) => (
+                            <DropdownItem key={index} variant="light" isReadOnly className="cursor-auto">
+                                {(() => {
                                     switch (notification.type) {
                                         case "friend-request":
-                                            return <NotiFriendRequest key={index} notification={notification} toasty={toast} />
+                                            return <NotiFriendRequest notification={notification} toasty={toast} />
                                         case "group-request":
-                                            return <NotiGroupRequest key={index} notification={notification} toasty={toast} />
+                                            return <NotiGroupRequest notification={notification} toasty={toast} />
+                                        case "group-watched":
+                                            return <NotiGroupWatched notification={notification} toasty={toast} />
+                                        case "review":
+                                            return <NotiReview notification={notification} toasty={toast}/>
                                         case "message":
-                                            return <NotiMessage key={index} notification={notification} />
+                                            return <NotiMessage notification={notification} />
+                                        default:
+                                            return null
                                     }
-                                })}
-                            </div>
-                        </DropdownItem>
+                                })()}
+                            </DropdownItem>
+                        ))
                     ) : (
                         <DropdownItem variant="none">
                             <div className="px-4 py-2 text-sm hover:cursor-auto">Sem novas notificações</div>

@@ -7,6 +7,7 @@ import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from "@her
 import Image from "next/image"
 import { useContentType } from "@/app/context/contentTypeProvider"
 import { fetchAddShow, fetchSearchedShowName } from "@/app/lib/showApi"
+import { useAuth } from "@/app/context/auth-context"
 
 const ModalAddMovie = () => {
     const [searchInput, setSearchInput] = useState("")
@@ -18,6 +19,7 @@ const ModalAddMovie = () => {
     const { selectedGroup } = useGroup()
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
     const { contentType, setContentType } = useContentType()
+    const { user } = useAuth()
     const genreMap = {
         28: "Action",
         12: "Adventure",
@@ -86,7 +88,7 @@ const ModalAddMovie = () => {
     const addMovie = async () => {
         if (selectedMovie) {
             try {
-                await fetchAddMovie(selectedMovie, selectedGroup.id)
+                await fetchAddMovie(user, selectedMovie, selectedGroup.id)
                 toast.success("Filme adicionado com sucesso!")
 
                 //arrumar o bug do toast
@@ -104,7 +106,7 @@ const ModalAddMovie = () => {
     const addShow = async () => {
         if (selectedShow) {
             try {
-                await fetchAddShow(selectedShow, selectedGroup.id)
+                await fetchAddShow(user, selectedShow, selectedGroup.id)
                 toast.success("Série adicionada com sucesso!")
 
                 //arrumar o bug do toast
@@ -133,8 +135,8 @@ const ModalAddMovie = () => {
                 setSearchInput("")
             }
         }
-        
-        if(contentType === 'tv') {
+
+        if (contentType === "tv") {
             const showAdded = await addShow()
 
             if (showAdded) {

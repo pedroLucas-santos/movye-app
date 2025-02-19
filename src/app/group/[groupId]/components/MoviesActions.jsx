@@ -11,7 +11,7 @@ import { useAuth } from "@/app/context/auth-context"
 import { useContentType } from "@/app/context/contentTypeProvider"
 import { deleteShowFromGroup } from "@/app/lib/showApi"
 
-const MoviesActions = ({ groupId, movieId, movieTitle, groupCreatorId }) => {
+const MoviesActions = ({ groupId, movieId, movieTitle, groupCreatorId, watchId }) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
     const router = useRouter()
     const { user } = useAuth()
@@ -20,10 +20,10 @@ const MoviesActions = ({ groupId, movieId, movieTitle, groupCreatorId }) => {
     const deleteMovie = async () => {
         try {
             if(contentType === 'movie'){
-                await deleteMovieFromGroup(groupId, movieId)
+                await deleteMovieFromGroup(groupId, movieId, watchId)
                 toast.success("Filme excluído com sucesso!")
             } else {
-                await deleteShowFromGroup(groupId, movieId)
+                await deleteShowFromGroup(groupId, movieId, watchId)
                 toast.success("Série excluída com sucesso!")
             }
             

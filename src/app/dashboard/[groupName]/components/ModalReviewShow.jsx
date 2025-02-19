@@ -71,7 +71,7 @@ const ModalReviewShow = ({contentType}) => {
     const addReview = async () => {
         if (rating && selectedShowId && review !== "") {
             try {
-                const response = await fetchShowReview(selectedShowId, rating, selectedShow, review, user.uid, selectedGroup.id, contentType)
+                const response = await fetchShowReview(user, selectedShowId, rating, selectedShow, review, user.uid, selectedGroup.id, contentType)
                 toast.success("Review enviado com sucesso:", response)
 
                 triggerUpdate()
