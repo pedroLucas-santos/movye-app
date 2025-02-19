@@ -75,6 +75,12 @@ export default function LoginPage() {
                         photoURL: photoURL
                     })
                 }
+
+                if(userDoc.data().displayName !== displayName) {
+                    await updateDoc(userDocRef, {
+                        displayName: displayName
+                    })
+                }
             }
 
             const token = await user.getIdToken()
