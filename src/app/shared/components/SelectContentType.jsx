@@ -19,7 +19,7 @@ const SelectContentType = () => {
     return (
         <Select
             className="max-w-xs text-white"
-            label="Contéudo"
+            label="Conteúdo"
             placeholder="Selecione um tipo"
             selectedKeys={[contentType]}
             variant="bordered"
