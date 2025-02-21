@@ -16,6 +16,7 @@ const ModalReviewShow = ({contentType}) => {
     const [rating, setRating] = useState(0)
     const [watchedShows, setWatchedShows] = useState([])
     const [selectedShow, setSelectedShow] = useState({})
+    const [sendingR, setSendingR] = useState(false)
     const [selectedShowId, setSelectedShowId] = useState(0)
     const [review, setReview] = useState("")
     const { user } = useAuth()
@@ -71,6 +72,7 @@ const ModalReviewShow = ({contentType}) => {
     const addReview = async () => {
         if (rating && selectedShowId && review !== "") {
             try {
+                setSendingR(true)
                 const response = await fetchShowReview(user, selectedShowId, rating, selectedShow, review, user.uid, selectedGroup.id, contentType)
                 toast.success("Review enviado com sucesso:", response)
 
@@ -82,6 +84,7 @@ const ModalReviewShow = ({contentType}) => {
                 return false
             }
         } else {
+            setSendingR(false)
             toast.error("É necessário preencher o rating, filme e review para finalizar sua review!")
             return false
         }
@@ -185,7 +188,7 @@ const ModalReviewShow = ({contentType}) => {
                     </ModalBody>
                     <ModalFooter>
                         <div className="mt-8 flex justify-end items-center">
-                            <button className="bg-primary-dark text-white p-4 rounded-md transition hover:bg-primary-dark/50" onClick={handleReview}>
+                            <button disabled={sendingR} className="bg-primary-dark text-white p-4 rounded-md transition hover:bg-primary-dark/50" onClick={handleReview}>
                                 Finalizar review
                             </button>
                         </div>

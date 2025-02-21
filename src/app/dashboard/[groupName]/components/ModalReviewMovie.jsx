@@ -15,6 +15,7 @@ const ModalReviewMovie = ({contentType}) => {
     const [rating, setRating] = useState(0)
     const [watchedMovies, setWatchedMovies] = useState([])
     const [selectedMovie, setSelectedMovie] = useState({})
+    const [sendingR, setSendingR] = useState(false)
     const [selectedMovieId, setSelectedMovieId] = useState(0)
     const [review, setReview] = useState("")
     const { user } = useAuth()
@@ -70,6 +71,7 @@ const ModalReviewMovie = ({contentType}) => {
     const addReview = async () => {
         if (rating && selectedMovieId && review !== "") {
             try {
+                setSendingR(true)
                 const response = await fetchMovieReview(user, selectedMovieId, rating, selectedMovie, review, user.uid, selectedGroup.id, contentType)
                 toast.success("Review enviado com sucesso:", response)
 
@@ -81,6 +83,7 @@ const ModalReviewMovie = ({contentType}) => {
                 return false
             }
         } else {
+            setSendingR(false)
             toast.error("É necessário preencher o rating, filme e review para finalizar sua review!")
             return false
         }
@@ -160,9 +163,9 @@ const ModalReviewMovie = ({contentType}) => {
                             <textarea
                                 value={review}
                                 onChange={(e) => setReview(e.target.value)}
-                                className="flex-1 px-4 py-2 pt-3 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark text-white resize-none"
+                                className="flex-1 px-4 py-2 pt-3 shadow-inner shadow-gray-800/80 rounded-2xl scrollbar-hide bg-secondary-dark text-white resize-none"
                                 placeholder="Faça sua review..."
-                                rows="2"
+                                rows="3"
                             ></textarea>
                             <div className="rating-container">
                                 <p>Avalie o filme:</p>
@@ -184,7 +187,7 @@ const ModalReviewMovie = ({contentType}) => {
                     </ModalBody>
                     <ModalFooter>
                         <div className="mt-8 flex justify-end items-center">
-                            <button className="bg-primary-dark text-white p-4 rounded-md transition hover:bg-primary-dark/50" onClick={handleReview}>
+                            <button disabled={sendingR} className="bg-primary-dark text-white p-4 rounded-md transition hover:bg-primary-dark/50" onClick={handleReview}>
                                 Finalizar review
                             </button>
                         </div>

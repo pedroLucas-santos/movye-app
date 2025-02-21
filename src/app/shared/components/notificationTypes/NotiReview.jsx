@@ -54,7 +54,7 @@ const NotiReview = ({ notification, toasty }) => {
                     </div>
                 </div>
                 <div>
-                    <FiTrash onClick={readNoti} size={18} className="cursor-pointer hover:text-red-500 transition duration-200" />
+                    <FiTrash onClick={readNoti} onTouchEnd={readNoti} size={18} className="cursor-pointer hover:text-red-500 transition duration-200" />
                 </div>
             </div>
         </div>

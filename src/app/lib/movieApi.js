@@ -310,7 +310,7 @@ export const fetchMovieReview = async (sender, movieId, newRating, movieSelected
             }
 
             for (const friendId of friends) {
-                if (friendId !== sender.uid) {
+                if (friendId !== sender.uid && !members.includes(friendId)) {
                     await createNotification(
                         {
                             sender: sender,
