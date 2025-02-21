@@ -315,7 +315,7 @@ export const fetchShowReview = async (sender, showId, newRating, showSelected, n
             }
 
             for (const friendId of friends) {
-                if (friendId !== sender.uid) {
+                if (friendId !== sender.uid && !members.includes(friendId)) {
                     await createNotification(
                         {
                             sender: sender,
