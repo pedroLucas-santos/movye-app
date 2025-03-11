@@ -1,6 +1,6 @@
 {
   "name": "movye-app",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroui/avatar": "^2.2.12",
+    "@heroui/card": "^2.2.15",
     "@heroui/drawer": "^2.2.8",
     "@heroui/dropdown": "^2.3.10",
     "@heroui/listbox": "^2.3.10",
@@ -31,6 +33,7 @@
     "react-toastify": "^10.0.6"
   },
   "devDependencies": {
+    "@types/react": "19.0.10",
     "eslint": "^8",
     "eslint-config-next": "15.0.2",
     "postcss": "^8",
