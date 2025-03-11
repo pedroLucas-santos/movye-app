@@ -1,7 +1,7 @@
 import NavBar from "@/app/shared/NavBar"
 import CreateGroup from "./components/CreateGroup"
 
-const page = async ({ params }) => {
+const Page = async ({ params }) => {
     const { userId } = await params
 
     return (
@@ -15,4 +15,4 @@ const page = async ({ params }) => {
     )
 }
 
-export default page
+export default Page

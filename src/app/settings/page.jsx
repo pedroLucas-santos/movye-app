@@ -7,7 +7,7 @@ import { useAuth } from '@/app/context/auth-context'
 import LoadingSpinner from '../shared/LoadingSpinner'
 import { CircularProgress } from '@heroui/progress'
 
-const page = () => {
+const Page = () => {
     const { user } = useAuth()
     const [settings, setSettings] = useState({})
     const [loading, setLoading] = useState(true)
@@ -35,4 +35,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page
