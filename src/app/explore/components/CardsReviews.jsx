@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useContentType } from '@/app/context/contentTypeProvider'
 import { useRouter } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 
 const ITEMS_PER_PAGE = 8
 
@@ -24,8 +25,8 @@ const CardsReviews = ({ reviews }) => {
     }, [contentType, reviews])
 
     useEffect(() => {
-        router.refresh()
-    }, [contentType])
+        revalidatePath('/')
+    }, [[],contentType])
 
     const paginatedReviews = filteredReviews.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
