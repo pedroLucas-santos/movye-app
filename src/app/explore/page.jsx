@@ -8,7 +8,7 @@ import BackgroundImage from './components/BackgroundImage'
 import { getDailyBackground } from '../lib/movieApi'
 
 export default async function Page() {
-    const reviews = await getAllPublicReviews()
+    const reviews = await getAllPublicReviews({ cache: 'no-store' })
 
     return (
         <>
