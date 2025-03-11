@@ -4,10 +4,9 @@ import React, { useEffect, useState } from 'react'
 import Switches from './components/Switches'
 import { getUserSettings } from '@/app/lib/userApi'
 import { useAuth } from '@/app/context/auth-context'
-import LoadingSpinner from '../shared/LoadingSpinner'
 import { CircularProgress } from '@heroui/progress'
 
-const page = () => {
+const SettingsPage = () => {
     const { user } = useAuth()
     const [settings, setSettings] = useState({})
     const [loading, setLoading] = useState(true)
@@ -35,4 +34,4 @@ const page = () => {
     )
 }
 
-export default page
+export default SettingsPage

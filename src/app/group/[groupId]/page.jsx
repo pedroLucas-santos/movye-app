@@ -12,7 +12,7 @@ import ModalInviteUsers from "./components/ModalInviteUsers"
 import GroupActions from "./components/GroupActions"
 import { fetchShowsGroupReviews, fetchShowsWatched } from "@/app/lib/showApi"
 
-const page = async ({ params }) => {
+const Page = async ({ params }) => {
     const { groupId } = await params
     const group = await getGroupData(groupId)
     const watchedMovies = await fetchMoviesWatched(groupId)
@@ -55,4 +55,4 @@ const page = async ({ params }) => {
     )
 }
 
-export default page
+export default Page
