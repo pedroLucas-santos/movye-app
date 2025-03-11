@@ -73,7 +73,8 @@ export default function LoginPage() {
                     settings: {
                         notificationsReviews: true,
                         notificationsMovies: true,
-                        notificationsShows: true
+                        notificationsShows: true,
+                        publicReviews:true
                     }
                 })
             } else {
@@ -95,7 +96,8 @@ export default function LoginPage() {
                         settings: {
                             notificationsReviews: true,
                             notificationsMovies: true,
-                            notificationsShows: true
+                            notificationsShows: true,
+                            publicReviews:true
                         }
                     }, {merge: true})
                 }

@@ -1,44 +1,44 @@
-import { collection, collectionGroup, doc, getCountFromServer, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore"
-import { db } from "@/app/lib/firebase-config" // Replace with your Firebase setup
+import { collection, collectionGroup, doc, getCountFromServer, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore'
+import { db } from '@/app/lib/firebase-config' // Replace with your Firebase setup
 
 export const options = {
-    method: "GET",
+    method: 'GET',
     headers: {
-        accept: "application/json",
+        accept: 'application/json',
         Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5MTJhMzAzMGExODRhYTgzMTg1MWY5MWNmMTBjNmI1ZCIsIm5iZiI6MTczMTQyNDEyMC42NTUwNDg2LCJzdWIiOiI2NzMzNmU4ZDEzYmVhZjQ2NWI3M2M5NDciLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.4ZA9UGy74W6Avpvd7CVsuj5tZkBaX6QbptP2W-DEWNM",
-    },
+            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5MTJhMzAzMGExODRhYTgzMTg1MWY5MWNmMTBjNmI1ZCIsIm5iZiI6MTczMTQyNDEyMC42NTUwNDg2LCJzdWIiOiI2NzMzNmU4ZDEzYmVhZjQ2NWI3M2M5NDciLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.4ZA9UGy74W6Avpvd7CVsuj5tZkBaX6QbptP2W-DEWNM'
+    }
 }
 
 export const getUserById = async (userId) => {
     try {
-        const userDoc = await getDoc(doc(db, "users", userId))
+        const userDoc = await getDoc(doc(db, 'users', userId))
         if (userDoc.exists()) {
             return { id: userId, ...userDoc.data() }
         }
         return null
     } catch (error) {
-        console.error("Error fetching user data:", error)
+        console.error('Error fetching user data:', error)
         return null
     }
 }
 
 export const getUserReviews = async (userId, contentType) => {
     try {
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where("content", "==", contentType))
+        const reviewsQuery = query(collectionGroup(db, 'reviews'), where('user_id', '==', userId), where('content', '==', contentType))
 
         const snapshot = await getCountFromServer(reviewsQuery)
 
         return snapshot.data().count
     } catch (err) {
-        console.error("Error fetching user reviews:", err)
+        console.error('Error fetching user reviews:', err)
         throw err
     }
 }
 
 export const getUserAvgReviews = async (userId, contentType) => {
     try {
-        const reviewsQuery = query(collectionGroup(db, "reviews"), where("user_id", "==", userId), where("content", "==", contentType))
+        const reviewsQuery = query(collectionGroup(db, 'reviews'), where('user_id', '==', userId), where('content', '==', contentType))
 
         const querySnapshot = await getDocs(reviewsQuery)
 
@@ -59,7 +59,7 @@ export const getUserAvgReviews = async (userId, contentType) => {
 
         return roundedAvg
     } catch (err) {
-        console.error("Error fetching user average reviews:", err)
+        console.error('Error fetching user average reviews:', err)
         throw err
     }
 }
@@ -73,7 +73,7 @@ export const searchFavoriteMovie = async (movie) => {
 
         return filteredMovies
     } catch (err) {
-        console.error("Error fetching favorite movie:", err)
+        console.error('Error fetching favorite movie:', err)
         throw err
     }
 }
@@ -84,43 +84,43 @@ export const getMovieBackdrop = async (movieId) => {
         const data = await response.json()
         return data.backdrops
     } catch (error) {
-        console.error("Error fetching movie images:", error.message)
+        console.error('Error fetching movie images:', error.message)
         throw error
     }
 }
 
 export const saveProfileEdit = async (userId, favoriteMovie, favoriteShow, backdropPath, bio, contentType) => {
     try {
-        const userDocRef = doc(db, "users", userId)
+        const userDocRef = doc(db, 'users', userId)
         const docSnapshot = await getDoc(userDocRef)
 
         if (!docSnapshot.exists()) {
             await setDoc(userDocRef, {
-                bio: "",
+                bio: '',
                 favoriteMovie: {
-                    title: "",
-                    id: "",
-                    backdropPath: "",
+                    title: '',
+                    id: '',
+                    backdropPath: ''
                 },
                 favoriteShow: {
-                    name: "",
-                    id: "",
-                    backdropPath: "",
-                },
+                    name: '',
+                    id: '',
+                    backdropPath: ''
+                }
             })
         }
 
-        if (contentType === "movie") {
+        if (contentType === 'movie') {
             if (favoriteMovie) {
                 await setDoc(
                     userDocRef,
                     {
-                        bio: bio || "",
+                        bio: bio || '',
                         favoriteMovie: {
                             title: favoriteMovie.title,
                             id: favoriteMovie.id,
-                            backdropPath: backdropPath,
-                        },
+                            backdropPath: backdropPath
+                        }
                     },
                     { merge: true }
                 )
@@ -128,24 +128,24 @@ export const saveProfileEdit = async (userId, favoriteMovie, favoriteShow, backd
                 await updateDoc(
                     userDocRef,
                     {
-                        bio: bio || "",
+                        bio: bio || ''
                     },
                     { merge: true }
                 )
             }
         }
 
-        if (contentType === "tv") {
+        if (contentType === 'tv') {
             if (favoriteShow) {
                 await setDoc(
                     userDocRef,
                     {
-                        bio: bio || "",
+                        bio: bio || '',
                         favoriteShow: {
                             name: favoriteShow.name,
                             id: favoriteShow.id,
-                            backdropPath: backdropPath,
-                        },
+                            backdropPath: backdropPath
+                        }
                     },
                     { merge: true }
                 )
@@ -153,21 +153,21 @@ export const saveProfileEdit = async (userId, favoriteMovie, favoriteShow, backd
                 await updateDoc(
                     userDocRef,
                     {
-                        bio: bio || "",
+                        bio: bio || ''
                     },
                     { merge: true }
                 )
             }
         }
     } catch (err) {
-        console.error("Error saving favorite movie:", err)
+        console.error('Error saving favorite movie:', err)
         throw err
     }
 }
 
 export const getUserSettings = async (userId) => {
     try {
-        const userDocRef = doc(db, "users", userId)
+        const userDocRef = doc(db, 'users', userId)
         const docSnapshot = await getDoc(userDocRef)
 
         if (!docSnapshot.exists()) {
@@ -176,17 +176,89 @@ export const getUserSettings = async (userId) => {
 
         return docSnapshot.data()?.settings || {}
     } catch (err) {
-        console.error("Error fetching user settings:", err)
+        console.error('Error fetching user settings:', err)
         throw err
     }
 }
 
 export const saveUserSettings = async (userId, settings) => {
     try {
-        const userDocRef = doc(db, "users", userId)
+        const userDocRef = doc(db, 'users', userId)
         await updateDoc(userDocRef, { settings })
     } catch (err) {
-        console.error("Error saving user settings:", err)
+        console.error('Error saving user settings:', err)
         throw err
     }
 }
+
+export const getAllPublicReviews = async () => {
+    try {
+        const usersRef = collection(db, 'users')
+        const userDocs = await getDocs(usersRef)
+
+        let allReviews = []
+        let counter = 0
+
+        for (const userDoc of userDocs.docs) {
+            const userSettings = await getUserSettings(userDoc.id)
+
+            if (userSettings.publicReviews) {
+                const reviewRef = collection(db, 'users', userDoc.id, 'reviews')
+                const reviewsSnapshot = await getDocs(reviewRef)
+
+                reviewsSnapshot.forEach((review) => {
+                    const reviewData = review.data()
+
+                    let formattedDate = ''
+                    let editedFormatted = ''
+                    let reviewedAtTimestamp = null
+
+                    if (reviewData.reviewed_at && reviewData.reviewed_at.toDate) {
+                        reviewedAtTimestamp = reviewData.reviewed_at.toDate()
+                        formattedDate = reviewedAtTimestamp.toLocaleDateString('pt-BR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                        })
+                    }
+
+                    if (reviewData.edited_at) {
+                        editedFormatted = reviewData.edited_at.toDate().toLocaleDateString('pt-BR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                        })
+                    }
+
+                    allReviews.push({
+                        id: review.id,
+                        keyId: counter++,
+                        user_id: userDoc.id,
+                        displayName: userDoc.data().displayName,
+                        photoURL: userDoc.data().photoURL,
+                        ...review.data(),
+                        backdrop_path: `https://image.tmdb.org/t/p/original${review.data().backdrop_path}`,
+                        reviewed_at: formattedDate,
+                        reviewed_at_timestamp: reviewedAtTimestamp, // Mantemos o timestamp para ordenar corretamente
+                        edited_at: editedFormatted
+                    })
+                })
+            }
+        }
+
+        // Ordena as reviews do mais recente para o mais antigo
+        allReviews.sort((a, b) => b.reviewed_at_timestamp - a.reviewed_at_timestamp)
+
+        return allReviews
+    } catch (e) {
+        console.error('Error fetching all public reviews:', e.message)
+        throw e
+    }
+}
+

@@ -1,25 +1,29 @@
-"use client"
-import { useEffect, useState, useRef } from "react"
-import { fetchMovieLastWatched, fetchUserLastMovieReview } from "@/app/lib/movieApi"
-import { useMovieUpdate } from "@/app/context/movieUpdateProvider"
-import NavBar from "@/app/shared/NavBar"
-import RenderStars from "@/app/shared/RenderStars"
-import { useGroup } from "@/app/context/groupProvider"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { useContentType } from "@/app/context/contentTypeProvider"
+'use client'
+import { useEffect, useState, useRef } from 'react'
+import { fetchMovieLastWatched, fetchUserLastMovieReview } from '@/app/lib/movieApi'
+import { useMovieUpdate } from '@/app/context/movieUpdateProvider'
+import NavBar from '@/app/shared/NavBar'
+import RenderStars from '@/app/shared/RenderStars'
+import { useGroup } from '@/app/context/groupProvider'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useContentType } from '@/app/context/contentTypeProvider'
+import { FaArrowRight } from 'react-icons/fa'
+import Link from 'next/link'
+import { Skeleton } from '@heroui/skeleton'
 
 const MovieBanner = () => {
     const [lastWatchedMovie, setLastWatchedMovie] = useState({})
     const [allReviews, setAllReviews] = useState([])
     const [currentReview, setCurrentReview] = useState(null)
+    const [isLoading, setIsLoading] = useState(true)
     const [reviewIndex, setReviewIndex] = useState(0)
     const reviewChangeInterval = 5000
     const [animate, setAnimate] = useState(false) // Estado de animação
     const { updateSignal } = useMovieUpdate()
     const allReviewsRef = useRef(allReviews)
     const { selectedGroup } = useGroup()
-    const {contentType, setContentType} = useContentType()
+    const { contentType, setContentType } = useContentType()
     const router = useRouter()
 
     useEffect(() => {
@@ -38,8 +42,7 @@ const MovieBanner = () => {
     useEffect(() => {
         const fetchLastMovieReview = async () => {
             try {
-                
-                const reviews = await fetchUserLastMovieReview(selectedGroup.id,lastWatchedMovie.id)
+                const reviews = await fetchUserLastMovieReview(selectedGroup.id, lastWatchedMovie.id)
                 setAllReviews(reviews) //
                 if (reviews && reviews.length > 0) {
                     setCurrentReview(reviews[0]) // Exibe a primeira review ao iniciar
@@ -85,22 +88,46 @@ const MovieBanner = () => {
     }, [animate])
 
     return (
-        <div
-            className={`relative w-full h-[720px] bg-cover shadow-inner bg-center md:bg-top shadow-gray-900/80`}
-            style={{ backgroundImage: lastWatchedMovie.backdropUrl ? `url(${lastWatchedMovie.backdropUrl})` : "" }}
-        >
-            <div id="dark-filter" className="absolute inset-0 bg-black opacity-60"></div>
+        <div className="relative w-full h-[720px] shadow-inner shadow-gray-900/80">
+            {/* Skeleton enquanto a imagem carrega */}
+            {isLoading && <Skeleton className="absolute inset-0 w-full h-full bg-gray-800" />}
+
+            {/* Background com Next Image */}
+            {lastWatchedMovie.backdropUrl && (
+                <Image
+                    src={lastWatchedMovie.backdropUrl}
+                    alt="Último assistido"
+                    fill
+                    quality={100}
+                    className={`object-cover object-center transition-opacity duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                    onLoadingComplete={() => setIsLoading(false)}
+                />
+            )}
+
+            {/* Overlay escuro */}
+            <div id="dark-filter" className="absolute inset-0 bg-black/60"></div>
+
             <div className="relative z-10 flex flex-col items-center">
                 <NavBar />
                 <div className="w-full h-[500px] mt-8 flex justify-evenly items-center p-4 md:p-0">
                     <div className="flex justify-center flex-col gap-2">
-                        <span className="text-3xl md:text-4xl font-bold antialiased text-white">{contentType === 'movie' ? 'Último filme assistido:' : 'Última série assitida:'}</span>
-                        <span className="text-lg md:text-2xl antialiased w-3/4 text-center ml-4 text-white">{lastWatchedMovie.title}</span>
+                        <div className="flex flex-col justify-center items-center">
+                            <span className="text-3xl md:text-4xl font-bold antialiased text-white">
+                                {contentType === 'movie' ? 'Último filme assistido:' : 'Última série assistida:'}
+                            </span>
+                            <span className="text-lg md:text-2xl antialiased w-3/4 text-center ml-4 text-white">{lastWatchedMovie.title}</span>
+                            <Link
+                                href={'/explore'}
+                                className="text-lg md:text-xl antialiased w-3/4 text-center ml-4 text-zinc-400 flex justify-center items-center gap-3 mt-1 hover:text-zinc-200 transition-colors"
+                            >
+                                Explorar <FaArrowRight />
+                            </Link>
+                        </div>
 
                         {currentReview && (
                             <div className="hidden flex-col p-8 shadow-inner shadow-gray-800/80 rounded-2xl bg-secondary-dark mt-2 md:flex">
                                 <div className="flex">
-                                    <div className={`flex gap-4 ${animate ? "animate-fadeIn" : ""}`}>
+                                    <div className="flex gap-4">
                                         {currentReview.user?.photoURL && (
                                             <img
                                                 id="avatar"
@@ -113,7 +140,12 @@ const MovieBanner = () => {
                                         <div className="flex flex-col">
                                             <div className="flex gap-3 items-center -mt-1">
                                                 {currentReview.user?.displayName && (
-                                                    <p onClick={() => router.push(`/profile/${currentReview.user?.id}`)} className="font-semibold cursor-pointer text-white">{currentReview.user.displayName}</p>
+                                                    <p
+                                                        onClick={() => router.push(`/profile/${currentReview.user?.id}`)}
+                                                        className="font-semibold cursor-pointer text-white"
+                                                    >
+                                                        {currentReview.user.displayName}
+                                                    </p>
                                                 )}
                                             </div>
                                             {currentReview.rating && (
@@ -126,10 +158,8 @@ const MovieBanner = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className={`italic mt-4 text-[18px] text-white font-normal break-words w-[500px] ${animate ? "animate-fadeIn" : ""}`}>
-                                    {currentReview.review}
-                                </div>
-                                <div className={`flex flex-col text-white text-[12px] mt-4 ${animate ? "animate-fadeIn" : ""}`}>
+                                <div className="italic mt-4 text-[18px] text-white font-normal break-words w-[500px]">{currentReview.review}</div>
+                                <div className="flex flex-col text-white text-[12px] mt-4">
                                     <span>{currentReview.reviewed_at}</span>
                                     <span className="text-xs text-gray-400">{`Assistido com o grupo: ${currentReview.groupName}`}</span>
                                 </div>
@@ -138,7 +168,7 @@ const MovieBanner = () => {
                     </div>
                     <div className="w-[400px] h-[270px] md:h-[450px] md:w-[300px]">
                         {lastWatchedMovie.posterUrl && (
-                            <img src={lastWatchedMovie.posterUrl} alt="" className="w-full h-full select-none shadow-xl" />
+                            <img src={lastWatchedMovie.posterUrl} alt="Pôster do filme" className="w-full h-full select-none shadow-xl" />
                         )}
                     </div>
                 </div>

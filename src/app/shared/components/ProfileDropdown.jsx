@@ -45,7 +45,7 @@ const ProfileDropdown = ({ user }) => {
     }
 
     const settingsPage = () => {
-        router.push(`/settings/${user?.uid}`)
+        router.push(`/settings`)
     }
 
     return (
