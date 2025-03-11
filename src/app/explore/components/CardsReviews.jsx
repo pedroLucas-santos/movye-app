@@ -25,7 +25,7 @@ const CardsReviews = ({ reviews }) => {
     }, [contentType, reviews])
 
     useEffect(() => {
-        revalidatePath('/')
+        revalidatePath('/explore')
     }, [[],contentType])
 
     const paginatedReviews = filteredReviews.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
