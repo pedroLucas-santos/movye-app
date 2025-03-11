@@ -17,7 +17,7 @@ export default async function Page() {
                 <div>
                     <TypewriterHeading />
                 </div>
-                <input className="w-96 p-4 rounded-full" placeholder="Buscar review..." type="text" />
+               {/*  <input className="w-96 p-4 rounded-full" placeholder="Buscar review..." type="text" /> */}
 
                 <CardsReviews reviews={reviews} />
             </BackgroundImage>
