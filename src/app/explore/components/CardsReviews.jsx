@@ -5,26 +5,34 @@ import { Card, CardBody } from '@heroui/card'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useContentType } from '@/app/context/contentTypeProvider'
+import { useRouter } from 'next/navigation'
 
 const ITEMS_PER_PAGE = 10
 
 const CardsReviews = ({ reviews }) => {
     const [currentPage, setCurrentPage] = useState(1)
-    const [reviewsToShow, setReviewsToShow] = useState([])
+    const [filteredReviews, setFilteredReviews] = useState([])
     const [totalPages, setTotalPages] = useState(0)
     const { contentType } = useContentType()
+    const router = useRouter()
 
-    const paginatedReviews = reviews.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
     useEffect(() => {
-        const rr = paginatedReviews.filter((r) => r.content === contentType)
+        const rr = reviews.filter((r) => r.content === contentType)
+        setFilteredReviews(rr)
         setTotalPages(Math.ceil(rr.length / ITEMS_PER_PAGE))
-        setReviewsToShow(rr)
-    }, [[], contentType])
+        setCurrentPage(1) // Resetar para a primeira página ao mudar o filtro
+    }, [reviews])
+
+    useEffect(() => {
+        router.refresh()
+    }, [contentType])
+
+    const paginatedReviews = filteredReviews.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
     return (
         <>
             <div className="p-12 flex flex-wrap justify-center items-center gap-6">
-                {reviewsToShow?.map((review) => (
+                {paginatedReviews?.map((review) => (
                     <Card className="hover:scale-105 max-w-96 flex flex-col" key={review.keyId}>
                         <Image src={review.backdrop_path} alt="Movie Banner" width={500} height={300} className="w-full h-56 object-cover" />
                         <CardBody className="p-4 flex flex-col justify-between h-60 max-h-60 overflow-hidden">
