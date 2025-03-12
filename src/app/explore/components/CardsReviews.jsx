@@ -6,7 +6,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useContentType } from '@/app/context/contentTypeProvider'
 import { useRouter } from 'next/navigation'
-import { revalidatePath } from 'next/cache'
 
 const ITEMS_PER_PAGE = 8
 
@@ -21,19 +20,20 @@ const CardsReviews = ({ reviews }) => {
         const rr = reviews.filter((r) => r.content === contentType)
         setFilteredReviews(rr)
         setTotalPages(Math.ceil(rr.length / ITEMS_PER_PAGE))
-        setCurrentPage(1) // Resetar para a primeira página ao mudar o filtro
-    }, [contentType, reviews])
+        setCurrentPage(1)
+
+    }, [reviews])
 
     useEffect(() => {
-        revalidatePath('/')
-    }, [[],contentType])
+        router.refresh()
+    }, [contentType])
 
     const paginatedReviews = filteredReviews.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
     return (
         <>
             <div className="p-12 flex flex-wrap justify-center items-center gap-6">
-                {paginatedReviews.map((review) => (
+                {paginatedReviews?.map((review) => (
                     <Card className="hover:scale-105 max-w-96 flex flex-col" key={review.keyId}>
                         <Image src={review.backdrop_path} alt="Movie Banner" width={500} height={300} className="w-full h-56 object-cover" />
                         <CardBody className="p-4 flex flex-col justify-between h-60 max-h-60 overflow-hidden">
