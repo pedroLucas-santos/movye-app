@@ -118,7 +118,7 @@ const MovieBanner = () => {
                             <span className="text-lg md:text-2xl antialiased w-3/4 text-center ml-4 text-white">{lastWatchedMovie.title}</span>
                             <Link
                                 href={'/explore'}
-                                className="text-lg md:text-xl antialiased w-3/4 text-center ml-4 text-zinc-400 flex justify-center items-center gap-3 mt-1 hover:text-zinc-200 transition-colors"
+                                className="text-lg md:text-xl antialiased text-center ml-4 text-zinc-400 flex justify-center items-center gap-3 mt-1 hover:text-zinc-200 transition-colors"
                             >
                                 Explorar <FaArrowRight />
                             </Link>
