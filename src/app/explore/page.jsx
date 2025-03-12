@@ -7,6 +7,8 @@ import { getAllPublicReviews } from '../lib/userApi'
 import BackgroundImage from './components/BackgroundImage'
 import { getDailyBackground } from '../lib/movieApi'
 
+export const revalidate = 10
+
 export default async function Page() {
     const reviews = await getAllPublicReviews()
 
