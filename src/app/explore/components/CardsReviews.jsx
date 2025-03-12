@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { useContentType } from '@/app/context/contentTypeProvider'
 import { useRouter } from 'next/navigation'
 
-const ITEMS_PER_PAGE = 10
+const ITEMS_PER_PAGE = 8
 
 const CardsReviews = ({ reviews }) => {
     const [currentPage, setCurrentPage] = useState(1)
@@ -20,7 +20,8 @@ const CardsReviews = ({ reviews }) => {
         const rr = reviews.filter((r) => r.content === contentType)
         setFilteredReviews(rr)
         setTotalPages(Math.ceil(rr.length / ITEMS_PER_PAGE))
-        setCurrentPage(1) // Resetar para a primeira página ao mudar o filtro
+        setCurrentPage(1)
+
     }, [reviews])
 
     useEffect(() => {
@@ -40,42 +41,41 @@ const CardsReviews = ({ reviews }) => {
                                 <Link href={`profile/${review.user_id}`}>
                                     <Avatar src={review.photoURL} name={review.displayName} />
                                 </Link>
-
                                 <div>
                                     <p className="font-semibold text-lg">{review.displayName}</p>
                                     <p className="text-sm text-gray-500">{review.reviewed_at}</p>
                                 </div>
                             </div>
-
-                            <div className="flex-1 mt-4 text-gray-300 overflow-auto break-words max-h-24 scrollbar-hide hover:scrollbar-default transition ">
+                            <div className="flex-1 mt-4 text-gray-300 overflow-auto break-words max-h-24 scrollbar-hide hover:scrollbar-default transition">
                                 <p className="whitespace-pre-line">{review.review}</p>
                             </div>
-
                             <p className="mt-4 text-gray-600 self-end place-self-end text-right break-words">{review.id}</p>
                         </CardBody>
                     </Card>
                 ))}
             </div>
-
-            <div className="flex justify-center items-center mt-6 gap-4">
-                <button
-                    className="bg-secondary-dark p-2 text-white rounded-md"
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                >
-                    {'<'}
-                </button>
-                <span>
-                    {currentPage} / {totalPages}
-                </span>
-                <button
-                    className="bg-secondary-dark p-2 text-white rounded-md"
-                    disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                >
-                    {'>'}
-                </button>
-            </div>
+            
+            {totalPages > 1 && (
+                <div className="flex justify-center items-center mt-6 gap-4">
+                    <button
+                        className="bg-secondary-dark p-2 text-white rounded-md"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    >
+                        {'<'}
+                    </button>
+                    <span>
+                        {currentPage} / {totalPages}
+                    </span>
+                    <button
+                        className="bg-secondary-dark p-2 text-white rounded-md"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    >
+                        {'>'}
+                    </button>
+                </div>
+            )}
         </>
     )
 }

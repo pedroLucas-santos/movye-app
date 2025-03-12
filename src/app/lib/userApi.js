@@ -202,7 +202,7 @@ export const getAllPublicReviews = async () => {
         for (const userDoc of userDocs.docs) {
             const userSettings = await getUserSettings(userDoc.id)
 
-            if (userSettings.publicReviews) {
+            if (userSettings.publicReviews === true) {
                 const reviewRef = collection(db, 'users', userDoc.id, 'reviews')
                 const reviewsSnapshot = await getDocs(reviewRef)
 
