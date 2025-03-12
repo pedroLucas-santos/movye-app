@@ -3,9 +3,8 @@ import { Suspense } from 'react'
 import CardsReviews from './components/CardsReviews'
 import './Typing.css'
 import TypewriterHeading from './components/TypewriterHeading'
-import { getAllPublicReviews } from '../lib/userApi'
+import { getAllPublicReviews} from '../lib/userApi'
 import BackgroundImage from './components/BackgroundImage'
-import { getDailyBackground } from '../lib/movieApi'
 
 export const revalidate = 10
 
@@ -16,12 +15,11 @@ export default async function Page() {
         <>
             <BackgroundImage>
                 <NavBar />
-                <div>
+                <div className='mb-2'>
                     <TypewriterHeading />
                 </div>
-               {/*  <input className="w-96 p-4 rounded-full" placeholder="Buscar review..." type="text" /> */}
 
-                <CardsReviews reviews={reviews} />
+                <CardsReviews reviews={reviews}/>
             </BackgroundImage>
         </>
     )

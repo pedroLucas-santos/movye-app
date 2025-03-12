@@ -23,7 +23,7 @@ const BackgroundImage = ({ children }) => {
         fetchBackground()
     }, [contentType])
     return (
-        <div className="relative w-full min-h-screen flex flex-col gap-6 justify-center items-center pb-6">
+        <div className="relative w-full min-h-screen flex flex-col gap-6 items-center pb-6">
             {isLoading && <Skeleton className="absolute inset-0 w-full h-full bg-gray-800" />}
             {backgroundImage && (
                 <Image

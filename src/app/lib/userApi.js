@@ -1,5 +1,6 @@
 import { collection, collectionGroup, doc, getCountFromServer, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore'
 import { db } from '@/app/lib/firebase-config' // Replace with your Firebase setup
+import { fetchMoviePoster } from './movieApi'
 
 export const options = {
     method: 'GET',
@@ -262,3 +263,34 @@ export const getAllPublicReviews = async () => {
     }
 }
 
+export const getReviewByTitle = async (searchTerm, content) => {
+    try {
+        if (content === 'movie') {
+            const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${searchTerm}`, options)
+            const data = await response.json()
+            const updatedResults = data.results
+                .filter((i) => i.poster_path)
+                .map((item) => ({
+                    ...item,
+                    poster_path: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : null
+                }))
+
+            return updatedResults
+        } else {
+            const response = await fetch(`https://api.themoviedb.org/3/search/tv?query=${searchTerm}`, options)
+            const data = await response.json()
+            const updatedResults = data.results
+                .filter((i) => i.poster_path)
+                .map((item) => ({
+                    ...item,
+                    poster_path: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : null
+                }))
+
+            console.log(updatedResults)
+            return updatedResults
+        }
+    } catch (e) {
+        console.error('Error fetching movie data:', e.message)
+        throw e
+    }
+}
