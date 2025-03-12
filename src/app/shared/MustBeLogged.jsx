@@ -25,7 +25,7 @@ const MustBeLogged = () => {
                     <path d="M14 12H8" />
                 </svg>
                 <button
-                    onClick={() => router.push("./login")}
+                    onClick={() => router.push("/login")}
                     className="text-xl font-semibold text-white bg-primary-dark hover:bg-primary-dark-hover rounded-md "
                 >
                     Login
