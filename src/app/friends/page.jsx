@@ -7,6 +7,8 @@ import MustBeLogged from "../shared/MustBeLogged"
 import NavBar from "../shared/NavBar"
 import UserData from "../reviews/[userId]/components/UserData"
 import FriendsCard from "./components/FriendsCard"
+import Image from "next/image"
+import UserData2 from "../reviews/[userId]/components/UserData2"
 
 const Friends = () => {
     const { user, loading } = useAuth()
@@ -27,8 +29,11 @@ const Friends = () => {
             <div className="p-4 flex gap-4 h-full flex-grow overflow-y-auto md:overflow-y-hidden">
                 <div className="md:hidden"><FriendsCard/></div>
                 <div className="hidden md:flex flex-grow gap-4">
-                    <UserData actualUser={user}/>
-                    <FriendsCard/>
+{/*                     <UserData actualUser={user}/>
+                    <FriendsCard/> */}
+                    <div className="w-full bg-red-400 h-full rounded-xl">
+                        <UserData2 actualUser={user}/>
+                    </div>
                 </div>
             </div>
         </div>
