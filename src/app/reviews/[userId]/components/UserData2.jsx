@@ -27,7 +27,7 @@ const UserData2 = ({ userId, actualUser }) => {
     }
 
     useEffect(() => {
-        if (!user?.uid) return 
+        if (!user?.uid) return
 
         let userIdToUse
 
@@ -39,8 +39,8 @@ const UserData2 = ({ userId, actualUser }) => {
 
         const fetchLastMovieReview = async () => {
             try {
-                const response = await fetchLastReviewUser(userIdToUse, contentType) 
-                setUserInfo(response) 
+                const response = await fetchLastReviewUser(userIdToUse, contentType)
+                setUserInfo(response)
             } catch (e) {
                 console.error(e)
             }
@@ -48,25 +48,25 @@ const UserData2 = ({ userId, actualUser }) => {
 
         fetchUserFriendCode()
 
-        fetchLastMovieReview() 
-    }, [user?.uid, updateSignal, contentType]) 
+        fetchLastMovieReview()
+    }, [user?.uid, updateSignal, contentType])
 
     const copyToClipboard = () => {
         navigator.clipboard
-            .writeText(userFriendCode) 
+            .writeText(userFriendCode)
             .then(() => {
-                toast.info('Código copiado com sucesso!') 
+                toast.info('Código copiado com sucesso!')
             })
             .catch((error) => {
-                console.error('Erro ao copiar: ', error) 
+                console.error('Erro ao copiar: ', error)
             })
     }
     return (
-        <div className="border-yellow-200 border-2 w-full h-56 flex justify-center items-center">
-            <div className="flex items-top justify-center gap-12 border-2" id="userData">
-                <div className="flex gap-2">
-                    <Image src={actualUser.photoURL} width={100} height={100} alt="User Image" className="rounded-full" quality={100} />
-                    <div className="flex flex-col justify-center gap-1">
+        <div className="border-gray-400 w-full h-56 flex justify-center items-center">
+            <div className="flex items-start justify-center gap-12" id="userData">
+                <div className="flex items-start gap-3">
+                    <Image src={actualUser.photoURL} width={80} height={80} alt="User Image" className="rounded-full" quality={100} />
+                    <div className="flex flex-col justify-start gap-1">
                         <div className="flex gap-2 justify-center items-center">
                             <span className="text-2xl text-white font-bold">{actualUser.displayName}</span>
                             <Tooltip content="Copiar código de amizade" className="text-white" closeDelay={60}>
@@ -80,7 +80,7 @@ const UserData2 = ({ userId, actualUser }) => {
                             </Tooltip>
                         </div>
                         <div>
-                            <span className="flex flex-col justify-center text-white">
+                            <span className="flex flex-col justify-center text-white gap-1">
                                 <span className="flex">
                                     {Array.from({ length: 5 }, (_, index) => (
                                         <RenderStars key={index} index={index + 1} movieRating={userInfo.averageRating} />
@@ -93,17 +93,28 @@ const UserData2 = ({ userId, actualUser }) => {
                 </div>
                 <div>
                     <span className="flex flex-col justify-center items-center text-white">
-                        Generos mais assistidos:
+                        Genero mais assistidos:
                         <span className="text-sm text-white bg-gray-950/20 rounded-lg p-1">{userInfo.mostViewedGenre}</span>
                     </span>
                 </div>
-                <span className="text-white text-center">
-                    Última review: <br />
-                    <Link href={`/reviews/${actualUser.id}`} className="hover:underline transition-all duration-100">
-                        {userInfo.id}
-                    </Link>
-                </span>
-                <span className="text-white">Reviews: {userInfo.totalReviews}</span>
+                <div className='flex flex-col items-center'>
+                    <span className="text-white text-center">
+                        Última review: <br />
+                        <Link href={`/reviews/${actualUser.uid}`} className="hover:underline transition-all duration-100">
+                            {userInfo.id}
+                        </Link>
+                    </span>
+                    <div>
+                        <span className="flex flex-col justify-center text-white">
+                            <span className="flex">
+                                {Array.from({ length: 5 }, (_, index) => (
+                                    <RenderStars key={index} index={index + 1} movieRating={userInfo.rating} />
+                                ))}
+                            </span>
+                        </span>
+                    </div>
+                </div>
+                <span className="text-white text-center">Reviews: <br/>{userInfo.totalReviews}</span>
             </div>
         </div>
     )

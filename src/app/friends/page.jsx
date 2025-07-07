@@ -9,6 +9,7 @@ import UserData from "../reviews/[userId]/components/UserData"
 import FriendsCard from "./components/FriendsCard"
 import Image from "next/image"
 import UserData2 from "../reviews/[userId]/components/UserData2"
+import FriendsCard2 from "./components/FriendsCard2"
 
 const Friends = () => {
     const { user, loading } = useAuth()
@@ -31,8 +32,9 @@ const Friends = () => {
                 <div className="hidden md:flex flex-grow gap-4">
 {/*                     <UserData actualUser={user}/>
                     <FriendsCard/> */}
-                    <div className="w-full bg-red-400 h-full rounded-xl">
+                    <div className="w-full h-full rounded-xl">
                         <UserData2 actualUser={user}/>
+                        <FriendsCard2/>
                     </div>
                 </div>
             </div>
